@@ -1,0 +1,269 @@
+{
+ "asOf": "2026-11-18",
+ "note": "Publicly announced or widely reported US ground/air force deployments. Positions mark the country or region, not unit locations. Sizes are as reported and may be out of date.",
+ "items": [
+  {
+   "id": "centcom-surge",
+   "title": "Middle East force posture (Iran conflict)",
+   "region": "CENTCOM — Gulf region",
+   "lat": 27.5,
+   "lon": 49.5,
+   "kind": "surge",
+   "size": "~50,000 in region, plus ~9,000–10,000 more sent in Oct.",
+   "since": "2026-02",
+   "status": "Active; deployments reportedly being extended into 2027",
+   "units": [
+    "Third carrier strike group and Marine amphibious ships (Oct. 2026)",
+    "Patriot batteries moved to Saudi Arabia and Qatar",
+    "2nd IBCT, 10th Mountain Division (rotation announced Feb. 2026)"
+   ],
+   "sources": [
+    {
+     "title": "Kurdistan24 — U.S. sends more troops, Patriots as Trump weighs Iran strikes",
+     "url": "https://www.kurdistan24.net/en/story/943386"
+    },
+    {
+     "title": "Express & Star (AP) — Around 9,000 US troops heading to Middle East",
+     "url": "https://www.expressandstar.com/world-news/around-9000-us-troops-heading-to-middle-east-amid-iran-war-official-says-9248998"
+    },
+    {
+     "title": "Jerusalem Post — Pentagon extends deployments as Iran war may run into 2027",
+     "url": "https://jpost.com/middle-east/iran-news/article-907396"
+    },
+    {
+     "title": "Stars and Stripes — 10th Mountain brigade to Middle East",
+     "url": "https://www.stripes.com/branches/army/2026-02-02/10th-mountain-brigade-deployment-middle-east-20607161.html"
+    }
+   ],
+   "branches": [
+    "army",
+    "navy",
+    "marines",
+    "af"
+   ]
+  },
+  {
+   "id": "lithuania-1id",
+   "title": "2nd BCT, 1st Infantry Division → Lithuania",
+   "region": "NATO eastern flank — Lithuania",
+   "lat": 54.9,
+   "lon": 23.9,
+   "kind": "rotation",
+   "size": "Brigade (two battalions in place by mid-Nov.)",
+   "since": "2026-10",
+   "status": "Arriving; replaces 1st BCT, 1st Armored Division",
+   "units": [
+    "2nd Brigade Combat Team, 1st Infantry Division (Fort Riley, Kan.)"
+   ],
+   "sources": [
+    {
+     "title": "Army.mil — Army announces upcoming unit deployments (Aug. 24, 2026)",
+     "url": "https://www.army.mil/article/294757/army_announces_upcoming_unit_deployments"
+    },
+    {
+     "title": "Stars and Stripes — US troop deployment to Lithuania",
+     "url": "https://www.stripes.com/branches/army/2026-10-15/lithuania-us-troop-deployment-23160843.html"
+    }
+   ],
+   "branches": [
+    "army"
+   ]
+  },
+  {
+   "id": "estonia",
+   "title": "US Army rotation resumes in Estonia",
+   "region": "NATO eastern flank — Estonia",
+   "lat": 59.3,
+   "lon": 25.9,
+   "kind": "rotation",
+   "size": "Unit size not announced",
+   "since": "2026-11",
+   "status": "New unit due in November after a pause for a force-structure review",
+   "units": [
+    "Unit not named publicly"
+   ],
+   "sources": [
+    {
+     "title": "Janes — US Army unit rotation in Estonia to resume in November 2026",
+     "url": "https://www.janes.com/defence-intelligence-insights/defence-news/defence/us-army-unit-rotation-in-estonia-to-resume-in-november-2026-after-interruption"
+    }
+   ],
+   "branches": [
+    "army"
+   ]
+  },
+  {
+   "id": "poland-canceled",
+   "title": "Poland armored rotation canceled",
+   "region": "NATO eastern flank — Poland",
+   "lat": 52.4,
+   "lon": 16.9,
+   "kind": "drawdown",
+   "size": "~4,000 (2nd BCT, 1st Cavalry Division) — not deployed",
+   "since": "2026-05",
+   "status": "Canceled; Pentagon rearranging forces in Europe",
+   "units": [
+    "2nd Brigade Combat Team, 1st Cavalry Division (Fort Hood) — stood down"
+   ],
+   "sources": [
+    {
+     "title": "Stars and Stripes — Poland downplays canceled US brigade rotation",
+     "url": "https://www.stripes.com/branches/army/2026-05-14/army-brigade-poland-troop-reduction-21668054.html"
+    }
+   ],
+   "branches": [
+    "army"
+   ]
+  },
+  {
+   "id": "romania-101",
+   "title": "101st Airborne brigade leaves Europe, not replaced",
+   "region": "NATO southeast — Romania",
+   "lat": 44.36,
+   "lon": 28.49,
+   "kind": "drawdown",
+   "size": "Brigade (2nd IBCT, 101st Airborne)",
+   "since": "2025",
+   "status": "Returning home without a replacement; Army says not a withdrawal from Europe",
+   "units": [
+    "2nd Infantry Brigade Combat Team, 101st Airborne Division"
+   ],
+   "sources": [
+    {
+     "title": "Task & Purpose — 101st Airborne unit leaves Europe as US focuses on border, drug war",
+     "url": "https://taskandpurpose.com/news/military-europe-101st/"
+    }
+   ],
+   "branches": [
+    "army"
+   ]
+  },
+  {
+   "id": "korea-3cr",
+   "title": "3rd Cavalry Regiment → South Korea",
+   "region": "Korean Peninsula",
+   "lat": 36.96,
+   "lon": 127.03,
+   "kind": "rotation",
+   "size": "Regiment (~3,500 typical rotational force)",
+   "since": "2026-fall",
+   "status": "Fall rotation; replaces 2nd SBCT, 2nd Infantry Division",
+   "units": [
+    "3rd Cavalry Regiment (Fort Hood, Texas)"
+   ],
+   "sources": [
+    {
+     "title": "Army.mil — Army announces upcoming unit deployments (Aug. 24, 2026)",
+     "url": "https://www.army.mil/article/294757/army_announces_upcoming_unit_deployments"
+    },
+    {
+     "title": "Stars and Stripes — Stryker brigade rotation, South Korea",
+     "url": "https://www.stripes.com/branches/army/2026-01-30/stryker-brigade-rotation-south-korea-20572099.html"
+    }
+   ],
+   "branches": [
+    "army"
+   ]
+  },
+  {
+   "id": "jtf-southern-border",
+   "title": "Joint Task Force–Southern Border",
+   "region": "US–Mexico border",
+   "lat": 31.8,
+   "lon": -106.4,
+   "kind": "domestic",
+   "size": "~8,700 active-duty (May 2026), plus National Guard",
+   "since": "2025-01",
+   "status": "Ongoing; 1st Armored Division leads the task force; state Guard units rotating in (MI, SD, IN, NH, NC and others)",
+   "units": [
+    "1st Armored Division (task force command)",
+    "101st Airborne Division elements",
+    "Guard: Michigan, South Dakota, Indiana, New Hampshire, North Carolina 130th MEB"
+   ],
+   "sources": [
+    {
+     "title": "Task & Purpose — 101st Airborne, 1st Armored units heading to southern border",
+     "url": "https://taskandpurpose.com/news/army-border-deployments-2026/"
+    },
+    {
+     "title": "Army Times — Army plans summer deployments to southern border",
+     "url": "https://www.armytimes.com/news/your-army/2026/05/12/army-plans-summer-deployments-to-southern-border/"
+    },
+    {
+     "title": "Michigan DMVA — Guard soldiers deploy to southwest border (Nov. 6, 2026)",
+     "url": "https://www.michigan.gov/dmva/newsroom/press-releases/2026/11/06/michigan-army-national-guard-soldiers-deploy-to-southwest-border-to-support-federal-law"
+    },
+    {
+     "title": "South Dakota Searchlight — SD Guard deploys to border for 7th time",
+     "url": "https://www.newsfromthestates.com/node/434240"
+    }
+   ],
+   "branches": [
+    "army",
+    "guard",
+    "marines"
+   ]
+  },
+  {
+   "id": "dc-guard",
+   "title": "National Guard in Washington, D.C.",
+   "region": "Washington, D.C.",
+   "lat": 38.9,
+   "lon": -77.03,
+   "kind": "domestic",
+   "size": "~3,100 Guard members from several states (cap 3,500)",
+   "since": "2025-08",
+   "status": "Extended to Jan. 20, 2029; patrols expanded with vehicles and boats (Oct. 29 memos); court challenge ongoing",
+   "units": [
+    "D.C. National Guard",
+    "Guard contingents from Georgia and other states"
+   ],
+   "sources": [
+    {
+     "title": "AP via KTAR — Hegseth allows Guard to boost DC patrols",
+     "url": "https://ktar.com/?p=5926113"
+    },
+    {
+     "title": "AP via WSLS — DC Guard deployment will last through Trump's term",
+     "url": "https://www.wsls.com/news/politics/2026/07/16/national-guard-deployment-to-dc-will-last-through-trumps-term/"
+    }
+   ],
+   "branches": [
+    "guard"
+   ]
+  },
+  {
+   "id": "caribbean",
+   "title": "Caribbean / Puerto Rico buildup (Operation Southern Spear)",
+   "region": "Caribbean — Puerto Rico",
+   "lat": 18.23,
+   "lon": -65.64,
+   "kind": "surge",
+   "size": "~5,000 based in Puerto Rico at peak (late 2025); current size unclear",
+   "since": "2025-08",
+   "status": "Roosevelt Roads reopened; most large ships have since left (USNI lists one LCS in the Caribbean on Nov. 16)",
+   "units": [
+    "Roosevelt Roads (reopened)",
+    "Muñiz Air National Guard Base",
+    "Fort Buchanan"
+   ],
+   "sources": [
+    {
+     "title": "CFR — Mapping the U.S. military buildup near Venezuela",
+     "url": "https://www.cfr.org/article/mapping-us-military-buildup-near-venezuela"
+    },
+    {
+     "title": "NPR — Why the buildup of U.S. forces continues in the Caribbean",
+     "url": "https://www.npr.org/transcripts/nx-s1-5707466"
+    }
+   ],
+   "branches": [
+    "navy",
+    "marines",
+    "af",
+    "army",
+    "guard"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+{
+  "asOf": "2026-11-16",
+  "source": "USNI News Fleet and Marine Tracker: Nov. 16, 2026",
+  "sourceUrl": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026",
+  "totals": { "battleForce": 286, "deployed": 102, "underway": 87 },
+  "ships": [
+    { "name": "USS George Washington (CVN-73)", "type": "carrier", "area": "Arabian Sea", "lat": 18.0, "lon": 62.0, "group": "CSG 5", "note": "Supporting U.S. operations in the Middle East. Homeport Yokosuka." },
+    { "name": "USS Shoup (DDG-86)", "type": "destroyer", "area": "Arabian Sea", "lat": 18.4, "lon": 62.6, "group": "CSG 5", "note": "Operating with George Washington. Homeport Yokosuka." },
+    { "name": "USS Ross (DDG-71)", "type": "destroyer", "area": "Arabian Sea", "lat": 17.6, "lon": 61.5, "group": "CSG 5", "note": "Operating with George Washington. Homeport Norfolk." },
+
+    { "name": "USS George H.W. Bush (CVN-77)", "type": "carrier", "area": "Arabian Sea", "lat": 14.5, "lon": 59.5, "group": "CSG 10", "note": "Supporting U.S. operations in the Middle East. Homeport Norfolk." },
+    { "name": "USS Donald Cook (DDG-75)", "type": "destroyer", "area": "Arabian Sea", "lat": 14.0, "lon": 60.2, "group": "CSG 10", "note": "Operating with George H.W. Bush. Homeport Mayport." },
+
+    { "name": "USS Theodore Roosevelt (CVN-71)", "type": "carrier", "area": "Arabian Sea", "lat": 20.5, "lon": 65.0, "group": "CSG 9", "note": "Recently arrived. Homeport North Island, Calif." },
+    { "name": "USS Chosin (CG-65)", "type": "cruiser", "area": "Arabian Sea", "lat": 21.0, "lon": 65.6, "group": "CSG 9", "note": "Air defense commander for CSG 9. Homeport San Diego." },
+    { "name": "USS Paul Hamilton (DDG-60)", "type": "destroyer", "area": "Arabian Sea", "lat": 20.0, "lon": 65.7, "group": "CSG 9", "note": "Homeport San Diego." },
+    { "name": "USS Decatur (DDG-73)", "type": "destroyer", "area": "Arabian Sea", "lat": 20.9, "lon": 64.3, "group": "CSG 9", "note": "Homeport Pearl Harbor." },
+    { "name": "MUSV Seahawk", "type": "other", "area": "Arabian Sea", "lat": 20.2, "lon": 64.4, "group": "CSG 9", "note": "Medium unmanned surface vessel deployed with the Roosevelt group." },
+
+    { "name": "USS Milius (DDG-69)", "type": "destroyer", "area": "Middle East region", "lat": 16.0, "lon": 63.5, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Yokosuka." },
+    { "name": "USS John Paul Jones (DDG-53)", "type": "destroyer", "area": "Middle East region", "lat": 16.6, "lon": 64.4, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Everett, Wash." },
+    { "name": "USS Rafael Peralta (DDG-115)", "type": "destroyer", "area": "Middle East region", "lat": 15.4, "lon": 64.8, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Yokosuka." },
+    { "name": "USS John Finn (DDG-113)", "type": "destroyer", "area": "Middle East region", "lat": 16.9, "lon": 61.0, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Yokosuka." },
+    { "name": "USS Carl M. Levin (DDG-120)", "type": "destroyer", "area": "Middle East region", "lat": 13.5, "lon": 62.5, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Pearl Harbor." },
+    { "name": "USS Mason (DDG-87)", "type": "destroyer", "area": "Middle East region", "lat": 13.2, "lon": 58.6, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Mayport." },
+    { "name": "USS Princeton (CG-59)", "type": "cruiser", "area": "Middle East region", "lat": 15.8, "lon": 66.6, "group": "Other warships in region", "note": "Exact sea not reported. Homeport San Diego." },
+    { "name": "USS Wayne E. Meyer (DDG-108)", "type": "destroyer", "area": "Middle East region", "lat": 22.0, "lon": 63.0, "group": "Other warships in region", "note": "Exact sea not reported. Homeport Pearl Harbor." },
+    { "name": "USS Miguel Keith (ESB-5)", "type": "other", "area": "Middle East region", "lat": 22.6, "lon": 61.6, "group": "Other warships in region", "note": "Expeditionary sea base. Exact sea not reported. Homeport Guam." },
+
+    { "name": "USS Jason Dunham (DDG-109)", "type": "destroyer", "area": "Red Sea", "lat": 19.5, "lon": 39.2, "group": "Independent", "note": "Homeport Mayport." },
+    { "name": "USS Gonzalez (DDG-66)", "type": "destroyer", "area": "Red Sea", "lat": 17.3, "lon": 40.6, "group": "Independent", "note": "Flight quarters Nov. 15. Homeport Norfolk." },
+
+    { "name": "USS Boxer (LHD-4)", "type": "amphib", "area": "Indian Ocean", "lat": 6.0, "lon": 74.0, "group": "Boxer ARG / 11th MEU", "note": "Leads ARG with USS Comstock (LSD-45), USS Portland (LPD-27) and the 11th MEU." },
+    { "name": "USS Mustin (DDG-89)", "type": "destroyer", "area": "Indian Ocean", "lat": 3.5, "lon": 77.5, "group": "Independent", "note": "Homeport Yokosuka." },
+
+    { "name": "USS Makin Island (LHD-8)", "type": "amphib", "area": "Philippine Sea", "lat": 21.0, "lon": 131.0, "group": "Makin Island ARG / 13th MEU", "note": "Routine operations with USS Anchorage (LPD-23), USS John P. Murtha (LPD-26) and the 13th MEU." },
+    { "name": "USS Tripoli (LHA-7)", "type": "amphib", "area": "Sasebo, Japan", "lat": 33.16, "lon": 129.72, "group": "Forward deployed", "note": "In port." },
+
+    { "name": "USS Mount Whitney (LCC-20)", "type": "other", "area": "Mediterranean (off Greece)", "lat": 37.6, "lon": 23.9, "group": "6th Fleet flagship", "note": "Completed port visit to Piraeus, Greece, on Sunday." },
+    { "name": "USS Oscar Austin (DDG-79)", "type": "destroyer", "area": "Mediterranean", "lat": 35.6, "lon": 17.5, "group": "Independent", "note": "Exact position not reported. Homeport Rota, Spain." },
+    { "name": "USS Bulkeley (DDG-84)", "type": "destroyer", "area": "Mediterranean", "lat": 34.2, "lon": 21.0, "group": "Independent", "note": "Exact position not reported. Homeport Rota, Spain." },
+    { "name": "USS Paul Ignatius (DDG-117)", "type": "destroyer", "area": "Mediterranean", "lat": 37.0, "lon": 13.5, "group": "Independent", "note": "Exact position not reported. Homeport Rota, Spain." },
+    { "name": "USS Stout (DDG-55)", "type": "destroyer", "area": "Mediterranean", "lat": 33.8, "lon": 28.5, "group": "Independent", "note": "Exact position not reported. Homeport Norfolk." },
+
+    { "name": "USS Minneapolis-Saint Paul (LCS-21)", "type": "other", "area": "Central Caribbean", "lat": 15.5, "lon": -74.5, "group": "Independent", "note": "Littoral combat ship. Homeport Mayport." },
+    { "name": "USS Nimitz (CVN-68)", "type": "carrier", "area": "Norfolk, Va.", "lat": 36.95, "lon": -76.33, "group": "Returned home", "note": "Returned to Norfolk last week, per ship spotters." }
+  ]
+}

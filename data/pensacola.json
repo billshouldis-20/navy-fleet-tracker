@@ -1,0 +1,381 @@
+{
+ "asOf": "2026-11-18",
+ "center": [
+  30.42,
+  -87.12
+ ],
+ "sites": [
+  {
+   "name": "NAS Pensacola",
+   "lat": 30.352,
+   "lon": -87.319,
+   "note": "\"Cradle of Naval Aviation\"; Naval Aviation Schools Command, Training Air Wing 6, Blue Angels home, Coast Guard deepwater port",
+   "short": "NAS PNS",
+   "kind": "air"
+  },
+  {
+   "name": "NAS Whiting Field",
+   "lat": 30.724,
+   "lon": -87.022,
+   "note": "Primary and helicopter flight training (Training Air Wing 5), Milton",
+   "short": "WHITING FLD",
+   "kind": "air"
+  },
+  {
+   "name": "Corry Station (NAS Pensacola annex)",
+   "lat": 30.403,
+   "lon": -87.29,
+   "note": "Information Warfare Training Command",
+   "short": "CORRY STA",
+   "kind": "school"
+  },
+  {
+   "name": "Saufley Field",
+   "lat": 30.469,
+   "lon": -87.338,
+   "note": "Navy support and training outlying field",
+   "short": "SAUFLEY",
+   "kind": "air"
+  },
+  {
+   "name": "Eglin AFB",
+   "lat": 30.483,
+   "lon": -86.525,
+   "note": "96th Test Wing, 33rd Fighter Wing (F-35), 7th Special Forces Group",
+   "short": "EGLIN AFB",
+   "kind": "air"
+  },
+  {
+   "name": "Hurlburt Field",
+   "lat": 30.428,
+   "lon": -86.689,
+   "note": "Air Force Special Operations Command",
+   "short": "HURLBURT",
+   "kind": "air"
+  },
+  {
+   "name": "Pensacola Pass (port entrance)",
+   "lat": 30.325,
+   "lon": -87.307,
+   "note": "Channel between the Gulf and Pensacola Bay; vessels crossing here are logged as entering/leaving",
+   "short": "PNS PASS",
+   "kind": "port"
+  }
+ ],
+ "news": [
+  {
+   "date": "2026-11-11",
+   "title": "Medal of Honor recipient Dakota Meyer visits NAS Pensacola",
+   "summary": "Trained with aircrew candidates and toured housing; base stressed service-member well-being.",
+   "url": "https://www.defconlevel.com/alert/2026-11-11-naval-air-station-pensacola-dakota-meyer-visits-nas-pensacola-engages-with-service-members"
+  },
+  {
+   "date": "2026-11-09",
+   "title": "Homecoming Air Show draws large crowds for NAS Pensacola's 200th",
+   "summary": "The Nov. 6–7 show closed the Blue Angels' 80th season; the base cited 150,000+ visitors, local TV estimated 300,000+.",
+   "url": "https://www.defconlevel.com/alert/2026-11-09-naval-air-station-pensacola-nas-pensacola-homecoming-airshow-celebrates-200-years-forged-here"
+  },
+  {
+   "date": "2026-11-07",
+   "title": "Blue Angels fly finale with five jets after No. 6 pilot removed",
+   "summary": "The Navy dismissed a Marine pilot and a public affairs officer before the season finale; no specifics given.",
+   "url": "https://www.flyingmag.com/?p=364874"
+  },
+  {
+   "date": "2026-11-07",
+   "title": "Blue Angels wrap 2026 show season at home",
+   "summary": "Season closer at NAS Pensacola; the 2027 Homecoming is scheduled for Nov. 5–6.",
+   "url": "https://weartv.com/news/local/blue-angels-wrap-2026-show-season-at-nas-pensacola-homecoming-airshow"
+  },
+  {
+   "date": "2026-07-28",
+   "title": "C-2A Greyhound retires with final landing at NAS Pensacola",
+   "summary": "The carrier-delivery aircraft ended six decades of service; one joins the naval aviation museum.",
+   "url": "https://www.navy.mil/Press-Office/News-Stories/display-news/Article/4559787/c-2a-greyhounds-six-decades-of-service-ends-with-landing-at-nas-pensacola/"
+  }
+ ],
+ "water": [
+  {
+   "name": "GULF",
+   "lat": 30.08,
+   "lon": -87.05
+  },
+  {
+   "name": "PENSACOLA BAY",
+   "lat": 30.338,
+   "lon": -87.1
+  },
+  {
+   "name": "ESCAMBIA BAY",
+   "lat": 30.52,
+   "lon": -87.135
+  },
+  {
+   "name": "EAST BAY",
+   "lat": 30.45,
+   "lon": -86.98
+  },
+  {
+   "name": "PERDIDO BAY",
+   "lat": 30.37,
+   "lon": -87.47
+  },
+  {
+   "name": "SANTA ROSA SOUND",
+   "lat": 30.395,
+   "lon": -86.82
+  }
+ ],
+ "base": {
+  "note": "Base map from OpenStreetMap; points of interest from OpenStreetMap and official NAS Pensacola / CNIC information. Spots marked 'approx.' are placed from their published street address, not an exact building outline.",
+  "fit": [
+   [
+    -87.336,
+    30.338
+   ],
+   [
+    -87.262,
+    30.412
+   ]
+  ],
+  "poi": [
+   {
+    "name": "Main Gate & Visitor Control Center (Bldg 777)",
+    "short": "MAIN GATE",
+    "cat": "gate",
+    "lat": 30.3688,
+    "lon": -87.2776,
+    "note": "South end of Navy Boulevard. Open 24/7 for DoD ID holders; visitors without a DoD ID check in at the VCC here. Barrancas National Cemetery visitors enter here."
+   },
+   {
+    "name": "West Gate (Blue Angel Parkway)",
+    "short": "WEST GATE",
+    "cat": "gate",
+    "lat": 30.3733,
+    "lon": -87.3266,
+    "note": "South end of Blue Angel Parkway. The public entrance for the National Naval Aviation Museum and Pensacola Lighthouse, open to visitors 9 a.m. – 3 p.m."
+   },
+   {
+    "name": "Corry Station gate",
+    "short": "CORRY GATE",
+    "cat": "gate",
+    "lat": 30.4068,
+    "lon": -87.2815,
+    "approx": true,
+    "note": "Entrance to Corry Station off Navy Boulevard / New Warrington Road. Corry has the main Navy Exchange, the commissary and the information-warfare schoolhouses."
+   },
+   {
+    "name": "Forrest Sherman Field",
+    "short": "SHERMAN FIELD",
+    "cat": "air",
+    "lat": 30.3527,
+    "lon": -87.3186,
+    "note": "NAS Pensacola's airfield: runways 07L/25R, 07R/25L and 01/19. Home of the Blue Angels, who practice here in season."
+   },
+   {
+    "name": "Air terminal",
+    "short": "TERMINAL",
+    "cat": "air",
+    "lat": 30.3496,
+    "lon": -87.3166,
+    "note": "Air operations terminal on the Sherman Field flight line."
+   },
+   {
+    "name": "Jet Port Café — base galley (Bldg 3900)",
+    "short": "GALLEY",
+    "cat": "food",
+    "lat": 30.354,
+    "lon": -87.2686,
+    "approx": true,
+    "note": "The main enlisted dining facility, at the NATTC complex (2 Taylor Road). Breakfast, lunch and dinner daily; cashless."
+   },
+   {
+    "name": "NATTC food court (Subway, Panda Express, Starbucks)",
+    "short": "FOOD COURT",
+    "cat": "food",
+    "lat": 30.3502,
+    "lon": -87.2698,
+    "note": "Fast-food outlets next to the NEX store at the NATTC complex."
+   },
+   {
+    "name": "Mustin Beach Officers' Club",
+    "short": "MUSTIN BEACH",
+    "cat": "food",
+    "lat": 30.3472,
+    "lon": -87.2857,
+    "note": "Club and restaurant on the waterfront."
+   },
+   {
+    "name": "Green Beans Coffee",
+    "short": "COFFEE",
+    "cat": "food",
+    "lat": 30.3476,
+    "lon": -87.277,
+    "note": "Coffee shop on the main side."
+   },
+   {
+    "name": "NATTC barracks (unaccompanied housing, incl. Barracks E Bldg 3910)",
+    "short": "NATTC BARRACKS",
+    "cat": "barracks",
+    "lat": 30.3527,
+    "lon": -87.2664,
+    "approx": true,
+    "note": "The main enlisted barracks complex at 905 East Avenue. NAS Pensacola's unaccompanied housing holds about 4,500 people in 14 buildings; the check-in/billeting office is in Barracks E, Bldg 3910."
+   },
+   {
+    "name": "BOQ Road quarters (Bldg 3249)",
+    "short": "BOQ",
+    "cat": "barracks",
+    "lat": 30.3545,
+    "lon": -87.276,
+    "approx": true,
+    "note": "Unaccompanied housing on BOQ Road."
+   },
+   {
+    "name": "Corry Station barracks (Bldg 1084)",
+    "short": "CORRY BARRACKS",
+    "cat": "barracks",
+    "lat": 30.4062,
+    "lon": -87.2855,
+    "approx": true,
+    "note": "Student barracks at Corry Station, 640 Roberts Avenue. Marine entry-level students are housed here."
+   },
+   {
+    "name": "Navy Exchange (NEX) main store",
+    "short": "NEX",
+    "cat": "shop",
+    "lat": 30.4022,
+    "lon": -87.2883,
+    "note": "The main Navy Exchange department store, at Corry Station."
+   },
+   {
+    "name": "Commissary",
+    "short": "COMMISSARY",
+    "cat": "shop",
+    "lat": 30.4021,
+    "lon": -87.2896,
+    "note": "Defense Commissary Agency grocery store, at Corry Station next to the NEX."
+   },
+   {
+    "name": "NEX Package Store & MWR Tickets",
+    "short": "PACKAGE STORE",
+    "cat": "shop",
+    "lat": 30.4011,
+    "lon": -87.2873,
+    "note": "At Corry Station."
+   },
+   {
+    "name": "NEX gas station (Corry)",
+    "short": "NEX GAS",
+    "cat": "shop",
+    "lat": 30.4003,
+    "lon": -87.2881,
+    "note": "At Corry Station."
+   },
+   {
+    "name": "NEX store & Uniform Shop (NATTC)",
+    "short": "NEX NATTC",
+    "cat": "shop",
+    "lat": 30.3501,
+    "lon": -87.2693,
+    "note": "Smaller NEX and the uniform store on the main side."
+   },
+   {
+    "name": "NEX Sherman gas station",
+    "short": "NEX GAS",
+    "cat": "shop",
+    "lat": 30.3489,
+    "lon": -87.31,
+    "note": "Gas station near Sherman Field."
+   },
+   {
+    "name": "Post office",
+    "short": "POST OFFICE",
+    "cat": "svc",
+    "lat": 30.3479,
+    "lon": -87.271,
+    "note": "USPS branch on the main side."
+   },
+   {
+    "name": "Library",
+    "short": "LIBRARY",
+    "cat": "svc",
+    "lat": 30.3497,
+    "lon": -87.2737,
+    "note": ""
+   },
+   {
+    "name": "Radford Gym",
+    "short": "GYM",
+    "cat": "svc",
+    "lat": 30.3482,
+    "lon": -87.2803,
+    "note": "Fitness center."
+   },
+   {
+    "name": "MWR Liberty Center (Bldg 3912)",
+    "short": "LIBERTY CTR",
+    "cat": "svc",
+    "lat": 30.35,
+    "lon": -87.2655,
+    "note": "Recreation center for junior enlisted, next to the NATTC barracks."
+   },
+   {
+    "name": "Bayou Grande Marina",
+    "short": "MARINA",
+    "cat": "svc",
+    "lat": 30.3683,
+    "lon": -87.2701,
+    "note": "MWR marina."
+   },
+   {
+    "name": "Building 633 — Naval Aviation Schools Command",
+    "short": "BLDG 633",
+    "cat": "svc",
+    "lat": 30.3491,
+    "lon": -87.2753,
+    "note": "Historic schoolhouse where generations of naval aviators have trained since 1941."
+   },
+   {
+    "name": "Naval Hospital Pensacola",
+    "short": "HOSPITAL",
+    "cat": "medical",
+    "lat": 30.3985,
+    "lon": -87.2985,
+    "note": "Next to Corry Station."
+   },
+   {
+    "name": "National Naval Aviation Museum",
+    "short": "MUSEUM",
+    "cat": "history",
+    "lat": 30.3496,
+    "lon": -87.3036,
+    "note": "Free museum, open to the public via the West Gate."
+   },
+   {
+    "name": "Pensacola Lighthouse",
+    "short": "LIGHTHOUSE",
+    "cat": "history",
+    "lat": 30.3461,
+    "lon": -87.3081,
+    "note": "1859 lighthouse and museum, open to the public."
+   },
+   {
+    "name": "Fort Barrancas",
+    "short": "FT BARRANCAS",
+    "cat": "history",
+    "lat": 30.3479,
+    "lon": -87.2975,
+    "note": "Civil War–era fort, part of Gulf Islands National Seashore."
+   },
+   {
+    "name": "Coast Guard cutters",
+    "short": "USCG CUTTERS",
+    "cat": "svc",
+    "lat": 30.3452,
+    "lon": -87.2655,
+    "note": "Homeport pier for cutters including Dauntless, Decisive and Reliance."
+   }
+  ]
+ }
+}

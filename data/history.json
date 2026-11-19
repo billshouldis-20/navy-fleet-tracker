@@ -1,0 +1,1506 @@
+{
+ "from": "2026-10-05",
+ "to": "2026-11-16",
+ "note": "Weekly approximate positions from USNI News Fleet and Marine Trackers. Gaps mean the ship was not listed that week.",
+ "ships": {
+  "USS George Washington (CVN-73)": [
+   {
+    "date": "2026-10-05",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 18.0,
+    "lon": 62.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Shoup (DDG-86)": [
+   {
+    "date": "2026-10-05",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 18.4,
+    "lon": 62.6,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Ross (DDG-71)": [
+   {
+    "date": "2026-10-05",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 17.6,
+    "lon": 61.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS George H.W. Bush (CVN-77)": [
+   {
+    "date": "2026-10-05",
+    "area": "Phuket, Thailand (port visit)",
+    "lat": 7.88,
+    "lon": 98.39,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 14.5,
+    "lon": 59.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Donald Cook (DDG-75)": [
+   {
+    "date": "2026-10-05",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Arabian Sea",
+    "lat": 16.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 14.0,
+    "lon": 60.2,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Theodore Roosevelt (CVN-71)": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, westbound (3rd Fleet)",
+    "lat": 25.5,
+    "lon": -138.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Western Pacific, westbound (7th Fleet)",
+    "lat": 23.5,
+    "lon": 153.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Philippine Sea (Exercise Keen Sword)",
+    "lat": 26.0,
+    "lon": 133.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "South China Sea",
+    "lat": 15.5,
+    "lon": 115.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Andaman Sea (after Singapore visit)",
+    "lat": 11.5,
+    "lon": 97.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 20.5,
+    "lon": 65.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Chosin (CG-65)": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, westbound (3rd Fleet)",
+    "lat": 25.5,
+    "lon": -138.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Western Pacific, westbound (7th Fleet)",
+    "lat": 23.5,
+    "lon": 153.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Philippine Sea (Exercise Keen Sword)",
+    "lat": 26.0,
+    "lon": 133.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "South China Sea",
+    "lat": 15.5,
+    "lon": 115.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Andaman Sea (after Singapore visit)",
+    "lat": 11.5,
+    "lon": 97.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 21.0,
+    "lon": 65.6,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Paul Hamilton (DDG-60)": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, westbound (3rd Fleet)",
+    "lat": 25.5,
+    "lon": -138.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Western Pacific, westbound (7th Fleet)",
+    "lat": 23.5,
+    "lon": 153.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Philippine Sea (Exercise Keen Sword)",
+    "lat": 26.0,
+    "lon": 133.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "South China Sea",
+    "lat": 15.5,
+    "lon": 115.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Andaman Sea (after Singapore visit)",
+    "lat": 11.5,
+    "lon": 97.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 20.0,
+    "lon": 65.7,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Decatur (DDG-73)": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, westbound (3rd Fleet)",
+    "lat": 25.5,
+    "lon": -138.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Western Pacific, westbound (7th Fleet)",
+    "lat": 23.5,
+    "lon": 153.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Philippine Sea (Exercise Keen Sword)",
+    "lat": 26.0,
+    "lon": 133.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "South China Sea",
+    "lat": 15.5,
+    "lon": 115.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Andaman Sea (after Singapore visit)",
+    "lat": 11.5,
+    "lon": 97.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 20.9,
+    "lon": 64.3,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "MUSV Seahawk": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, westbound (3rd Fleet)",
+    "lat": 25.5,
+    "lon": -138.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Western Pacific, westbound (7th Fleet)",
+    "lat": 23.5,
+    "lon": 153.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Philippine Sea (Exercise Keen Sword)",
+    "lat": 26.0,
+    "lon": 133.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "South China Sea",
+    "lat": 15.5,
+    "lon": 115.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Andaman Sea (after Singapore visit)",
+    "lat": 11.5,
+    "lon": 97.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Arabian Sea",
+    "lat": 20.2,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Milius (DDG-69)": [
+   {
+    "date": "2026-10-05",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 16.0,
+    "lon": 63.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS John Paul Jones (DDG-53)": [
+   {
+    "date": "2026-10-05",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 16.6,
+    "lon": 64.4,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Rafael Peralta (DDG-115)": [
+   {
+    "date": "2026-10-05",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 15.4,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS John Finn (DDG-113)": [
+   {
+    "date": "2026-10-05",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.9,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.9,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.9,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.9,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.9,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 16.9,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 16.9,
+    "lon": 61.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Carl M. Levin (DDG-120)": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, westbound (3rd Fleet)",
+    "lat": 22.5,
+    "lon": -140.5,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 62.5,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 62.5,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 62.5,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 62.5,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 62.5,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 13.5,
+    "lon": 62.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Mason (DDG-87)": [
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.5,
+    "lon": 61.2,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 13.2,
+    "lon": 58.6,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Princeton (CG-59)": [
+   {
+    "date": "2026-10-05",
+    "area": "Indian Ocean",
+    "lat": 3.3,
+    "lon": 77.8,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Indian Ocean",
+    "lat": 3.3,
+    "lon": 77.8,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Indian Ocean",
+    "lat": 3.3,
+    "lon": 77.8,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.8,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.8,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 15.8,
+    "lon": 64.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 15.8,
+    "lon": 66.6,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Wayne E. Meyer (DDG-108)": [
+   {
+    "date": "2026-10-13",
+    "area": "Indian Ocean",
+    "lat": 6.0,
+    "lon": 76.0,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 63.0,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 63.0,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 63.0,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 63.0,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 22.0,
+    "lon": 63.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Miguel Keith (ESB-5)": [
+   {
+    "date": "2026-10-05",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Middle East region (exact sea not reported)",
+    "lat": 18.5,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Middle East region",
+    "lat": 22.6,
+    "lon": 61.6,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Jason Dunham (DDG-109)": [
+   {
+    "date": "2026-10-05",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.56,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.56,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.56,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.56,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.56,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.56,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Red Sea",
+    "lat": 19.5,
+    "lon": 39.2,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Gonzalez (DDG-66)": [
+   {
+    "date": "2026-10-05",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.12,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.12,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.12,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.12,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.12,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.12,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Red Sea",
+    "lat": 17.3,
+    "lon": 40.6,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Boxer (LHD-4)": [
+   {
+    "date": "2026-10-05",
+    "area": "Arabian Sea",
+    "lat": 19.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Arabian Sea",
+    "lat": 19.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Arabian Sea",
+    "lat": 19.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Arabian Sea",
+    "lat": 19.0,
+    "lon": 60.7,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Indian Ocean",
+    "lat": 6.0,
+    "lon": 74.2,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Indian Ocean, near the Laccadive Sea",
+    "lat": 11.5,
+    "lon": 71.7,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Indian Ocean",
+    "lat": 6.0,
+    "lon": 74.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Mustin (DDG-89)": [
+   {
+    "date": "2026-10-05",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Indian Ocean",
+    "lat": 3.5,
+    "lon": 77.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Makin Island (LHD-8)": [
+   {
+    "date": "2026-10-05",
+    "area": "Eastern Pacific, outbound from San Diego",
+    "lat": 27.0,
+    "lon": -128.0,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Pearl Harbor, Hawaii (port visit)",
+    "lat": 21.35,
+    "lon": -157.95,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Central Pacific, westbound after Hawaii",
+    "lat": 24.0,
+    "lon": 176.0,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Yokosuka, Japan (port visit)",
+    "lat": 35.29,
+    "lon": 139.67,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Sea of Japan",
+    "lat": 39.0,
+    "lon": 134.0,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Philippine Sea",
+    "lat": 21.0,
+    "lon": 131.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Tripoli (LHA-7)": [
+   {
+    "date": "2026-10-05",
+    "area": "Sasebo, Japan (in port)",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Sasebo, Japan (in port)",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Sasebo, Japan (in port)",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Sasebo, Japan (in port)",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Sasebo, Japan (in port)",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Sasebo, Japan (in port)",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Sasebo, Japan",
+    "lat": 33.16,
+    "lon": 129.72,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Mount Whitney (LCC-20)": [
+   {
+    "date": "2026-11-16",
+    "area": "Mediterranean (off Greece)",
+    "lat": 37.6,
+    "lon": 23.9,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Oscar Austin (DDG-79)": [
+   {
+    "date": "2026-10-05",
+    "area": "Red Sea",
+    "lat": 19.1,
+    "lon": 39.2,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Mediterranean Sea",
+    "lat": 35.6,
+    "lon": 17.5,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Mediterranean Sea",
+    "lat": 35.6,
+    "lon": 17.5,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Mediterranean Sea",
+    "lat": 35.6,
+    "lon": 17.5,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Mediterranean Sea",
+    "lat": 35.6,
+    "lon": 17.5,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Mediterranean Sea",
+    "lat": 35.6,
+    "lon": 17.5,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Mediterranean",
+    "lat": 35.6,
+    "lon": 17.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Bulkeley (DDG-84)": [
+   {
+    "date": "2026-10-05",
+    "area": "Rota, Spain (in port)",
+    "lat": 36.62,
+    "lon": -6.35,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Mediterranean Sea",
+    "lat": 34.2,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Mediterranean Sea",
+    "lat": 34.2,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Mediterranean Sea",
+    "lat": 34.2,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Mediterranean Sea",
+    "lat": 34.2,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Mediterranean",
+    "lat": 34.2,
+    "lon": 21.0,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Paul Ignatius (DDG-117)": [
+   {
+    "date": "2026-11-09",
+    "area": "Mediterranean Sea",
+    "lat": 36.5,
+    "lon": 17.2,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Mediterranean",
+    "lat": 37.0,
+    "lon": 13.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Stout (DDG-55)": [
+   {
+    "date": "2026-10-05",
+    "area": "Rota, Spain (in port)",
+    "lat": 36.62,
+    "lon": -6.35,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Mediterranean Sea",
+    "lat": 33.8,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Mediterranean Sea",
+    "lat": 33.8,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Mediterranean Sea",
+    "lat": 33.8,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Mediterranean Sea",
+    "lat": 33.8,
+    "lon": 20.8,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Mediterranean",
+    "lat": 33.8,
+    "lon": 28.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Minneapolis-Saint Paul (LCS-21)": [
+   {
+    "date": "2026-10-05",
+    "area": "Central Caribbean Sea",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Central Caribbean Sea",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-10-19",
+    "area": "Central Caribbean Sea",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/10/19/usni-news-fleet-and-marine-tracker-oct-19-2026"
+   },
+   {
+    "date": "2026-10-26",
+    "area": "Central Caribbean Sea",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/10/26/usni-news-fleet-and-marine-tracker-oct-26-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Central Caribbean Sea",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Central Caribbean Sea",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Central Caribbean",
+    "lat": 15.5,
+    "lon": -74.5,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ],
+  "USS Nimitz (CVN-68)": [
+   {
+    "date": "2026-10-05",
+    "area": "Norfolk, Va. (in port)",
+    "lat": 36.95,
+    "lon": -76.33,
+    "src": "https://news.usni.org/2026/10/05/usni-news-fleet-and-marine-tracker-oct-5-2026"
+   },
+   {
+    "date": "2026-10-13",
+    "area": "Norfolk, Va. (in port)",
+    "lat": 36.95,
+    "lon": -76.33,
+    "src": "https://news.usni.org/2026/10/13/usni-news-fleet-and-marine-tracker-oct-13-2026"
+   },
+   {
+    "date": "2026-11-02",
+    "area": "Western Atlantic",
+    "lat": 36.2,
+    "lon": -70.65,
+    "src": "https://news.usni.org/2026/11/02/usni-news-fleet-and-marine-tracker-nov-2-2026"
+   },
+   {
+    "date": "2026-11-09",
+    "area": "Western Atlantic",
+    "lat": 36.2,
+    "lon": -70.65,
+    "src": "https://news.usni.org/2026/11/09/usni-news-fleet-and-marine-tracker-nov-9-2026"
+   },
+   {
+    "date": "2026-11-16",
+    "area": "Norfolk, Va.",
+    "lat": 36.95,
+    "lon": -76.33,
+    "src": "https://news.usni.org/2026/11/16/usni-news-fleet-and-marine-tracker-nov-16-2026"
+   }
+  ]
+ }
+}

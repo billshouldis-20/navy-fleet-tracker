@@ -1,0 +1,373 @@
+{
+ "asOf": "2026-11-18",
+ "note": "NATO Forward Land Forces battlegroups (framework nation leads) and long-standing allied overseas bases. Battlegroup sizes vary; positions are the main garrison.",
+ "items": [
+  {
+   "id": "flf-estonia",
+   "title": "NATO battlegroup Estonia",
+   "lead": "United Kingdom",
+   "host": "Estonia",
+   "place": "Tapa",
+   "lat": 59.26,
+   "lon": 25.96,
+   "kind": "battlegroup",
+   "contributors": "France, Iceland",
+   "src": {
+    "title": "Spanish Defence Staff — Forward Land Forces",
+    "url": "https://emad.defensa.gob.es/en/operaciones/operaciones-en-el-exterior/31_Forward_Land_Forces/31.2-FLF_Eslovaquia/index.html"
+   },
+   "countries": [
+    "United Kingdom",
+    "France",
+    "Iceland",
+    "Estonia"
+   ]
+  },
+  {
+   "id": "flf-latvia",
+   "title": "NATO battlegroup / brigade Latvia",
+   "lead": "Canada",
+   "host": "Latvia",
+   "place": "Ādaži",
+   "lat": 57.08,
+   "lon": 24.33,
+   "kind": "battlegroup",
+   "contributors": "Belgium, Luxembourg, Poland and others",
+   "src": {
+    "title": "NATO Land Command — Forward presence",
+    "url": "https://lc.nato.int/operations/enhanced-forward-presence-efp.aspx"
+   },
+   "countries": [
+    "Canada",
+    "Belgium",
+    "Luxembourg",
+    "Poland",
+    "Latvia"
+   ]
+  },
+  {
+   "id": "flf-lithuania",
+   "title": "German Panzerbrigade 45 + NATO battlegroup Lithuania",
+   "lead": "Germany",
+   "host": "Lithuania",
+   "place": "Rukla / Rūdninkai",
+   "lat": 55.06,
+   "lon": 24.38,
+   "kind": "battlegroup",
+   "contributors": "Multinational battlegroup folded into Germany's permanent brigade (Feb. 2026); ~1,700 added; growing to ~5,000 by 2027",
+   "src": {
+    "title": "Bundeswehr — Aufwuchs Brigade Litauen",
+    "url": "https://www.bundeswehr.de/de/organisation/heer/aktuelles/aufwuchs-brigade-litauen-6065568"
+   },
+   "countries": [
+    "Germany",
+    "Lithuania"
+   ]
+  },
+  {
+   "id": "flf-poland",
+   "title": "NATO battlegroup Poland",
+   "lead": "United States",
+   "host": "Poland",
+   "place": "Orzysz / Bemowo Piskie",
+   "lat": 53.81,
+   "lon": 21.95,
+   "kind": "battlegroup",
+   "contributors": "UK, Romania, Croatia and others",
+   "src": {
+    "title": "NATO — Forward Land Forces",
+    "url": "https://www.nato.int/cps/da/natohq/topics_136388.htm"
+   },
+   "countries": [
+    "United States",
+    "United Kingdom",
+    "Romania",
+    "Croatia",
+    "Poland"
+   ]
+  },
+  {
+   "id": "flf-slovakia",
+   "title": "NATO battlegroup Slovakia",
+   "lead": "Spain",
+   "host": "Slovakia",
+   "place": "Lešť",
+   "lat": 48.43,
+   "lon": 19.33,
+   "kind": "battlegroup",
+   "contributors": "Czechia, Portugal, Slovenia, Türkiye",
+   "src": {
+    "title": "Spanish Defence Staff — FLF Slovakia",
+    "url": "https://emad.defensa.gob.es/en/operaciones/operaciones-en-el-exterior/31_Forward_Land_Forces/31.1_FLF_Letonia/"
+   },
+   "countries": [
+    "Spain",
+    "Czechia",
+    "Portugal",
+    "Slovenia",
+    "Türkiye",
+    "Slovakia"
+   ]
+  },
+  {
+   "id": "flf-hungary",
+   "title": "NATO battlegroup Hungary",
+   "lead": "Hungary",
+   "host": "Hungary",
+   "place": "Tata",
+   "lat": 47.65,
+   "lon": 18.32,
+   "kind": "battlegroup",
+   "contributors": "Croatia, Italy, Türkiye, United States",
+   "src": {
+    "title": "NATO Land Command — Forward presence",
+    "url": "https://lc.nato.int/operations/enhanced-forward-presence-efp.aspx"
+   },
+   "countries": [
+    "Hungary",
+    "Croatia",
+    "Italy",
+    "Türkiye",
+    "United States"
+   ]
+  },
+  {
+   "id": "flf-romania",
+   "title": "NATO battlegroup Romania",
+   "lead": "France",
+   "host": "Romania",
+   "place": "Cincu",
+   "lat": 45.92,
+   "lon": 24.8,
+   "kind": "battlegroup",
+   "contributors": "Belgium, Luxembourg, Spain",
+   "src": {
+    "title": "Spanish Defence Staff — Forward Land Forces",
+    "url": "https://emad.defensa.gob.es/en/operaciones/operaciones-en-el-exterior/31_Forward_Land_Forces/31.1_FLF_Letonia/"
+   },
+   "countries": [
+    "France",
+    "Belgium",
+    "Luxembourg",
+    "Spain",
+    "Romania"
+   ]
+  },
+  {
+   "id": "flf-bulgaria",
+   "title": "NATO battlegroup Bulgaria",
+   "lead": "Italy",
+   "host": "Bulgaria",
+   "place": "Novo Selo",
+   "lat": 42.13,
+   "lon": 26.13,
+   "kind": "battlegroup",
+   "contributors": "Albania, Greece, Montenegro, North Macedonia, Türkiye, United States",
+   "src": {
+    "title": "Spanish Defence Staff — Forward Land Forces",
+    "url": "https://emad.defensa.gob.es/en/operaciones/operaciones-en-el-exterior/31_Forward_Land_Forces/31.2-FLF_Eslovaquia/index.html"
+   },
+   "countries": [
+    "Italy",
+    "Albania",
+    "Greece",
+    "Montenegro",
+    "North Macedonia",
+    "Türkiye",
+    "United States",
+    "Bulgaria"
+   ]
+  },
+  {
+   "id": "flf-finland",
+   "title": "NATO Forward Land Forces Finland (stood up June 6, 2026)",
+   "lead": "Sweden",
+   "host": "Finland",
+   "place": "Lapland (HQ elements in Boden, Sweden)",
+   "lat": 66.5,
+   "lon": 25.7,
+   "kind": "battlegroup",
+   "contributors": "~600 Swedish troops; France to add rotations (July 2026)",
+   "src": {
+    "title": "Janes — France to contribute troops to FLF Finland",
+    "url": "https://www.janes.com/defence-intelligence-insights/defence-news/defence/nato-summit-2026-france-to-contribute-troops-to-forward-land-forces-finland"
+   },
+   "countries": [
+    "Sweden",
+    "France",
+    "Finland"
+   ]
+  },
+  {
+   "id": "uk-akrotiri",
+   "title": "RAF Akrotiri",
+   "lead": "United Kingdom",
+   "host": "Cyprus",
+   "place": "Akrotiri",
+   "lat": 34.59,
+   "lon": 32.99,
+   "kind": "base",
+   "contributors": "UK Sovereign Base Area; air operations hub for the Middle East",
+   "countries": [
+    "United Kingdom"
+   ]
+  },
+  {
+   "id": "uk-bahrain",
+   "title": "UK Naval Support Facility Bahrain",
+   "lead": "United Kingdom",
+   "host": "Bahrain",
+   "place": "Mina Salman",
+   "lat": 26.2,
+   "lon": 50.61,
+   "kind": "base",
+   "contributors": "Royal Navy Gulf base",
+   "countries": [
+    "United Kingdom"
+   ]
+  },
+  {
+   "id": "uk-diego",
+   "title": "British Indian Ocean Territory (shared with US)",
+   "lead": "United Kingdom",
+   "host": "Diego Garcia",
+   "place": "Diego Garcia",
+   "lat": -7.31,
+   "lon": 72.41,
+   "kind": "base",
+   "contributors": "UK–US joint facility",
+   "countries": [
+    "United Kingdom",
+    "United States"
+   ]
+  },
+  {
+   "id": "uk-brunei",
+   "title": "British Forces Brunei",
+   "lead": "United Kingdom",
+   "host": "Brunei",
+   "place": "Seria",
+   "lat": 4.61,
+   "lon": 114.33,
+   "kind": "base",
+   "contributors": "Gurkha battalion garrison",
+   "countries": [
+    "United Kingdom"
+   ]
+  },
+  {
+   "id": "uk-falklands",
+   "title": "British Forces South Atlantic Islands",
+   "lead": "United Kingdom",
+   "host": "Falkland Islands",
+   "place": "Mount Pleasant",
+   "lat": -51.82,
+   "lon": -58.45,
+   "kind": "base",
+   "contributors": "RAF Mount Pleasant",
+   "countries": [
+    "United Kingdom"
+   ]
+  },
+  {
+   "id": "fr-djibouti",
+   "title": "French Forces in Djibouti",
+   "lead": "France",
+   "host": "Djibouti",
+   "place": "Djibouti City",
+   "lat": 11.55,
+   "lon": 43.15,
+   "kind": "base",
+   "contributors": "France's largest overseas garrison",
+   "countries": [
+    "France"
+   ]
+  },
+  {
+   "id": "fr-uae",
+   "title": "French base Abu Dhabi",
+   "lead": "France",
+   "host": "UAE",
+   "place": "Abu Dhabi",
+   "lat": 24.52,
+   "lon": 54.38,
+   "kind": "base",
+   "contributors": "Naval, air (Al Dhafra) and army elements",
+   "countries": [
+    "France"
+   ]
+  },
+  {
+   "id": "fr-reunion",
+   "title": "French Forces in the Southern Indian Ocean",
+   "lead": "France",
+   "host": "Réunion",
+   "place": "Saint-Denis",
+   "lat": -20.88,
+   "lon": 55.45,
+   "kind": "base",
+   "contributors": "Overseas department garrison",
+   "countries": [
+    "France"
+   ]
+  },
+  {
+   "id": "jp-djibouti",
+   "title": "Japan Self-Defense Forces base Djibouti",
+   "lead": "Japan",
+   "host": "Djibouti",
+   "place": "Djibouti airport",
+   "lat": 11.56,
+   "lon": 43.14,
+   "kind": "base",
+   "contributors": "Japan's only overseas base; anti-piracy",
+   "countries": [
+    "Japan"
+   ]
+  },
+  {
+   "id": "it-djibouti",
+   "title": "Italian support base Djibouti",
+   "lead": "Italy",
+   "host": "Djibouti",
+   "place": "Djibouti City",
+   "lat": 11.58,
+   "lon": 43.13,
+   "kind": "base",
+   "contributors": "Anti-piracy support",
+   "countries": [
+    "Italy"
+   ]
+  },
+  {
+   "id": "au-darwin",
+   "title": "Marine Rotational Force–Darwin (US Marines with Australia)",
+   "lead": "Australia / US",
+   "host": "Australia",
+   "place": "Darwin",
+   "lat": -12.44,
+   "lon": 130.84,
+   "kind": "base",
+   "contributors": "Annual US Marine rotation hosted by the Australian Defence Force",
+   "countries": [
+    "Australia",
+    "United States"
+   ]
+  },
+  {
+   "id": "tr-incirlik",
+   "title": "Incirlik Air Base",
+   "lead": "Türkiye (US-shared)",
+   "host": "Türkiye",
+   "place": "Adana",
+   "lat": 37.0,
+   "lon": 35.43,
+   "kind": "base",
+   "contributors": "Turkish base hosting US forces",
+   "countries": [
+    "Türkiye",
+    "United States"
+   ]
+  }
+ ]
+}

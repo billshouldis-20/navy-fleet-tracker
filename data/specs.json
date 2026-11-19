@@ -1,0 +1,305 @@
+{
+ "note": "Class-level figures from public U.S. Navy fact files and standard references; rounded. Exact top speeds of warships are not published.",
+ "classes": {
+  "nimitz": {
+   "class": "Nimitz-class nuclear aircraft carrier",
+   "length": "1,092 ft (333 m)",
+   "beam": "252 ft flight deck",
+   "height": "≈244 ft keel to mast (≈20 stories)",
+   "draft": "37 ft",
+   "displacement": "≈100,000 tons",
+   "speed": "30+ knots",
+   "power": "2 nuclear reactors, 4 shafts",
+   "crew": "≈3,200 ship's crew + ≈2,500 air wing",
+   "carries": "60+ aircraft"
+  },
+  "wasp": {
+   "class": "Wasp-class amphibious assault ship (LHD)",
+   "length": "844 ft (257 m)",
+   "beam": "106 ft",
+   "draft": "27 ft",
+   "displacement": "≈41,000 tons",
+   "speed": "22+ knots",
+   "crew": "≈1,200 sailors + ≈1,700 Marines",
+   "carries": "F-35B jets, MV-22 Ospreys, helicopters, landing craft"
+  },
+  "america": {
+   "class": "America-class amphibious assault ship (LHA)",
+   "length": "844 ft (257 m)",
+   "beam": "106 ft",
+   "draft": "26 ft",
+   "displacement": "≈45,000 tons",
+   "speed": "22+ knots",
+   "crew": "≈1,100 sailors + ≈1,600 Marines",
+   "carries": "F-35B jets, MV-22 Ospreys, helicopters"
+  },
+  "tico": {
+   "class": "Ticonderoga-class guided-missile cruiser",
+   "length": "567 ft (173 m)",
+   "beam": "55 ft",
+   "draft": "34 ft",
+   "displacement": "≈9,800 tons",
+   "speed": "30+ knots",
+   "crew": "≈330",
+   "carries": "122 missile cells, 2 helicopters"
+  },
+  "burke1": {
+   "class": "Arleigh Burke-class destroyer (Flight I/II)",
+   "length": "505 ft (154 m)",
+   "beam": "66 ft",
+   "draft": "31 ft",
+   "displacement": "≈8,300–8,900 tons",
+   "speed": "30+ knots",
+   "crew": "≈300",
+   "carries": "90 missile cells"
+  },
+  "burke2a": {
+   "class": "Arleigh Burke-class destroyer (Flight IIA)",
+   "length": "509–513 ft (155–156 m)",
+   "beam": "66 ft",
+   "draft": "31 ft",
+   "displacement": "≈9,200–9,700 tons",
+   "speed": "30+ knots",
+   "crew": "≈320",
+   "carries": "96 missile cells, 2 helicopters"
+  },
+  "blueridge": {
+   "class": "Blue Ridge-class command ship",
+   "length": "620 ft (189 m)",
+   "beam": "108 ft",
+   "draft": "29 ft",
+   "displacement": "≈18,400 tons",
+   "speed": "23 knots",
+   "crew": "≈150 sailors + ≈150 civilian mariners",
+   "carries": "6th Fleet command staff"
+  },
+  "freedom": {
+   "class": "Freedom-class littoral combat ship",
+   "length": "387 ft (118 m)",
+   "beam": "57 ft",
+   "draft": "14 ft",
+   "displacement": "≈3,500 tons",
+   "speed": "40+ knots",
+   "crew": "≈70 core crew + mission crew",
+   "carries": "MH-60 helicopter, mission modules"
+  },
+  "esb": {
+   "class": "Lewis B. Puller-class expeditionary sea base",
+   "length": "785 ft (239 m)",
+   "beam": "164 ft",
+   "draft": "34 ft",
+   "displacement": "≈90,000 tons",
+   "speed": "15 knots",
+   "crew": "≈250 Navy sailors, plus civilian mariners",
+   "carries": "Helicopter deck, mine-countermeasure and special-ops support"
+  },
+  "musv": {
+   "class": "Medium unmanned surface vessel (Sea Hunter type)",
+   "length": "132 ft (40 m)",
+   "displacement": "≈145 tons",
+   "speed": "≈27 knots",
+   "crew": "None — uncrewed",
+   "carries": "Sensors and payloads for experimentation"
+  }
+ },
+ "ships": {
+  "USS Nimitz (CVN-68)": {
+   "c": "nimitz",
+   "builder": "Newport News Shipbuilding, Va.",
+   "commissioned": 1975,
+   "wiki": "USS_Nimitz"
+  },
+  "USS Theodore Roosevelt (CVN-71)": {
+   "c": "nimitz",
+   "builder": "Newport News Shipbuilding, Va.",
+   "commissioned": 1986,
+   "wiki": "USS_Theodore_Roosevelt_(CVN-71)"
+  },
+  "USS George Washington (CVN-73)": {
+   "c": "nimitz",
+   "builder": "Newport News Shipbuilding, Va.",
+   "commissioned": 1992,
+   "wiki": "USS_George_Washington_(CVN-73)"
+  },
+  "USS George H.W. Bush (CVN-77)": {
+   "c": "nimitz",
+   "builder": "Newport News Shipbuilding, Va.",
+   "commissioned": 2009,
+   "wiki": "USS_George_H.W._Bush"
+  },
+  "USS Boxer (LHD-4)": {
+   "c": "wasp",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 1995,
+   "wiki": "USS_Boxer_(LHD-4)"
+  },
+  "USS Makin Island (LHD-8)": {
+   "c": "wasp",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2009,
+   "wiki": "USS_Makin_Island"
+  },
+  "USS Tripoli (LHA-7)": {
+   "c": "america",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2020,
+   "wiki": "USS_Tripoli_(LHA-7)"
+  },
+  "USS Princeton (CG-59)": {
+   "c": "tico",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 1989,
+   "wiki": "USS_Princeton_(CG-59)"
+  },
+  "USS Chosin (CG-65)": {
+   "c": "tico",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 1991,
+   "wiki": "USS_Chosin"
+  },
+  "USS John Paul Jones (DDG-53)": {
+   "c": "burke1",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 1993,
+   "wiki": "USS_John_Paul_Jones_(DDG-53)"
+  },
+  "USS Stout (DDG-55)": {
+   "c": "burke1",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 1994,
+   "wiki": "USS_Stout"
+  },
+  "USS Paul Hamilton (DDG-60)": {
+   "c": "burke1",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 1995,
+   "wiki": "USS_Paul_Hamilton_(DDG-60)"
+  },
+  "USS Gonzalez (DDG-66)": {
+   "c": "burke1",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 1996,
+   "wiki": "USS_Gonzalez"
+  },
+  "USS Milius (DDG-69)": {
+   "c": "burke1",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 1996,
+   "wiki": "USS_Milius"
+  },
+  "USS Ross (DDG-71)": {
+   "c": "burke1",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 1997,
+   "wiki": "USS_Ross_(DDG-71)"
+  },
+  "USS Decatur (DDG-73)": {
+   "c": "burke1",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 1998,
+   "wiki": "USS_Decatur_(DDG-73)"
+  },
+  "USS Donald Cook (DDG-75)": {
+   "c": "burke1",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 1998,
+   "wiki": "USS_Donald_Cook"
+  },
+  "USS Oscar Austin (DDG-79)": {
+   "c": "burke2a",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 2000,
+   "wiki": "USS_Oscar_Austin"
+  },
+  "USS Bulkeley (DDG-84)": {
+   "c": "burke2a",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2001,
+   "wiki": "USS_Bulkeley"
+  },
+  "USS Shoup (DDG-86)": {
+   "c": "burke2a",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2002,
+   "wiki": "USS_Shoup"
+  },
+  "USS Mason (DDG-87)": {
+   "c": "burke2a",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 2003,
+   "wiki": "USS_Mason_(DDG-87)"
+  },
+  "USS Mustin (DDG-89)": {
+   "c": "burke2a",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2003,
+   "wiki": "USS_Mustin"
+  },
+  "USS Wayne E. Meyer (DDG-108)": {
+   "c": "burke2a",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 2009,
+   "wiki": "USS_Wayne_E._Meyer"
+  },
+  "USS Jason Dunham (DDG-109)": {
+   "c": "burke2a",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 2010,
+   "wiki": "USS_Jason_Dunham"
+  },
+  "USS John Finn (DDG-113)": {
+   "c": "burke2a",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2017,
+   "wiki": "USS_John_Finn"
+  },
+  "USS Rafael Peralta (DDG-115)": {
+   "c": "burke2a",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 2017,
+   "wiki": "USS_Rafael_Peralta"
+  },
+  "USS Paul Ignatius (DDG-117)": {
+   "c": "burke2a",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2019,
+   "wiki": "USS_Paul_Ignatius"
+  },
+  "USS Delbert D. Black (DDG-119)": {
+   "c": "burke2a",
+   "builder": "Ingalls Shipbuilding, Pascagoula, Miss.",
+   "commissioned": 2020,
+   "wiki": "USS_Delbert_D._Black"
+  },
+  "USS Carl M. Levin (DDG-120)": {
+   "c": "burke2a",
+   "builder": "Bath Iron Works, Maine",
+   "commissioned": 2023,
+   "wiki": "USS_Carl_M._Levin"
+  },
+  "USS Mount Whitney (LCC-20)": {
+   "c": "blueridge",
+   "builder": "Newport News Shipbuilding, Va.",
+   "commissioned": 1971,
+   "wiki": "USS_Mount_Whitney"
+  },
+  "USS Minneapolis-Saint Paul (LCS-21)": {
+   "c": "freedom",
+   "builder": "Fincantieri Marinette Marine, Wis. (Lockheed Martin team)",
+   "commissioned": 2022,
+   "wiki": "USS_Minneapolis–Saint_Paul"
+  },
+  "USS Miguel Keith (ESB-5)": {
+   "c": "esb",
+   "builder": "General Dynamics NASSCO, San Diego",
+   "commissioned": 2021,
+   "wiki": "USS_Miguel_Keith"
+  },
+  "MUSV Seahawk": {
+   "c": "musv",
+   "builder": "Vigor Industrial (Leidos design)",
+   "commissioned": 2021,
+   "wiki": "Sea_Hunter"
+  }
+ }
+}

@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>US Navy Fleet Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0a1520; --land:#1d2e3d; --landline:#2c4256; --grat:#132433; --panel:#12212f; --line:#24384b;
+          --text:#e6edf3; --muted:#8aa0b4; --ais:#00e5a0; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--text);
+              font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; }
+  #map, #map svg { position:absolute; inset:0; touch-action:none; -webkit-user-select:none; user-select:none; }
+  #map svg { width:100%; height:100%; display:block; cursor:grab; }
+  .land { fill:var(--land); stroke:var(--landline); stroke-width:.5; vector-effect:non-scaling-stroke; }
+  .land.coast { fill:none; stroke:#5b7d99; stroke-width:1.2; }
+  .grat { fill:none; stroke:var(--grat); stroke-width:.5; vector-effect:non-scaling-stroke; }
+  .ship { stroke:#fff; stroke-width:1.5; cursor:pointer; }
+  .ship.sel { stroke:#fff; stroke-width:3; }
+  .ais { fill:var(--ais); stroke:#fff; stroke-width:1; cursor:pointer; }
+  .lbl { fill:#cfd9e2; font-size:11px; paint-order:stroke; stroke:#0a1520; stroke-width:3px; pointer-events:none; }
+
+  .panel { position:absolute; z-index:5; top:calc(10px + env(safe-area-inset-top)); left:10px; right:10px;
+           max-width:380px; background:rgba(18,33,47,.95); border:1px solid var(--line); border-radius:12px;
+           padding:10px 12px; }
+  .panel { padding:8px 10px; }
+  .bar { display:flex; align-items:center; gap:6px; }
+  .bar h1 { font-size:15px; margin:0; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .barbtn { font-size:13px; padding:5px 10px; border-radius:8px; border:1px solid var(--line); background:#0e1b27; color:var(--text); cursor:pointer; white-space:nowrap; }
+  .panel .body { margin-top:8px; max-height:calc(100vh - 140px); overflow-y:auto; }
+  .statline { margin-top:2px; }
+  .statline b { color:var(--text); }
+  .sect { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin:10px 0 4px; }
+  .filters { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+  .filters select { max-width:none; flex:1; min-width:140px; }
+  .sub { color:var(--muted); font-size:12px; }
+  a { color:#4fc3f7; }
+  .stats { display:flex; gap:8px; margin:8px 0; }
+  .stat { flex:1; background:#0e1b27; border:1px solid var(--line); border-radius:8px; padding:5px 6px; text-align:center; }
+  .stat b { display:block; font-size:16px; }
+  .stat span { font-size:11px; color:var(--muted); }
+  .legend { display:flex; flex-wrap:wrap; gap:6px 12px; font-size:12px; }
+  .legend label, .ais-row label { display:flex; align-items:center; gap:4px; cursor:pointer; user-select:none; }
+  .dot { width:10px; height:10px; border-radius:50%; display:inline-block; border:1px solid rgba(255,255,255,.7); }
+  .ais-row { margin-top:8px; padding-top:8px; border-top:1px solid var(--line); font-size:12px;
+             display:flex; justify-content:space-between; gap:8px; align-items:center; }
+  .toggle { background:none; border:none; color:var(--muted); font-size:12px; padding:0; cursor:pointer; float:right; }
+  .collapsed .body { display:none; }
+  .pns-exit { display:none; position:absolute; z-index:6; right:10px; top:calc(10px + env(safe-area-inset-top)); padding:6px 12px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:13px; cursor:pointer; }
+  body.pns-mode .pns-exit { display:none; }
+  @media (max-width:799px){ body.pns-mode .pns-exit { top:calc(64px + env(safe-area-inset-top)); } }
+  .legend.ground { margin-top:6px; padding-top:6px; border-top:1px solid var(--line); }
+  .src { font-size:12px; padding:2px 0; }
+  select.country { background:#0e1b27; color:var(--text); border:1px solid var(--line); border-radius:6px; font-size:12px; padding:3px 6px; max-width:150px; }
+  .chip { font-size:11px; padding:2px 8px; margin:2px 4px 2px 0; border-radius:10px; background:#0e1b27; border:1px solid var(--line); color:var(--text); cursor:pointer; }
+  .chip.on { border-color:#38bdf8; background:#0c3047; }
+  .src a { color:#4fc3f7; }
+  .retry { margin-left:6px; font-size:12px; padding:3px 8px; border-radius:6px; border:1px solid #00e5a0; background:transparent; color:#00e5a0; cursor:pointer; }
+  .ais-row { flex-wrap:wrap; }
+
+  .sheet { position:absolute; z-index:6; left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom));
+           max-width:380px; background:rgba(18,33,47,.97); border:1px solid var(--line); border-radius:12px;
+           padding:10px 12px; display:none; }
+  .sheet h3 { margin:0 0 3px; font-size:15px; padding-right:24px; }
+  .sheet .close { position:absolute; top:6px; right:8px; background:none; border:none; color:var(--muted); font-size:20px; cursor:pointer; }
+  .tag { display:inline-block; font-size:11px; padding:1px 7px; border-radius:10px; background:#0e1b27; border:1px solid var(--line); margin:2px 4px 2px 0; }
+  .sheet { max-height:42vh; overflow-y:auto; }
+  @media (min-width:800px){ .sheet { max-height:calc(100vh - 80px); top:10px; bottom:auto; } }
+  .tl-head { margin:8px 0 4px; padding-top:8px; border-top:1px solid var(--line); font-size:12px; color:var(--muted); }
+  .tl { position:relative; margin-left:4px; }
+  .tl-row { display:flex; gap:10px; font-size:13px; padding:3px 0 3px 12px; border-left:2px solid var(--line); position:relative; }
+  .tl-row::before { content:""; position:absolute; left:-5px; top:8px; width:8px; height:8px; border-radius:50%; background:var(--line); }
+  .tl-row.now::before { background:#4fc3f7; }
+  .tl-row.now { font-weight:600; }
+  .tl-date { color:var(--muted); min-width:48px; }
+  .zoom { position:absolute; z-index:5; right:10px; bottom:calc(10px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; gap:6px; }
+  .zoom button { width:38px; height:38px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--text); font-size:20px; cursor:pointer; }
+  @media (min-width:800px){ .sheet { left:auto; right:60px; } }
+
+  /* ===================== TACTICAL HUD THEME ===================== */
+  :root { --bg:#04080b; --land:#0a1a14; --landline:#1d6b4c; --grat:#0b241b; --panel:rgba(3,14,11,.88); --line:#14553e;
+          --text:#d8ffe9; --muted:#6fae93; --acc:#39ff9c; --acc2:#3ad7ff; --warn:#ffb000; --ais:#3ad7ff; }
+  html,body { font:15px/1.35 "Rajdhani", system-ui, sans-serif; letter-spacing:.02em; background:radial-gradient(ellipse at 50% 40%, #071510 0%, #020405 75%); }
+  #map svg { background:transparent; }
+  .land { fill:var(--land); stroke:var(--landline); stroke-width:.7; }
+  .land.coast { fill:#0c2219; stroke:var(--acc); stroke-opacity:.7; stroke-width:1.1; }
+  .grat { stroke:var(--grat); stroke-width:.6; }
+  /* scanlines + vignette */
+  body::after { content:""; position:fixed; inset:0; pointer-events:none; z-index:20;
+    background:repeating-linear-gradient(0deg, rgba(57,255,156,.021) 0 1px, transparent 1px 3px),
+               radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,.45) 100%); }
+  .sub, .sub a { color:var(--muted); }
+  a { color:var(--acc2); }
+  b, .stat b, .statline b { font-family:"Share Tech Mono", monospace; color:var(--acc); }
+
+  /* angular glowing panels */
+  .panel, .sheet { background:var(--panel); border:1px solid var(--line); border-radius:0;
+    box-shadow:0 0 0 1px rgba(57,255,156,.08) inset, 0 0 18px rgba(57,255,156,.12);
+    clip-path:polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px)); backdrop-filter:blur(4px); }
+  .panel::before, .sheet::before { content:""; position:absolute; left:0; top:0; width:18px; height:18px;
+    border-left:2px solid var(--acc); border-top:2px solid var(--acc); pointer-events:none; }
+  .panel::after, .sheet::after { content:""; position:absolute; right:0; bottom:0; width:18px; height:18px;
+    border-right:2px solid var(--acc); border-bottom:2px solid var(--acc); pointer-events:none; }
+  .panel { padding:6px 8px; }
+  .bar { gap:5px; }
+  .bar h1 { font:700 16px/1 "Rajdhani"; text-transform:uppercase; letter-spacing:.1em; color:var(--acc); text-shadow:0 0 8px rgba(57,255,156,.6); display:flex; align-items:center; gap:8px; }
+  .radar { width:18px; height:18px; border-radius:50%; border:1px solid var(--acc); position:relative; flex:none;
+    background:conic-gradient(from 0deg, rgba(57,255,156,.75), transparent 28%, transparent); animation:sweep 2.4s linear infinite; box-shadow:0 0 8px rgba(57,255,156,.5); }
+  @keyframes sweep { to { transform:rotate(360deg); } }
+  .hudstat { font:11px/1 "Share Tech Mono", monospace; color:var(--muted); letter-spacing:.05em; margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; }
+  .hudstat span b { font-weight:400; }
+  .barbtn, .retry, .chip, select.country, .zoom button, .pns-exit {
+    font:600 13px/1 "Rajdhani"; text-transform:uppercase; letter-spacing:.1em; border-radius:0;
+    background:rgba(57,255,156,.06); border:1px solid var(--line); color:var(--acc);
+    clip-path:polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px)); }
+  .barbtn:hover, .retry:hover, .zoom button:hover, .chip.on { background:rgba(57,255,156,.18); box-shadow:0 0 10px rgba(57,255,156,.4) inset; color:#eafff3; }
+  .barbtn { padding:6px 9px; font-size:12px; min-height:32px; }
+  select.country { padding:6px 8px; text-transform:none; letter-spacing:.03em; font-family:"Share Tech Mono"; color:var(--text); }
+  .zoom { gap:5px; }
+  .zoom button { width:36px; height:36px; font-size:18px; }
+  .sect { font:700 11px/1 "Rajdhani"; letter-spacing:.22em; color:var(--warn); margin:12px 0 6px; }
+  .sect::before { content:"▸ "; }
+  .tl-head { font:700 11px/1.2 "Rajdhani"; letter-spacing:.18em; text-transform:uppercase; color:var(--warn); border-top:1px dashed var(--line); }
+  .tl-row { border-left:1px solid var(--line); font-family:"Share Tech Mono", monospace; font-size:13px; }
+  .tl-row::before { border-radius:0; background:var(--line); transform:rotate(45deg); }
+  .tl-row.now::before { background:var(--acc); box-shadow:0 0 8px var(--acc); }
+  .tl-date { color:var(--acc2); }
+  .tag { border-radius:0; font:600 12px/1.4 "Rajdhani"; text-transform:uppercase; letter-spacing:.08em; background:rgba(57,255,156,.06); border-color:var(--line); }
+  .sheet h3 { font:700 19px/1.15 "Rajdhani"; text-transform:uppercase; letter-spacing:.06em; color:#eafff3; }
+  .sheet .close { color:var(--acc); font-family:"Share Tech Mono"; }
+  .sheet .sheet-kicker { font:12px "Share Tech Mono"; color:var(--warn); letter-spacing:.12em; margin-bottom:4px; }
+  .sheet .sheet-kicker::after { content:"_"; animation:blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .stat { border-radius:0; background:rgba(57,255,156,.05); border-color:var(--line); }
+  .stat span { text-transform:uppercase; letter-spacing:.08em; font-size:10px; }
+  input[type=checkbox] { accent-color:var(--acc); }
+  .lbl { fill:#bfffe0; font-family:"Share Tech Mono", monospace; text-transform:uppercase; letter-spacing:.04em; stroke:#020405; }
+  /* glowing map markers */
+  .shipg path, .cluster .cl-ship { filter:drop-shadow(0 0 1.2px currentColor); }
+  .cluster .cl-badge { fill:#04080b; stroke:var(--acc); stroke-width:1; }
+  .cluster .cl-n { fill:var(--acc); font:11px "Share Tech Mono", monospace; }
+  .sel-lbl { fill:#eafff3; }
+  .nearc { fill:rgba(57,255,156,.13); stroke:var(--acc); stroke-width:1.4; vector-effect:non-scaling-stroke; filter:drop-shadow(0 0 3px rgba(57,255,156,.7)); }
+  .near-lbl { fill:var(--acc); font:600 12px "Rajdhani", sans-serif; letter-spacing:.18em; paint-order:stroke; stroke:#020405; stroke-width:3px; pointer-events:none; }
+  .near-row { display:flex; flex-wrap:wrap; gap:4px; }
+  .water { fill:#3ad7ff; fill-opacity:.55; font:italic 600 11px "Rajdhani", sans-serif; letter-spacing:.22em; pointer-events:none; }
+  .site-ico { fill:#04080b; stroke:#eafff3; stroke-width:1.4; }
+  .site-ico.port { stroke:#3ad7ff; } .site-ico.school { stroke:#c08bff; }
+  .site-lbl { fill:#eafff3; }
+  .spec-hero { display:flex; justify-content:center; padding:6px 0 2px; filter:drop-shadow(0 0 4px rgba(57,255,156,.35)); }
+  .spec-grid { display:grid; grid-template-columns:max-content 1fr; gap:3px 12px; font-size:13px; }
+  .spec-k { color:var(--muted); text-transform:uppercase; letter-spacing:.08em; font:600 11px/1.6 "Rajdhani"; }
+  .spec-v { font-family:"Share Tech Mono", monospace; color:var(--text); }
+  .spec-link { display:inline-block; padding:7px 10px; text-decoration:none; }
+  .contact { display:flex; align-items:center; gap:10px; width:100%; margin:4px 0; padding:8px 10px; text-align:left;
+    background:rgba(57,255,156,.05); border:1px solid var(--line); color:var(--text); font:600 14px "Rajdhani"; letter-spacing:.04em; cursor:pointer; }
+  .contact:hover { background:rgba(57,255,156,.15); }
+  .dep .halo { animation:pulse 2.6s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes pulse { 0% { transform:scale(.6); opacity:1; } 100% { transform:scale(1.6); opacity:0; } }
+  .reticle { fill:none; stroke:var(--acc); stroke-width:1.6; filter:drop-shadow(0 0 4px var(--acc)); }
+  .reticle-spin { animation:sweep 6s linear infinite; transform-box:fill-box; transform-origin:center; }
+  .ais { filter:drop-shadow(0 0 4px var(--acc2)); }
+  .ally .glow { animation:pulse 1.8s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  .ally.on { filter:drop-shadow(0 0 6px var(--gc)) drop-shadow(0 0 2px #fff); }
+  .usflag { pointer-events:none; }
+  .basemap path { vector-effect:non-scaling-stroke; }
+  .bm-base { fill:rgba(57,255,156,.06); stroke:rgba(57,255,156,.55); stroke-width:1.2; stroke-dasharray:5 3; }
+  .bm-beach { fill:rgba(255,214,130,.10); stroke:none; }
+  .bm-golf { fill:rgba(120,200,90,.13); stroke:none; }
+  .bm-water { fill:rgba(20,60,90,.55); stroke:rgba(58,215,255,.25); stroke-width:.6; }
+  .bm-apron { fill:rgba(160,180,190,.16); stroke:rgba(160,180,190,.35); stroke-width:.6; }
+  .bm-taxi { fill:none; stroke:rgba(200,215,220,.35); }
+  .bm-rwy { fill:none; stroke:#b9c6cc; stroke-opacity:.55; }
+  .bm-rwyc { fill:none; stroke:#fff; stroke-opacity:.7; stroke-dasharray:8 6; stroke-width:.8; }
+  .bm-major { fill:none; stroke:#ffb000; stroke-opacity:.7; stroke-width:2; }
+  .bm-minor { fill:none; stroke:#cfe8dc; stroke-opacity:.28; stroke-width:1; }
+  .bm-bld { fill:rgba(58,215,255,.22); stroke:rgba(58,215,255,.55); stroke-width:.5; }
+  .bm-coast { fill:none; stroke:var(--acc); stroke-opacity:.8; stroke-width:1.2; }
+  .bm-lbl { font:600 10px "Share Tech Mono", monospace; fill:#d8fbe9; paint-order:stroke; stroke:#04080b; stroke-width:3; letter-spacing:.06em; pointer-events:none; }
+  .bm-rwylbl { font:700 10px "Share Tech Mono", monospace; fill:#fff; paint-order:stroke; stroke:#04080b; stroke-width:3; pointer-events:none; }
+  .poi circle { stroke:#04080b; stroke-width:1.2; }
+  .poi.on circle.ring { animation:pulse 1.8s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  .aship { filter:drop-shadow(0 0 2px rgba(255,255,255,.35)); }
+  .aship.on { filter:drop-shadow(0 0 7px var(--gc)) drop-shadow(0 0 2px #fff); }
+  .aship .glow { animation:pulse 1.8s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  .src a { color:var(--acc2); }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<div class="panel collapsed" id="panel">
+  <div class="bar">
+    <h1><span class="radar"></span>Fleet Command</h1>
+    <button class="barbtn" id="pnsBtn" title="Pensacola live view">📍 PNS</button>
+    <button class="barbtn" id="toggle">Layers ▾</button>
+  </div>
+  <div class="hudstat"><span>UNITS <b id="hudUnits">--</b></span><span>AIS <b id="hudAis">--</b></span><span>DEPL <b id="hudDep">--</b></span><span id="hudClock">--:--:--Z</span></div>
+  <div class="body">
+    <div class="sub" id="asof">Loading…</div>
+    <div class="sub statline"><b id="tBF">–</b> battle force · <b id="tDep">–</b> deployed · <b id="tUw">–</b> underway</div>
+    <div class="sect">Ships</div>
+    <div class="legend" id="legend"></div>
+    <div class="ais-row">
+      <label><input type="checkbox" id="aisOn" checked><span class="dot" style="background:var(--ais);border-radius:2px"></span>Live AIS</label>
+      <span class="sub" id="aisStatus">checking…</span>
+    </div>
+    <div class="sect">Forces</div>
+    <div class="legend ground" id="groundLegend">
+      <label><input type="checkbox" checked data-g="deploy"><span class="dot" style="background:#ffa94d"></span>Deployments <span class="sub" id="c-deploy"></span></label>
+      <label><input type="checkbox" data-g="bases"><span class="dot" style="background:#0a1520;border-color:#9ccc65;border-radius:2px"></span>US bases <span class="sub" id="c-bases"></span></label>
+      <label><input type="checkbox" data-g="allies"><span style="font-size:13px">🇬🇧🇫🇷</span>Allies <span class="sub" id="c-allies"></span></label>
+      <label><input type="checkbox" checked data-g="allyShips"><span id="aShipKey"></span>Allied ships <span class="sub" id="c-allyShips"></span></label>
+    </div>
+    <div class="filters">
+      <select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select>
+      <select id="allyCountry" class="country"><option value="">All ally countries</option></select>
+    </div>
+    <div class="sub" style="margin-top:8px">Weekly positions are approximate (sea area, not GPS). Live AIS shows only ships broadcasting a transponder.</div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet"><button class="close" id="close">×</button><div id="sheetBody"></div></div>
+<button id="pnsExit" class="pns-exit">← World</button>
+<div class="zoom"><button id="zin">+</button><button id="zout">−</button></div>
+
+<script type="module">
+import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+import * as topojson from "https://cdn.jsdelivr.net/npm/topojson-client@3/+esm";
+import land110 from "https://cdn.jsdelivr.net/npm/world-atlas@2/land-110m.json/+esm";
+
+// Side-profile ship silhouettes, drawn in a 26x14 box centred on (0,0), waterline at y=5.
+const TYPES = {
+  carrier:   { label:"Carrier",   hex:"#ffcc33", s:1.4,
+    path:"M-13,-0.5H13V1L10.5,5H-9.5L-12,1H-13Z M2,-0.5V-5H3.2V-8.5H3.8V-5H5.8V-0.5Z" },
+  amphib:    { label:"Amphib",    hex:"#3ad7ff", s:1.3,
+    path:"M-12.5,-1.5H12V0.5L10,5H-10.5L-12.5,0.5Z M-1,-1.5V-6H0.3V-9H0.9V-6H3.2V-1.5Z" },
+  cruiser:   { label:"Cruiser",   hex:"#c08bff", s:1.15,
+    path:"M-12,1H12.5L9,5H-11Z M-7.5,1V-2H-4V-6.5H-3.4V-2H-0.5V1Z M1.5,1V-2H3.5V-5.5H4.1V-2H7V1Z M9,1V0H11V1Z" },
+  destroyer: { label:"Destroyer", hex:"#ff5a5a", s:1.1,
+    path:"M-12,1H12.5L9,5H-11Z M-6,1V-1.5H-2.5V-3.5H0.5V-8H1.1V-3.5H3.5V-1.5H6V1Z M8,1V0H10.5V1Z" },
+  other:     { label:"Other",     hex:"#8dff6a", s:1.0,
+    path:"M-11,1H11L8,5H-9.5Z M-4.5,1V-2H1V-6H1.6V-2H4V1Z" }
+};
+const shipIcon = (t, size = 26) => { const c = TYPES[t] || TYPES.other;
+  return `<svg width="${size}" height="${Math.round(size * 14 / 26)}" viewBox="-13.5 -9.5 27 15" style="vertical-align:middle"><path d="${c.path}" fill="${c.hex}" stroke="#fff" stroke-opacity=".55" stroke-width=".6"/></svg>`; };
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $ = id => document.getElementById(id);
+
+// Maritime waypoint graph ([lon, lat]). Every edge was checked against the
+// 110m coastline; edges marked * are canals/straits too narrow for that data.
+const SEA_NODES = {
+  SD:[-117.6,32.4], BAJ1:[-118.8,29], CABO:[-110.3,22.2], EP1:[-125,30], EPN:[-128,40], JDF:[-124.9,48.4],
+  HAWW:[-159,22.2], HAW:[-158.4,20.6], CP1:[-170,23], DATEL:[178,24], WP1:[160,23], WP2:[150,22], GUAM:[144.4,13.6],
+  PHS:[132,22], OKI:[128.3,25.3], SASa:[129.3,32.9], KYU:[130.6,30.6], JPS:[135,32.4], YOKa:[139.8,34.7],
+  KOR:[129.2,34.4], SOJ:[134,39], LUZ:[121,20.5], SCS1:[116,17], SCS2:[112,10], SCS3:[106.5,4], SING:[104.4,1.2],
+  SINGW:[103.4,1.05], MAL0:[102.0,1.55], MAL1:[100.9,2.35], MAL2:[98.3,5.3], AND:[96,9], BOB:[88,8], SRI:[81,5.2],
+  LAC:[74.5,9], IND:[76,2], DG:[72.4,-6.6], ARAB:[64,16], ARABN:[62,21], GOM:[58.6,24.3], HORM:[56.35,26.55],
+  PG0:[55.0,26.1], PG1:[53.0,26.4], PG2:[50.9,27.2], ADEN:[49,12.8], GA:[45.5,12.3], BAB:[43.45,12.45],
+  RED1:[41.2,16], RED2:[38.3,21], RED3:[34.4,26.9], GS1:[33.8,27.5], GS2:[33.0,28.8], SUEZS:[32.55,29.9],
+  SUEZN:[32.35,31.6], EMED:[29,33.4], CRETE:[24,34.6], KYTH:[23.0,36.0], AEG:[24.3,37.3], CMED:[18,35],
+  SIC:[12,36.9], SARDS:[9,38.2], WMED:[5,37.7], ALB:[-2,36.2], GIB:[-5.7,35.95], ROTA:[-7,36.4], ATL1:[-20,36],
+  ATL2:[-45,36], ATL3:[-65,35], HAT:[-74.6,35], NORa:[-75.6,36.9], JAX:[-80.9,30.3], FLS1:[-79.8,27],
+  FLM:[-79.75,25.6], FLS2:[-80.4,24.2], KEY:[-83,24.3], GOMX:[-86.5,27], PNSa:[-87.3,30.15], YUC:[-85.9,21.5],
+  BAH:[-73,25.5], WIND:[-73.6,20.1], WIND2:[-74.6,19.2], CAR1:[-75,15.5], CAR2:[-67.5,15.5], MONA:[-67.75,18.55],
+  PR:[-66,18.75], ANEG:[-63.8,18.6], PAN:[-79.9,9.6], PANP:[-79.5,8.6], GOP:[-79.5,6.6], GOP2:[-81.2,6.4],
+  EPAC2:[-90,12], EPAC3:[-105,18]
+};
+const SEA_EDGES = ("SD-BAJ1 BAJ1-CABO CABO-EPAC3 SD-EP1 EP1-EPN EPN-JDF EP1-HAWW HAWW-HAW HAWW-CP1 HAW-CP1 CP1-DATEL " +
+  "DATEL-WP1 WP1-WP2 WP2-GUAM WP2-PHS WP1-JPS GUAM-PHS PHS-OKI PHS-LUZ OKI-SASa OKI-KYU KYU-JPS SASa-KYU JPS-YOKa " +
+  "SASa-KOR KOR-SOJ LUZ-SCS1 SCS1-SCS2 SCS2-SCS3 SCS3-SING SING-SINGW SINGW-MAL0* MAL0-MAL1* MAL1-MAL2 MAL2-AND AND-BOB " +
+  "BOB-SRI SRI-LAC SRI-IND LAC-ARAB LAC-IND IND-ARAB IND-DG ARAB-ARABN ARABN-GOM ARAB-GOM GOM-HORM HORM-PG0 PG0-PG1 " +
+  "PG1-PG2 ARAB-ADEN ADEN-GA GA-BAB BAB-RED1 RED1-RED2 RED2-RED3 RED3-GS1 GS1-GS2* GS2-SUEZS* SUEZS-SUEZN* SUEZN-EMED " +
+  "EMED-CRETE CRETE-KYTH KYTH-AEG CMED-KYTH CRETE-CMED CMED-SIC SIC-SARDS SARDS-WMED WMED-ALB ALB-GIB* GIB-ROTA ROTA-ATL1 " +
+  "GIB-ATL1 ATL1-ATL2 ATL2-ATL3 ATL3-HAT ATL3-NORa HAT-NORa HAT-JAX JAX-FLS1 FLS1-FLM FLM-FLS2 FLS2-KEY KEY-GOMX GOMX-PNSa " +
+  "GOMX-YUC YUC-CAR1 HAT-BAH ATL3-BAH BAH-WIND BAH-ANEG WIND-WIND2 WIND2-CAR1 ANEG-CAR2 ANEG-PR PR-MONA MONA-CAR2 " +
+  "CAR2-CAR1 CAR1-PAN PAN-PANP* PANP-GOP GOP-GOP2 GOP2-EPAC2 EPAC2-EPAC3").split(" ").filter(Boolean);
+
+// Returns a list of [lon,lat] points from a to b that stays at sea, using the
+// waypoint graph whenever the direct great-circle leg would cross land.
+function makeSeaRouter(d3, land) {
+  const nodes = Object.entries(SEA_NODES).map(([id, p]) => ({ id, p }));
+  const idx = Object.fromEntries(nodes.map((n, i) => [n.id, i]));
+  const adj = nodes.map(() => []);
+  for (const e of SEA_EDGES) {
+    const [a, b] = e.replace("*", "").split("-"); const i = idx[a], j = idx[b];
+    const w = d3.geoDistance(nodes[i].p, nodes[j].p);
+    adj[i].push([j, w]); adj[j].push([i, w]);
+  }
+  const KM = 6371;
+  // Land test along a leg, ignoring the first/last ~40 km (ports and coastal positions sit on the coarse coastline)
+  function clear(A, B) {
+    const D = d3.geoDistance(A, B) * KM; if (D < 1) return true;
+    const f = d3.geoInterpolate(A, B), n = Math.max(8, Math.ceil(D / 20)), skip = Math.min(0.45, 70 / D);
+    for (let i = 1; i < n; i++) { const t = i / n; if (t < skip || t > 1 - skip) continue; if (d3.geoContains(land, f(t))) return false; }
+    return true;
+  }
+  function links(P) {   // nearest waypoints reachable from P by a clear leg (fallback: the nearest one)
+    const near = nodes.map((n, i) => [i, d3.geoDistance(P, n.p)]).sort((a, b) => a[1] - b[1]).slice(0, 10);
+    const ok = near.filter(([i]) => clear(P, nodes[i].p)).slice(0, 4);
+    return ok.length ? ok : near.slice(0, 1);
+  }
+  const cache = new Map();
+  return function route(A, B) {
+    const key = A.join() + "|" + B.join();
+    if (cache.has(key)) return cache.get(key);
+    let out = [A, B];
+    if (!clear(A, B)) {
+      const la = links(A), lb = new Map(links(B).map(([i, w]) => [i, w]));
+      if (la.length && lb.size) {
+        const dist = nodes.map(() => Infinity), prev = nodes.map(() => -1), done = new Set();
+        for (const [i, w] of la) dist[i] = w;
+        while (true) {
+          let u = -1, best = Infinity;
+          for (let i = 0; i < nodes.length; i++) if (!done.has(i) && dist[i] < best) { best = dist[i]; u = i; }
+          if (u < 0) break; done.add(u);
+          for (const [v, w] of adj[u]) if (dist[u] + w < dist[v]) { dist[v] = dist[u] + w; prev[v] = u; }
+        }
+        let end = -1, bestTot = Infinity;
+        for (const [i, w] of lb) if (dist[i] + w < bestTot) { bestTot = dist[i] + w; end = i; }
+        if (end >= 0) {
+          const chain = []; for (let u = end; u >= 0; u = prev[u]) chain.unshift(nodes[u].p);
+          out = [A, ...chain, B];
+        }
+      }
+    }
+    cache.set(key, out);
+    return out;
+  };
+}
+
+// ---------- Map ----------
+const el = $("map");
+const svg = d3.select(el).append("svg");
+const g = svg.append("g");
+let projection = d3.geoNaturalEarth1();
+let path = d3.geoPath(projection);
+const landGeo = topojson.feature(land110, land110.objects.land);
+const seaRoute = makeSeaRouter(d3, landGeo);
+// Weekly points -> one path that stays at sea between consecutive positions
+function seaPath(pts) {
+  const out = [];
+  for (let i = 0; i < pts.length; i++) {
+    const p = [pts[i].lon, pts[i].lat];
+    if (!i) { out.push(p); continue; }
+    const q = [pts[i - 1].lon, pts[i - 1].lat];
+    if (q[0] === p[0] && q[1] === p[1]) continue;
+    out.push(...seaRoute(q, p).slice(1));
+  }
+  return out;
+}
+const gGrat = g.append("path").attr("class", "grat");
+const gLand = g.append("path").attr("class", "land");
+const gBase = g.append("g").attr("class", "basemap");
+const gNear = g.append("g");
+// Markers and labels live in an untransformed overlay and are positioned with a
+// "screen projection", so they stay a fixed pixel size at any zoom (iOS enforces a
+// minimum font size that breaks text drawn inside a scaled group).
+const ov = svg.append("g");
+const gNearLbl = ov.append("g");
+const gTrack = ov.append("g");
+const gBases = ov.append("g");
+const gAllies = ov.append("g");
+const gDeploy = ov.append("g");
+const gShips = ov.append("g");
+const gAShips = ov.append("g");
+const gAis = ov.append("g");
+const gLbl = ov.append("g");
+const gPns = ov.append("g");
+gAllies.raise(); gShips.raise(); gAShips.raise(); gAis.raise(); gLbl.raise(); gPns.raise();   // flags above deployment halos
+let T = d3.zoomIdentity, SPJ = null, projFactory = () => d3.geoNaturalEarth1();
+function screenProj() {
+  const [tx, ty] = projection.translate();
+  const w = el.clientWidth, h = el.clientHeight;
+  // Clip to the screen so zoomed-in paths only carry the visible coastline
+  return projFactory().scale(projection.scale() * T.k).translate([T.x + T.k * tx, T.y + T.k * ty])
+    .clipExtent([[-40, -40], [w + 40, h + 40]]);
+}
+let k = 1, ships = [], ais = [], hidden = new Set(), showAis = true, selected = null;
+let history = { ships: {} }, track = null;
+let bases = [], deploys = [], allies = [], deployMeta = {}, alliesMeta = {};
+const show = { bases: false, deploy: true, allies: false, allyShips: true };
+let allyCountry = "", branchSel = "";
+const BRANCH = { guard: ["National Guard", "#a5d6a7"], army: ["Army", "#9ccc65"], marines: ["Marines", "#e57373"], navy: ["Navy", "#64b5f6"], af: ["Air Force", "#90caf9"], space: ["Space Force", "#b0bec5"], joint: ["Joint", "#ffd54f"] };
+const FLAGS = { "Albania": "🇦🇱", "Australia": "🇦🇺", "Belgium": "🇧🇪", "Bulgaria": "🇧🇬", "Canada": "🇨🇦", "Croatia": "🇭🇷", "Czechia": "🇨🇿",
+  "Estonia": "🇪🇪", "Finland": "🇫🇮", "France": "🇫🇷", "Germany": "🇩🇪", "Greece": "🇬🇷", "Hungary": "🇭🇺", "Iceland": "🇮🇸", "Italy": "🇮🇹",
+  "Japan": "🇯🇵", "Latvia": "🇱🇻", "Lithuania": "🇱🇹", "Luxembourg": "🇱🇺", "Montenegro": "🇲🇪", "North Macedonia": "🇲🇰", "Poland": "🇵🇱",
+  "Portugal": "🇵🇹", "Romania": "🇷🇴", "Slovakia": "🇸🇰", "Slovenia": "🇸🇮", "Spain": "🇪🇸", "Sweden": "🇸🇪", "Türkiye": "🇹🇷",
+  "United Kingdom": "🇬🇧", "United States": "🇺🇸" };
+Object.assign(FLAGS, { "Norway": "🇳🇴", "Netherlands": "🇳🇱", "Denmark": "🇩🇰", "South Korea": "🇰🇷", "Philippines": "🇵🇭", "New Zealand": "🇳🇿" });
+const flagOf = c => FLAGS[c] || "🏳️";
+// Main flag colors per lead country — used to paint allied markers in their nation's colors.
+const FLAGCOL = { "United Kingdom": ["#012169", "#ffffff", "#c8102e"], "Canada": ["#d52b1e", "#ffffff"], "Germany": ["#000000", "#dd0000", "#ffce00"],
+  "United States": ["#3c3b6e", "#ffffff", "#b22234"], "Spain": ["#aa151b", "#f1bf00"], "Hungary": ["#ce2939", "#ffffff", "#477050"],
+  "France": ["#0055a4", "#ffffff", "#ef4135"], "Italy": ["#009246", "#ffffff", "#ce2b37"], "Sweden": ["#006aa7", "#fecc00"],
+  "Japan": ["#ffffff", "#bc002d"], "Australia": ["#012169", "#ffffff", "#e4002b"], "Türkiye": ["#e30a17", "#ffffff"],
+  "Norway": ["#ba0c2f", "#ffffff", "#00205b"], "Netherlands": ["#ae1c28", "#ffffff", "#21468b"], "Denmark": ["#c8102e", "#ffffff"],
+  "Poland": ["#ffffff", "#dc143c"], "Portugal": ["#046a38", "#da291c"], "Greece": ["#0d5eaf", "#ffffff"], "Belgium": ["#000000", "#fdda24", "#ef3340"],
+  "Finland": ["#ffffff", "#002f6c"], "Estonia": ["#0072ce", "#000000", "#ffffff"], "Latvia": ["#9e3039", "#ffffff"], "Lithuania": ["#fdb913", "#006a44", "#c1272d"],
+  "Romania": ["#002b7f", "#fcd116", "#ce1126"], "Bulgaria": ["#ffffff", "#00966e", "#d62612"], "Croatia": ["#ff0000", "#ffffff", "#171796"],
+  "South Korea": ["#ffffff", "#cd2e3a", "#0047a0"], "Philippines": ["#0038a8", "#ce1126"], "New Zealand": ["#012169", "#c8102e"] };
+// Flags whose stripes run vertically (tricolours); the rest are painted as horizontal bands.
+const FLAG_VERT = new Set(["France", "Italy", "Belgium", "Romania", "Canada", "Portugal"]);
+const NAVY_NAME = { "United Kingdom": "Royal Navy", "France": "French Navy (Marine nationale)", "Italy": "Italian Navy (Marina Militare)",
+  "Japan": "Japan Maritime Self-Defense Force", "Australia": "Royal Australian Navy", "Canada": "Royal Canadian Navy", "Norway": "Royal Norwegian Navy",
+  "Türkiye": "Turkish Naval Forces", "Germany": "German Navy", "Spain": "Spanish Navy", "Netherlands": "Royal Netherlands Navy", "Denmark": "Royal Danish Navy",
+  "South Korea": "Republic of Korea Navy", "New Zealand": "Royal New Zealand Navy", "Philippines": "Philippine Navy", "Greece": "Hellenic Navy",
+  "Poland": "Polish Navy", "Portugal": "Portuguese Navy", "Sweden": "Swedish Navy", "Finland": "Finnish Navy" };
+const slug = c => String(c || "x").normalize("NFD").replace(/[^A-Za-z]/g, "");
+// <linearGradient> with hard stops so a shape is filled in flag stripes
+const flagGrad = (c, id) => { const cols = flagCols(c), n = cols.length, v = FLAG_VERT.has(c);
+  return `<linearGradient id="${id}" x1="0" y1="0" x2="${v ? 1 : 0}" y2="${v ? 0 : 1}">` +
+    cols.map((col, i) => `<stop offset="${i / n}" stop-color="${col}"/><stop offset="${(i + 1) / n}" stop-color="${col}"/>`).join("") + `</linearGradient>`; };
+const allyShipIcon = (t, c, size = 26) => { const cfg = TYPES[t] || TYPES.other, id = "ig" + slug(c) + Math.random().toString(36).slice(2, 7);
+  return `<svg width="${size}" height="${Math.round(size * 14 / 26)}" viewBox="-13.5 -9.5 27 15" style="vertical-align:middle"><defs>${flagGrad(c, id)}</defs><path d="${cfg.path}" fill="url(#${id})" stroke="#fff" stroke-opacity=".8" stroke-width=".7"/></svg>`; };
+const flagCols = c => FLAGCOL[c] || ["#38bdf8"];
+let selAlly = null;
+let allyShips = [], allyAis = [], selAShip = null, allyShipsMeta = {};
+// Allied warships: curated list plus live AIS sightings, filtered by the ally-country picker
+const aShipList = () => { const all = [...allyShips, ...allyAis.map(v => ({ ...v, live: true, id: "ais" + v.mmsi, type: "destroyer" }))];
+  return allyCountry ? all.filter(d => d.country === allyCountry) : all; };
+const DKIND = { surge: ["Surge", "#ff5c5c"], rotation: ["Rotation", "#ffa94d"], domestic: ["Domestic", "#ce93d8"], drawdown: ["Drawdown / canceled", "#8aa0b4"] }; // track: {pts:[{lat,lon,label}], color, dashed}
+
+function size() {
+  const w = el.clientWidth, h = el.clientHeight;
+  const local = typeof pns !== "undefined" && pns.on;
+  if (local) {
+    // Local Mercator view of the Pensacola area, fitted to the part of the screen not covered by panels
+    const vb = visibleBox();
+    projFactory = () => d3.geoMercator();
+    projection = d3.geoMercator().fitExtent([[vb.left + 10, vb.top], [vb.left + vb.width - 10, vb.top + vb.height]],
+      { type: "MultiPoint", coordinates: [[-87.7, 30.25], [-86.6, 30.95]] })
+      .clipExtent([[-w, -h], [2 * w, 2 * h]]);
+  } else {
+    projFactory = () => d3.geoNaturalEarth1();
+    projection = d3.geoNaturalEarth1().fitExtent([[10, 10], [w - 10, h - 10]], { type: "Sphere" });
+  }
+  path = d3.geoPath(projection);
+  draw();
+}
+
+function drawTrack() {
+  const k = 1;
+  const t = track ? [track] : [];
+  gTrack.selectAll("path").data(t).join("path")
+    .attr("fill", "none")
+    .attr("stroke", d => d.color).attr("stroke-opacity", .9)
+    .attr("stroke-width", 2 / k)
+    .attr("stroke-dasharray", d => d.dashed ? `${6 / k} ${4 / k}` : null)
+    .attr("d", d => d3.geoPath(SPJ)({ type: "LineString", coordinates: d.coords || d.pts.map(p => [p.lon, p.lat]) }));
+  const pts = track ? track.pts : [];
+  gTrack.selectAll("circle").data(pts).join("circle")
+    .attr("cx", d => SPJ([d.lon, d.lat])[0])
+    .attr("cy", d => SPJ([d.lon, d.lat])[1])
+    .attr("r", (d, i) => (i === pts.length - 1 ? 0 : (track.small ? 2 : 4)) / Math.sqrt(k))
+    .attr("fill", "#0a1520").attr("stroke", track ? track.color : "#fff").attr("stroke-width", 1.5 / k);
+  const lbls = [];
+  if (track && !track.small) {
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i], last = lbls[lbls.length - 1];
+      if (last && last.lat === p.lat && last.lon === p.lon) { last.label = `${last.first} – ${p.label}`; last.isEnd = i === pts.length - 1; }
+      else lbls.push({ ...p, first: p.label, isEnd: i === pts.length - 1 });
+    }
+    // the current position already has the ship icon; drop its label unless it spans several weeks
+    if (lbls.length && lbls[lbls.length - 1].isEnd && lbls[lbls.length - 1].label === lbls[lbls.length - 1].first) lbls.pop();
+  }
+  gTrack.selectAll("text").data(lbls).join("text")
+    .attr("class", "lbl")
+    .each(function (d) { const [x, y] = SPJ([d.lon, d.lat]), flip = x > el.clientWidth - 120;
+      d3.select(this).attr("x", flip ? x - 7 : x + 7).attr("y", y - 7).attr("text-anchor", flip ? "end" : "start"); })
+    .attr("font-size", 10).attr("stroke-width", 3)
+    .text(d => d.label);
+}
+
+function fitTrack() {
+  if (!track || track.pts.length < 2) return;
+  const xy = track.pts.map(p => projection([p.lon, p.lat]));
+  const [x0, x1] = d3.extent(xy, d => d[0]), [y0, y1] = d3.extent(xy, d => d[1]);
+  // Fit into the map area left visible between the panel and the detail sheet
+  const w = el.clientWidth, h = el.clientHeight;
+  const top = $("panel").getBoundingClientRect().bottom + 10;
+  const sheetR = $("sheet").getBoundingClientRect();
+  const wide = w >= 800;
+  const bottom = (!wide && sheetR.height) ? sheetR.top - 10 : h - 10;
+  const right = (wide && sheetR.width) ? sheetR.left - 10 : w;
+  const vw = Math.max(80, right), vh = Math.max(80, bottom - top);
+  const s = Math.max(1, Math.min(8, 0.85 / Math.max((x1 - x0) / vw, (y1 - y0) / vh, 0.02)));
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  svg.transition().duration(600).call(zoom.transform,
+    d3.zoomIdentity.translate(vw / 2, top + vh / 2).scale(s).translate(-cx, -cy));
+}
+
+const fmtDay = d => new Date(d + "T12:00:00").toLocaleDateString([], { month: "short", day: "numeric" });
+
+function drawGround() {
+  const k = 1;
+  const P = d => SPJ([d.lon, d.lat]);
+  const bs = !show.bases ? [] : branchSel ? bases.filter(b => b.branch === branchSel) : bases;
+  const bsz = 6 / Math.sqrt(k);
+  gBases.selectAll("rect").data(bs, d => d.name).join("rect")
+    .attr("x", d => P(d)[0] - bsz / 2).attr("y", d => P(d)[1] - bsz / 2)
+    .attr("width", bsz).attr("height", bsz)
+    .attr("fill", "#0a1520").attr("stroke", d => (BRANCH[d.branch] || BRANCH.joint)[1]).attr("stroke-width", 1.4 / k)
+    .style("cursor", "pointer")
+    .on("click", (e, d) => { e.stopPropagation(); showBase(d); });
+
+  const al = !show.allies ? [] : allyCountry ? allies.filter(a => (a.countries || []).includes(allyCountry)) : allies;
+  const role = a => !allyCountry ? null : (a.lead || "").includes(allyCountry) ? "lead" : a.host === allyCountry ? "host" : "contributor";
+  // Flag of the lead/owning country; battlegroups get a ring. With a country filter on,
+  // places where that country only contributes or hosts are dimmed and show its flag as a badge.
+  const ga = gAllies.selectAll("g.ally").data(al, d => d.id).join(en => {
+    const x = en.append("g").attr("class", "ally").style("cursor", "pointer");
+    x.append("circle").attr("class", "glow"); x.append("circle").attr("class", "bg"); x.append("g").attr("class", "bands");
+    x.append("text").attr("class", "flag"); x.append("text").attr("class", "badge"); return x;
+  });
+  // Ring drawn in the lead country's flag colors (equal arcs); the selected one grows, glows and pulses.
+  const R = d => (d.kind === "battlegroup" ? 12 : 9.5) * (d === selAlly ? 1.3 : 1);
+  ga.attr("transform", d => `translate(${P(d)})`)
+    .classed("on", d => d === selAlly)
+    .style("--gc", d => flagCols((d.countries || [])[0]).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8")
+    .style("opacity", d => d === selAlly ? 1 : allyCountry && role(d) !== "lead" ? .75 : 1)
+    .on("click", (e, d) => { e.stopPropagation(); showAlly(d); });
+  ga.filter(d => d === selAlly).raise();
+  // While an allied force is selected, its layer sits above ships so nothing covers it.
+  if (selAlly) gAllies.raise(); else gShips.node().parentNode.insertBefore(gAllies.node(), gShips.node());
+  if (selAShip) gAShips.raise(); else gAis.node().parentNode.insertBefore(gAShips.node(), gAis.node());
+  ga.select(".glow").attr("r", d => d === selAlly ? R(d) + 4 : 0).attr("fill", "none")
+    .attr("stroke", d => flagCols((d.countries || [])[0]).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8").attr("stroke-width", 2.5);
+  ga.select(".bg").attr("r", R).attr("fill", d => d === selAlly ? "rgba(10,21,32,.92)" : "rgba(10,21,32,.75)");
+  ga.select(".bands").each(function (d) {
+    const cols = flagCols((d.countries || [])[0]), r = R(d), C = 2 * Math.PI * r, seg = C / cols.length;
+    const w = d === selAlly ? 3.6 : allyCountry && role(d) === "lead" ? 3 : 2.4;
+    d3.select(this).selectAll("circle").data(cols).join("circle")
+      .attr("r", r).attr("fill", "none").attr("stroke", c => c).attr("stroke-width", w)
+      .attr("stroke-dasharray", cols.length > 1 ? `${seg} ${C - seg}` : null)
+      .attr("stroke-dashoffset", (c, i) => -i * seg + C / 4)
+      .attr("transform", "rotate(-90)");
+  });
+  ga.select(".flag").attr("text-anchor", "middle").attr("dominant-baseline", "central")
+    .attr("font-size", d => (d.kind === "battlegroup" ? 15 : 12) * (d === selAlly ? 1.25 : 1)).text(d => flagOf((d.countries || [])[0]));
+  ga.select(".badge").attr("x", d => R(d) - 1).attr("y", d => -R(d) + 3).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 10)
+    .text(d => allyCountry && role(d) !== "lead" ? flagOf(allyCountry) : "");
+
+  const dp = !show.deploy ? [] : branchSel ? deploys.filter(d => branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)) : deploys;
+  const sel = gDeploy.selectAll("g.dep").data(dp, d => d.id).join(enter => {
+    const gg = enter.append("g").attr("class", "dep").style("cursor", "pointer");
+    gg.append("circle").attr("class", "halo"); gg.append("circle").attr("class", "core"); gg.append("text").attr("class", "lbl");
+    return gg;
+  });
+  sel.attr("transform", d => `translate(${P(d)[0]},${P(d)[1]})`)
+    .on("click", (e, d) => { e.stopPropagation(); showDeploy(d); });
+  sel.select(".halo").attr("r", 13 / Math.sqrt(k)).attr("fill", d => (DKIND[d.kind] || DKIND.rotation)[1]).attr("fill-opacity", .18)
+    .attr("stroke", d => (DKIND[d.kind] || DKIND.rotation)[1]).attr("stroke-width", 1 / k).attr("stroke-dasharray", d => d.kind === "drawdown" ? `${3 / k} ${3 / k}` : null);
+  sel.select(".core").attr("r", 4 / Math.sqrt(k)).attr("fill", d => (DKIND[d.kind] || DKIND.rotation)[1]);
+  sel.select("text").attr("font-size", 10).attr("stroke-width", 3).attr("y", 4)
+    .each(function (d) { const flip = P(d)[0] > el.clientWidth - 140;
+      d3.select(this).attr("x", flip ? -15 : 15).attr("text-anchor", flip ? "end" : "start"); })
+    .text(d => { const x = P(d)[0]; return T.k >= 2.5 && x > 4 && x < el.clientWidth - 4 ? trunc(d.title.replace(/\s*\(.*\)$/, ""), 20) : ""; });
+}
+
+// Land, graticule and coast highlights are re-projected at screen size on every zoom step
+// (instead of scaling one huge world path), which keeps iPad Safari from locking up when zoomed in.
+const GRAT = d3.geoGraticule10();
+function drawBase() {
+  const local = typeof pns !== "undefined" && pns.on, sp = d3.geoPath(SPJ);
+  gGrat.attr("d", local ? null : sp(GRAT));
+  gLand.attr("d", sp(local && pns.landHi ? pns.landHi : landGeo)).classed("coast", !!(local && pns.landHi));
+  spath = sp;
+}
+let spath = null;
+function draw() {
+  const k = 1;
+  SPJ = screenProj();
+  drawBase();
+  drawBasemap();
+  drawNear();
+  drawTrack();
+  drawGround();
+  drawPns();
+  const vis = ships.filter(s => !hidden.has(s.type));
+  // Screen-space clustering: ships closer than CLUSTER_R px merge into one numbered
+  // marker; they separate as you zoom in. The selected ship always stands alone.
+  const PRI = { carrier: 0, amphib: 1, cruiser: 2, destroyer: 3, other: 4 }, CLUSTER_R = 26;
+  const W = el.clientWidth;
+  const pts = vis.map(s => ({ s, xy: SPJ([s.lon, s.lat]) })).sort((a, b) => (PRI[a.s.type] ?? 9) - (PRI[b.s.type] ?? 9));
+  const singles = [], clusters = [], used = new Set();
+  for (const p of pts) {
+    if (used.has(p)) continue; used.add(p);
+    if (p.s === selected || T.k >= 38) { singles.push(p.s); continue; }
+    const mem = [p];
+    for (const q of pts) if (!used.has(q) && q.s !== selected && Math.hypot(q.xy[0] - p.xy[0], q.xy[1] - p.xy[1]) < CLUSTER_R) { mem.push(q); used.add(q); }
+    if (mem.length === 1) singles.push(p.s);
+    else clusters.push({ id: mem.map(m => m.s.name).sort().join("|"), lead: p.s, members: mem.map(m => m.s),
+      x: d3.mean(mem, m => m.xy[0]), y: d3.mean(mem, m => m.xy[1]) });
+  }
+  const gsh = gShips.selectAll("g.shipg").data(singles, d => d.name).join(en => {
+    const x = en.append("g").attr("class", "shipg").style("cursor", "pointer");
+    x.append("rect").attr("x", -14).attr("y", -10).attr("width", 28).attr("height", 16).attr("fill", "transparent");  // tap target
+    x.append("path"); x.append("text").attr("class", "usflag"); return x;
+  });
+  gsh.attr("transform", d => { const [x, y] = SPJ([d.lon, d.lat]), c = TYPES[d.type] || TYPES.other; return `translate(${x},${y}) scale(${c.s})`; })
+    .on("click", (e, d) => { e.stopPropagation(); showShip(d); });
+  gsh.select("path").attr("d", d => (TYPES[d.type] || TYPES.other).path)
+    .attr("fill", d => (TYPES[d.type] || TYPES.other).hex).style("color", d => (TYPES[d.type] || TYPES.other).hex)
+    .attr("stroke", d => d === selected ? "#fff" : "#04080b").attr("stroke-width", d => d === selected ? 1.6 : 0.9)
+    .attr("stroke-linejoin", "round");
+  // US flag on every US ship (constant ~10px whatever the hull scale)
+  gsh.select(".usflag").attr("x", d => -12.5).attr("y", -7).attr("text-anchor", "middle").attr("dominant-baseline", "central")
+    .attr("font-size", d => (d === selected ? 12 : 10) / (TYPES[d.type] || TYPES.other).s).text("🇺🇸");
+  gsh.filter(d => d === selected).raise();
+
+  const gcl = gShips.selectAll("g.cluster").data(clusters, d => d.id).join(en => {
+    const x = en.append("g").attr("class", "cluster").style("cursor", "pointer");
+    x.append("rect").attr("class", "hit").attr("x", -20).attr("y", -16).attr("width", 44).attr("height", 30).attr("fill", "transparent");
+    x.append("path").attr("class", "cl-ship");
+    x.append("rect").attr("class", "cl-badge"); x.append("text").attr("class", "cl-n"); x.append("text").attr("class", "usflag");
+    return x;
+  });
+  gcl.attr("transform", d => `translate(${d.x},${d.y})`)
+    .on("click", (e, d) => { e.stopPropagation(); openCluster(d); });
+  gcl.select(".cl-ship").attr("d", d => (TYPES[d.lead.type] || TYPES.other).path)
+    .attr("transform", d => `scale(${(TYPES[d.lead.type] || TYPES.other).s})`)
+    .attr("fill", d => (TYPES[d.lead.type] || TYPES.other).hex).style("color", d => (TYPES[d.lead.type] || TYPES.other).hex)
+    .attr("stroke", "#04080b").attr("stroke-width", .9).attr("stroke-linejoin", "round");
+  gcl.select(".cl-badge").attr("x", 10).attr("y", -19).attr("width", d => String(d.members.length).length * 7 + 9).attr("height", 14);
+  gcl.select(".usflag").attr("x", -16).attr("y", -11).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 10).text("🇺🇸");
+  gcl.select(".cl-n").attr("x", d => 10 + (String(d.members.length).length * 7 + 9) / 2).attr("y", -9.2).attr("text-anchor", "middle").text(d => d.members.length);
+
+  const sel = selected && !hidden.has(selected.type) ? [selected] : [];
+  const ret = gShips.selectAll("g.reticle-g").data(sel).join(en => {
+    const x = en.append("g").attr("class", "reticle-g").style("pointer-events", "none");
+    const spin = x.append("g").attr("class", "reticle-spin");
+    spin.append("path").attr("class", "reticle").attr("d", "M-22,-12V-22H-12 M12,-22H22V-12 M22,12V22H12 M-12,22H-22V12");
+    x.append("circle").attr("class", "reticle").attr("r", 3).style("stroke-dasharray", "2 2");
+    return x;
+  });
+  ret.attr("transform", d => `translate(${SPJ([d.lon, d.lat])})`).raise();
+
+  // Allied warships: silhouette filled in the country's flag stripes; selected one grows, glows and pulses
+  const as = show.allyShips ? aShipList().filter(d => !hidden.has(d.type)) : [];
+  const defs = svg.selectAll("defs.flaggrads").data([0]).join("defs").attr("class", "flaggrads");
+  const need = [...new Set(as.map(d => d.country))].filter(c => defs.select("#fg" + slug(c)).empty());
+  for (const c of need) defs.node().insertAdjacentHTML("beforeend", flagGrad(c, "fg" + slug(c)));
+  const gas = gAShips.selectAll("g.aship").data(as, d => d.id).join(en => {
+    const x = en.append("g").attr("class", "aship").style("cursor", "pointer");
+    x.append("circle").attr("class", "glow"); x.append("circle").attr("class", "hit").attr("r", 14).attr("fill", "transparent");
+    x.append("path").attr("class", "hull"); x.append("text").attr("class", "flag"); return x;
+  });
+  gas.classed("on", d => d === selAShip)
+    .style("--gc", d => flagCols(d.country).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8")
+    .attr("transform", d => `translate(${SPJ([d.lon, d.lat])})`)
+    .on("click", (e, d) => { e.stopPropagation(); showAllyShip(d); });
+  gas.select(".hull").attr("d", d => (TYPES[d.type] || TYPES.other).path)
+    .attr("transform", d => `scale(${(TYPES[d.type] || TYPES.other).s * (d === selAShip ? 1.5 : 1.05)})`)
+    .attr("fill", d => `url(#fg${slug(d.country)})`).attr("stroke", "#fff").attr("stroke-opacity", d => d === selAShip ? 1 : .75)
+    .attr("stroke-width", d => d === selAShip ? .9 : .7).style("stroke-dasharray", d => d.live ? null : null);
+  gas.select(".glow").attr("r", d => d === selAShip ? 26 : 0).attr("fill", "none").attr("stroke-width", 2.5)
+    .attr("stroke", d => flagCols(d.country).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8");
+  gas.select(".flag").attr("x", d => d === selAShip ? 20 : 13).attr("y", -9).attr("font-size", d => d === selAShip ? 13 : 10)
+    .attr("text-anchor", "middle").attr("dominant-baseline", "central").text(d => flagOf(d.country));
+  gas.filter(d => d === selAShip).raise();
+
+  const a = showAis ? ais : [];
+  gAis.selectAll("rect").data(a, d => d.mmsi).join("rect")
+    .attr("class", "ais")
+    .attr("width", 7 / k).attr("height", 7 / k).attr("stroke-width", 1 / k)
+    .attr("transform", d => { const [x, y] = SPJ([d.lon, d.lat]); return `translate(${x},${y}) rotate(45) translate(${-3.5 / k},${-3.5 / k})`; })
+    .on("click", (e, d) => { e.stopPropagation(); showAisShip(d); });
+  gAis.selectAll("text.usflag").data(a, d => d.mmsi).join("text").attr("class", "usflag")
+    .attr("transform", d => { const [x, y] = SPJ([d.lon, d.lat]); return `translate(${x + 9},${y - 7})`; })
+    .attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 9).style("pointer-events", "none").text("🇺🇸");
+
+  // Name label only for the selected ship; flips to the left near the right edge
+  const lab = selected && !hidden.has(selected.type) ? [selected] : [];
+  gLbl.selectAll("text").data(lab, d => d.name).join("text")
+    .attr("class", "lbl sel-lbl")
+    .each(function (d) {
+      const [x, y] = SPJ([d.lon, d.lat]), flip = x > el.clientWidth - 150;
+      d3.select(this).attr("x", flip ? x - 26 : x + 26).attr("y", y + 4).attr("text-anchor", flip ? "end" : "start");
+    })
+    .attr("font-size", 12).attr("stroke-width", 3)
+    .text(d => trunc(d.name.replace(/^USS /, "").replace(/ \(.*\)$/, ""), 22));
+}
+
+// Keep iOS from turning a pinch into page zoom so d3 receives it
+for (const ev of ["gesturestart", "gesturechange", "gestureend"]) document.addEventListener(ev, e => e.preventDefault(), { passive: false });
+const zoom = d3.zoom().scaleExtent([1, 40]).on("zoom", e => {
+  T = e.transform; k = T.k;
+  if (!draw.pending) { draw.pending = true; requestAnimationFrame(() => { draw.pending = false; draw(); }); }
+});
+svg.call(zoom).on("click", () => { hideSheet(); collapsePanel(); });
+$("pnsBtn").onclick = e => { e.stopPropagation(); collapsePanel(); pns.on ? exitPensacola() : enterPensacola(); };
+$("pnsExit").onclick = e => { e.stopPropagation(); exitPensacola(); };
+$("zin").onclick = () => svg.transition().duration(250).call(zoom.scaleBy, 1.8);
+$("zout").onclick = () => svg.transition().duration(250).call(zoom.scaleBy, 1 / 1.8);
+window.addEventListener("resize", size);
+
+
+
+
+// ---------- Ship specs ----------
+let specs = null;
+fetch("data/specs.json", { cache: "no-store" }).then(r => r.json()).then(j => { specs = j; }).catch(() => {});
+function specsHtml(s) {
+  const sp = specs && specs.ships[s.name]; if (!sp) return "";
+  const c = specs.classes[sp.c] || {};
+  const rows = [["Class", c.class], ["Builder", sp.builder], ["Commissioned", sp.commissioned], ["Length", c.length], ["Beam (width)", c.beam],
+    ["Height", c.height], ["Draft", c.draft], ["Displacement", c.displacement], ["Top speed", c.speed], ["Power", c.power],
+    ["Crew", c.crew], ["Carries", c.carries]].filter(r => r[1]);
+  const photo = `https://en.wikipedia.org/wiki/${encodeURIComponent(sp.wiki)}`;
+  return `<div class="tl-head">Ship profile</div>
+    <div class="spec-hero">${shipIcon(s.type, 120)}</div>
+    <div class="spec-grid">${rows.map(([k, v]) => `<div class="spec-k">${esc(k)}</div><div class="spec-v">${esc(v)}</div>`).join("")}</div>
+    <div style="margin-top:8px"><a class="retry spec-link" href="${esc(photo)}" target="_blank" rel="noopener">📷 Photos &amp; full history ↗</a></div>
+    <div class="sub" style="margin-top:4px">Class figures from public Navy fact files, rounded. Exact top speeds aren't published.</div>`;
+}
+
+// ---------- Nearby coastlines for the selected ship ----------
+let countriesGeo = null, near = null;   // near: {ship, list:[{f, name, km, lbl:[lon,lat]}]}
+async function loadCountries() {
+  if (countriesGeo) return countriesGeo;
+  const m = await import("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json/+esm");
+  const t = m.default || m;
+  countriesGeo = topojson.feature(t, t.objects.countries).features
+    .filter(f => d3.geoArea(f) < 2 * Math.PI)
+    .map(f => ({ f, name: f.properties.name, verts: f.geometry.type === "Polygon" ? f.geometry.coordinates.flat() : f.geometry.coordinates.flat(2) }));
+  return countriesGeo;
+}
+async function findNear(s) {
+  const P = [s.lon, s.lat];
+  try { await loadCountries(); } catch { return null; }
+  const scored = countriesGeo.map(c => {
+    let best = Infinity, bv = null;
+    for (const v of c.verts) { const d = d3.geoDistance(P, v); if (d < best) { best = d; bv = v; } }
+    return { ...c, km: best * 6371, nearest: bv };
+  }).sort((a, b) => a.km - b.km);
+  if (!scored.length) return null;
+  const lim = Math.min(600, Math.max(250, scored[0].km * 2.2));
+  let list = scored.filter(c => c.km < lim).slice(0, 4);
+  if (!list.length) list = scored.slice(0, 2);          // open ocean: show the nearest coasts
+  for (const c of list) {                               // label a little inland from the closest coast point
+    const cen = d3.geoCentroid(c.f);
+    c.lbl = d3.geoInterpolate(c.nearest, cen)(c.km > 900 ? 0.15 : 0.3);
+  }
+  return { ship: s, list };
+}
+function drawNear() {
+  const list = near && selected === near.ship ? near.list : [];
+  gNear.selectAll("path").data(list, d => d.name).join("path")
+    .attr("class", "nearc").attr("d", d => spath(d.f));
+  gNearLbl.selectAll("text").data(list, d => d.name).join("text")
+    .attr("class", "near-lbl")
+    .each(function (d) {
+      const [x, y] = SPJ(d.lbl), W = el.clientWidth;
+      d3.select(this).attr("x", Math.max(6, Math.min(W - 6, x))).attr("y", y)
+        .attr("text-anchor", x < 60 ? "start" : x > W - 60 ? "end" : "middle");
+    })
+    .text(d => d.name.toUpperCase());
+}
+function nearHtml(n) {
+  if (!n || !n.list.length) return "";
+  const open = n.list.every(c => c.km >= 600);
+  return `<div class="tl-head">${open ? "Open ocean · nearest coasts" : "Off the coast of"}</div>
+    <div class="near-row">${n.list.map(c => `<span class="tag">${esc(c.name)} · ${c.km < 15 ? "<15" : Math.round(c.km / 5) * 5} km</span>`).join("")}</div>`;
+}
+
+// ---------- Pensacola local view ----------
+const PNS_BOX = { lon0: -87.75, lon1: -86.35, lat0: 29.95, lat1: 30.85 };
+const AC_TYPES = { TEX2: "T-6B Texan II trainer", A119: "TH-73A Thrasher training helicopter", AS65: "MH-65 Dolphin (Coast Guard)",
+  T45: "T-45 Goshawk jet trainer", F35: "F-35 Lightning II", H60: "MH-60 Seahawk", F18S: "F/A-18E/F Super Hornet", F18H: "F/A-18 Hornet",
+  F16: "F-16", F15: "F-15", C130: "C-130 Hercules", C30J: "C-130J", B350: "C-12 / King Air", K35R: "KC-135", C17: "C-17", V22: "V-22 Osprey",
+  TH57: "TH-57 Sea Ranger", P8: "P-8 Poseidon", E6: "E-6 Mercury", U28: "U-28A", C146: "C-146A Wolfhound", MQ9: "MQ-9 Reaper" };
+const ZONES = { bay: ["In Pensacola Bay / sound", "#4fc3f7"], gulf: ["Gulf approach", "#00e5a0"], perdido: ["Perdido Bay", "#a5d6a7"] };
+const pns = { on: false, meta: null, landHi: null, data: { vessels: [], aircraft: [], events: [], stats: {} }, timer: null, err: null };
+
+
+function drawPns() {
+  const k = 1;
+  if (!pns.on) { gPns.selectAll("*").remove(); return; }
+  const P = d => SPJ([d.lon, d.lat]), s = 1 / k;
+  const W = el.clientWidth, inView = ([x, y]) => x > -20 && x < W + 20 && y > -20 && y < el.clientHeight + 20;
+  const water = pns.meta && pns.meta.water ? pns.meta.water : [];
+  gPns.selectAll("text.water").data(water, d => d.name).join("text").attr("class", "water")
+    .attr("x", d => P(d)[0]).attr("y", d => P(d)[1]).attr("text-anchor", "middle").text(d => d.name);
+  // once the base map's own points show, drop the regional markers they would collide with
+  const sites = (pns.meta ? pns.meta.sites : []).filter(x => !(T.k >= 3 && pns.meta.base && /^(NAS PNS|CORRY STA)$/.test(x.short || "")));
+  const gs = gPns.selectAll("g.site").data(sites, d => d.name).join(en => { const x = en.append("g").attr("class", "site"); x.append("rect").attr("class", "hit"); x.append("path"); x.append("text").attr("class", "lbl site-lbl"); return x; });
+  gs.attr("transform", d => `translate(${P(d)})`).style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); openSheet(`<div class="sheet-kicker">INSTALLATION</div><h3>${esc(d.name)}</h3><p style="margin:6px 0 0">${esc(d.note)}</p>${/NAS PNS|Pensacola/i.test(d.short || d.name) && !/Pass|Whiting|Eglin|Hurlburt/i.test(d.name) ? `<div style="margin-top:8px"><button class="retry" id="siteBase">🗺 Open base map</button></div>` : ""}${pnsBackBtn()}`); wirePnsBack();
+      const sb = $("siteBase"); if (sb) sb.onclick = ev => { ev.stopPropagation(); showBaseMap(true); }; });
+  gs.select("rect.hit").attr("x", -10).attr("y", -10).attr("width", 20).attr("height", 20).attr("fill", "transparent");
+  // airfield = square with runway stroke; port = anchor-like diamond; school = circle
+  gs.select("path").attr("class", d => "site-ico " + (d.kind || "air"))
+    .attr("d", d => d.kind === "port" ? "M0,-5L5,0L0,5L-5,0Z" : d.kind === "school" ? "M-4,0a4,4 0 1,0 8,0a4,4 0 1,0 -8,0" : "M-5,-5H5V5H-5Z M-4,4L4,-4");
+  gs.select("text").each(function (d) { const x = P(d)[0], flip = x > W - 90; d3.select(this).attr("x", flip ? -9 : 9).attr("text-anchor", flip ? "end" : "start"); })
+    .attr("y", 4).attr("font-size", 11).attr("stroke-width", 3).text(d => d.short || d.name);
+
+  const vs = pns.data.vessels;
+  gPns.selectAll("path.vsl").data(vs, d => d.mmsi).join("path").attr("class", "vsl")
+    .attr("d", `M0,${-8 * s}L${5 * s},${6 * s}L0,${3 * s}L${-5 * s},${6 * s}Z`)
+    .attr("transform", d => `translate(${P(d)}) rotate(${d.cog ?? 0})`)
+    .attr("fill", d => (ZONES[d.zone] || ZONES.gulf)[1]).attr("stroke", "#fff").attr("stroke-width", .8 * s)
+    .style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); showPnsVessel(d); });
+
+  const ac = pns.data.aircraft;
+  const plane = `M0,${-9 * s}L${1.6 * s},${-3 * s}L${8 * s},${1 * s}L${8 * s},${3 * s}L${1.6 * s},${1 * s}L${1.2 * s},${6 * s}L${3.5 * s},${8 * s}L${3.5 * s},${9.5 * s}L0,${8.5 * s}L${-3.5 * s},${9.5 * s}L${-3.5 * s},${8 * s}L${-1.2 * s},${6 * s}L${-1.6 * s},${1 * s}L${-8 * s},${3 * s}L${-8 * s},${1 * s}L${-1.6 * s},${-3 * s}Z`;
+  const ga = gPns.selectAll("g.ac").data(ac, d => d.hex).join(en => { const x = en.append("g").attr("class", "ac"); x.append("path"); x.append("text").attr("class", "lbl"); return x; });
+  ga.attr("transform", d => `translate(${P(d)})`).style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); showPnsAircraft(d); });
+  ga.select("path").attr("d", plane).attr("transform", d => `rotate(${d.track ?? 0})`).attr("fill", "#ffd54f").attr("stroke", "#0a1520").attr("stroke-width", .8 * s);
+  ga.select("text").attr("y", 4).attr("font-size", 10).attr("stroke-width", 3)
+    .each(function (d) { const x = P(d)[0], flip = x > W - 70; d3.select(this).attr("x", flip ? -11 : 11).attr("text-anchor", flip ? "end" : "start"); })
+    .text(d => inView(P(d)) ? (d.flight || d.reg || d.hex) : "");
+  drawPois();
+}
+
+// ---------- NAS Pensacola base map (OpenStreetMap, built by Supabase pns-basemap) ----------
+const BM = { feats: null, loading: false, err: null, sel: null, src: "" };
+const POI_CAT = { gate: ["Entry gate", "#ffb000", "⛩"], air: ["Airfield", "#cfd8dc", "✈"], food: ["Food / galley", "#ff7a59", "🍽"],
+  barracks: ["Barracks", "#c08bff", "🛏"], shop: ["Shopping (NEX / commissary)", "#39ff9c", "🛒"], svc: ["Services", "#3ad7ff", "ⓘ"],
+  medical: ["Medical", "#ff5a7a", "✚"], history: ["Museum / historic", "#e9c46a", "🏛"] };
+async function loadBasemap() {
+  if (BM.feats || BM.loading) return;
+  BM.loading = true;
+  try {
+    if (mcp === undefined) mcp = await claude.use("mcp");
+    if (!mcp) throw Object.assign(new Error("needs Supabase"), { code: "no_mcp" });
+    const d = await runSql(`select data from pns_basemap where id = 1`);
+    if (!d || !d.origin) throw new Error("base map not built yet");
+    const [ox, oy] = d.origin;
+    const dec = str => str.split(" ").map(q => { const [x, y] = q.split(","); return [ox + x / 1e5, oy + y / 1e5]; });
+    const F = {};
+    for (const k of ["taxiway", "apron", "bld", "coast", "water", "golf", "beach", "base"]) F[k] = (d[k] || []).map(dec);
+    F.runway = (d.runway || []).map(([str, ref]) => ({ pts: dec(str), ref }));
+    F.major = (d.major || []).map(([str, name]) => ({ pts: dec(str), name }));
+    F.minor = (d.minor || []).map(([str, name]) => ({ pts: dec(str), name }));
+    BM.feats = F; BM.src = d.source || "© OpenStreetMap contributors"; BM.err = null;
+  } catch (e) { BM.err = e.code === "no_mcp" ? "The base map needs your Supabase connection." : "Couldn't load the base map (" + (e.code || e.message) + ")."; }
+  BM.loading = false;
+  draw();
+}
+function drawBasemap() {
+  const on = pns.on && BM.feats && T.k >= 3;
+  if (!on) { gBase.selectAll("*").remove(); if (!pns.on) gPns.selectAll("g.poi").remove(); return; }
+  const W = el.clientWidth, H = el.clientHeight, F = BM.feats;
+  // planar path string from projected points; skips shapes entirely off screen
+  const d = (rings, closed) => { let out = "";
+    for (const r of rings) { const pp = r.map(SPJ); let minx = 1e9, maxx = -1e9, miny = 1e9, maxy = -1e9;
+      for (const [x, y] of pp) { if (x < minx) minx = x; if (x > maxx) maxx = x; if (y < miny) miny = y; if (y > maxy) maxy = y; }
+      if (maxx < -50 || minx > W + 50 || maxy < -50 || miny > H + 50) continue;
+      out += "M" + pp.map(p => p[0].toFixed(1) + "," + p[1].toFixed(1)).join("L") + (closed ? "Z" : ""); }
+    return out; };
+  // pixels per metre at the base, for true-width runways and taxiways
+  const a = SPJ([-87.30, 30.35]), b = SPJ([-87.29, 30.35]), ppm = Math.hypot(b[0] - a[0], b[1] - a[1]) / 961;
+  const layers = [
+    ["bm-base", d(F.base, true)], ["bm-beach", d(F.beach, true)], ["bm-golf", d(F.golf, true)], ["bm-water", d(F.water, true)],
+    ["bm-apron", d(F.apron, true)], ["bm-taxi", d(F.taxiway, false)], ["bm-rwy", d(F.runway.map(r => r.pts), false)],
+    ["bm-rwyc", T.k >= 8 ? d(F.runway.map(r => r.pts), false) : ""],
+    ["bm-minor", T.k >= 6 ? d(F.minor.map(r => r.pts), false) : ""], ["bm-major", d(F.major.map(r => r.pts), false)],
+    ["bm-bld", T.k >= 9 ? d(F.bld, true) : ""], ["bm-coast", d(F.coast, false)]];
+  gBase.selectAll("path").data(layers, l => l[0]).join("path").attr("class", l => l[0]).attr("d", l => l[1])
+    .style("stroke-width", l => l[0] === "bm-rwy" ? Math.max(3, 45 * ppm) + "px" : l[0] === "bm-taxi" ? Math.max(1, 20 * ppm) + "px" : null);
+  // runway designators at the runway ends
+  const rl = T.k >= 6 ? F.runway.filter(r => r.ref).flatMap(r => { const [e1, e2] = r.ref.split("/"), p0 = r.pts[0], p1 = r.pts[r.pts.length - 1];
+    return [{ t: e1, p: p0, id: r.ref + "a" }, { t: e2, p: p1, id: r.ref + "b" }]; }) : [];
+  gBase.selectAll("text.bm-rwylbl").data(rl, x => x.id).join("text").attr("class", "bm-rwylbl")
+    .attr("x", x => SPJ(x.p)[0]).attr("y", x => SPJ(x.p)[1] + 4).attr("text-anchor", "middle").text(x => x.t);
+  // street names for major roads when zoomed in
+  const seen = new Set(), sl = T.k >= 14 ? F.major.concat(T.k >= 22 ? F.minor : []).filter(r => r.name && !seen.has(r.name) && seen.add(r.name)).map(r => ({ id: r.name, p: r.pts[Math.floor(r.pts.length / 2)] }))
+    .filter(x => { const [px, py] = SPJ(x.p); return px > 10 && px < W - 60 && py > 10 && py < H - 10; }) : [];
+  gBase.selectAll("text.bm-lbl").data(sl, x => x.id).join("text").attr("class", "bm-lbl").attr("font-size", 9)
+    .attr("x", x => SPJ(x.p)[0]).attr("y", x => SPJ(x.p)[1]).text(x => trunc(x.id.toUpperCase(), 22)).style("opacity", .7);
+}
+function drawPois() {
+  const show = pns.on && T.k >= 3 && pns.meta && pns.meta.base;
+  const list = show ? pns.meta.base.poi : [];
+  const W = el.clientWidth, labelAll = T.k >= 60;
+  const gp = gPns.selectAll("g.poi").data(list, x => x.name).join(en => { const x = en.append("g").attr("class", "poi").style("cursor", "pointer");
+    x.append("circle").attr("class", "ring"); x.append("circle").attr("class", "dot"); x.append("text").attr("class", "ico"); x.append("text").attr("class", "lbl"); return x; });
+  gp.attr("transform", x => `translate(${SPJ([x.lon, x.lat])})`).classed("on", x => x === BM.sel)
+    .on("click", (e, x) => { e.stopPropagation(); showPoi(x); });
+  gp.select(".ring").attr("r", x => x === BM.sel ? 16 : 0).attr("fill", "none").attr("stroke", x => POI_CAT[x.cat][1]).attr("stroke-width", 2);
+  gp.select(".dot").attr("r", x => x === BM.sel ? 11 : 9).attr("fill", "rgba(6,14,18,.9)").attr("stroke", x => POI_CAT[x.cat][1]).attr("stroke-width", 1.6);
+  gp.select(".ico").attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 10).attr("fill", x => POI_CAT[x.cat][1]).text(x => POI_CAT[x.cat][2]);
+  // Greedy label placement: selected first, then gates, airfield, galley/barracks, shops, the rest; skip overlaps
+  const PR = { gate: 1, air: 2, food: 3, barracks: 3, shop: 4, medical: 5, history: 6, svc: 7 }, boxes = [], shown = new Set();
+  for (const x of [...list].sort((p, q) => (p === BM.sel ? -1 : q === BM.sel ? 1 : PR[p.cat] - PR[q.cat]))) {
+    const [px, py] = SPJ([x.lon, x.lat]), w = x.short.length * 6.6 + 4, flip = px > W - 110;
+    const bx = [flip ? px - 13 - w : px + 13, py - 7, w, 13];
+    const dotHit = list.some(o => o !== x && (([ox, oy]) => ox > bx[0] - 8 && ox < bx[0] + bx[2] + 8 && oy > bx[1] - 6 && oy < bx[1] + bx[3] + 6)(SPJ([o.lon, o.lat])));
+    if (x !== BM.sel && (boxes.some(b => bx[0] < b[0] + b[2] && b[0] < bx[0] + bx[2] && bx[1] < b[1] + b[3] && b[1] < bx[1] + bx[3]) || (dotHit && !labelAll))) continue;
+    boxes.push(bx); shown.add(x);
+  }
+  gp.select(".lbl").each(function (x) { const px = SPJ([x.lon, x.lat])[0], flip = px > W - 110; d3.select(this).attr("x", flip ? -13 : 13).attr("text-anchor", flip ? "end" : "start"); })
+    .attr("y", 4).attr("font-size", 10).attr("stroke-width", 3)
+    .text(x => shown.has(x) ? x.short : "");
+  gp.filter(x => x === BM.sel).raise();
+}
+function showPoi(x) {
+  const c = POI_CAT[x.cat];
+  openSheet(`<div class="sheet-kicker">NAS PENSACOLA // ${esc(c[0].toUpperCase())}</div><h3><span style="color:${c[1]}">${c[2]}</span> ${esc(x.name)}</h3>
+    ${x.note ? `<p style="margin:6px 0 0">${esc(x.note)}</p>` : ""}
+    ${x.approx ? `<div class="sub" style="margin-top:6px">Approximate spot, placed from the published street address.</div>` : ""}
+    <div style="margin-top:8px"><button class="retry" id="bmBack">🗺 Base map legend</button></div>`);
+  BM.sel = x; draw();
+  $("bmBack").onclick = ev => { ev.stopPropagation(); showBaseMap(false); };
+}
+async function showBaseMap(fit = true) {
+  const bm = pns.meta && pns.meta.base;
+  if (!bm) return;
+  const cats = Object.entries(POI_CAT).map(([k, [lab, col, ico]]) => {
+    const items = bm.poi.filter(p => p.cat === k);
+    return items.length ? `<div class="tl-head" style="color:${col}">${ico} ${esc(lab)}</div>` + items.map((p, i) => `<button class="contact" data-n="${esc(p.name)}"><span style="color:${col};width:18px;text-align:center">${ico}</span><span>${esc(p.name)}</span></button>`).join("") : "";
+  }).join("");
+  openSheet(`<div class="sheet-kicker">INSTALLATION // BASE MAP</div><h3>NAS Pensacola & Corry Station</h3>
+    <div class="sub">${BM.loading ? "Loading map…" : BM.err ? esc(BM.err) : "Runways, taxiways, roads and buildings · zoom in for building outlines"} · <a href="#" id="bmSum">← Pensacola overview</a></div>
+    ${cats}
+    <div class="sub" style="margin-top:8px">${esc(bm.note)} Map data ${esc(BM.src || "© OpenStreetMap contributors")}.</div>`);
+  $("sheetBody").querySelectorAll(".contact").forEach(b => b.onclick = ev => { ev.stopPropagation(); const p = bm.poi.find(q => q.name === b.dataset.n); if (p) { showPoi(p); fitPoints([p], 40); } });
+  const s2 = $("bmSum"); if (s2) s2.onclick = ev => { ev.preventDefault(); ev.stopPropagation(); showPnsSummary(); };
+  if (fit) fitPoints(bm.fit.map(([lon, lat]) => ({ lon, lat })), 60);
+  if (!BM.feats && !BM.loading) { await loadBasemap(); if ($("sheet").style.display !== "none" && !BM.sel) showBaseMap(false); }
+}
+
+function pnsBackBtn() { return `<div style="margin-top:8px"><button class="retry" id="pnsBackSheet">← Pensacola overview</button></div>`; }
+function wirePnsBack() { const b = $("pnsBackSheet"); if (b) b.onclick = ev => { ev.stopPropagation(); showPnsSummary(); }; }
+
+async function pnsLoad() {
+  try {
+    if (mcp === undefined) mcp = await claude.use("mcp");
+  } catch { mcp = null; }
+  if (!mcp) { pns.err = "Live Pensacola data needs your Supabase connection"; return; }
+  try {
+    pns.data = await runSql(`select json_build_object(
+      'vessels', coalesce((select json_agg(json_build_object('mmsi',mmsi,'name',name,'type',ship_type,'lat',lat,'lon',lon,'sog',sog,'cog',cog,'zone',zone,'t',seen_at) order by seen_at desc) from pns_vessels where seen_at > now() - interval '24 hours'), '[]'::json),
+      'aircraft', coalesce((select json_agg(json_build_object('hex',hex,'flight',flight,'reg',reg,'type',type,'lat',lat,'lon',lon,'alt',alt,'gs',gs,'track',track,'t',seen_at) order by flight) from pns_aircraft where seen_at > now() - interval '30 minutes'), '[]'::json),
+      'events', coalesce((select json_agg(json_build_object('name',name,'mmsi',mmsi,'event',event,'t',seen_at) order by seen_at desc) from (select * from pns_port_events where seen_at > now() - interval '7 days' order by seen_at desc limit 30) e), '[]'::json),
+      'stats', json_build_object('vessels45', (select count(distinct mmsi) from pns_vessel_tracks), 'aircraft24', (select count(distinct hex) from pns_aircraft_tracks where seen_at > now() - interval '24 hours'),
+                                 'lastRun', (select ran_at from pns_runs order by id desc limit 1)))`);
+    if (!pns.data || !Array.isArray(pns.data.vessels) || !Array.isArray(pns.data.aircraft)) {
+      pns.data = { vessels: [], aircraft: [], events: [], stats: {} }; throw Object.assign(new Error("bad reply"), { code: "parse_error" });
+    }
+    pns.err = null;
+  } catch (e) { pns.err = `Couldn't load live Pensacola data (${(e && (e.code || e.name)) || "error"}${e && e.message ? ": " + String(e.message).slice(0, 80) : ""})`; }
+}
+
+const ago = t => { const m = Math.round((Date.now() - new Date(t).getTime()) / 60000); return m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
+
+function showPnsSummary() {
+  const d = pns.data, st = d.stats || {};
+  const acRows = d.aircraft.map(a => `<div class="tl-row"><span class="tl-date">${esc(a.flight || a.reg || a.hex)}</span><span>${esc(AC_TYPES[a.type] || a.type || "Unknown type")}${a.alt > 0 ? ` · ${Math.round(a.alt / 100) * 100} ft` : " · on ground / low"}</span></div>`).join("");
+  const vRows = d.vessels.slice(0, 15).map(v => `<div class="tl-row"><span class="tl-date">${esc(ago(v.t))}</span><span>${esc(v.name || "MMSI " + v.mmsi)} · ${esc((ZONES[v.zone] || ZONES.gulf)[0])}</span></div>`).join("");
+  const eRows = d.events.map(e => `<div class="tl-row"><span class="tl-date">${esc(new Date(e.t).toLocaleDateString([], { month: "short", day: "numeric" }))}</span><span>${esc(e.name || "MMSI " + e.mmsi)} ${esc(e.event)}</span></div>`).join("");
+  const news = (pns.meta ? pns.meta.news : []).map(n => `<div class="src"><span class="sub">${esc(fmtDay(n.date))}</span> <a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a><br><span class="sub">${esc(n.summary)}</span></div>`).join("");
+  openSheet(`<div class="sheet-kicker">SECTOR // PENSACOLA</div><h3>Pensacola area</h3>
+    <div class="sub">${st.lastRun ? "Live data updated " + esc(ago(st.lastRun)) : "Live data every 10 min"} · <a href="#" id="pnsWorld">← back to world map</a></div>
+    <div style="margin-top:8px"><button class="retry" id="pnsBase">🗺 NAS Pensacola base map — gates, galley, barracks, NEX, airfield</button></div>
+    ${pns.err ? `<p style="margin:6px 0 0;color:#ffb4a9">${esc(pns.err)} <button class="retry" id="pnsRetry">Tap to load</button></p>` : ""}
+    <div class="stats" style="margin-top:8px">
+      <div class="stat"><b>${d.aircraft.length}</b><span>Military aircraft now</span></div>
+      <div class="stat"><b>${st.aircraft24 ?? "–"}</b><span>Aircraft, 24 h</span></div>
+      <div class="stat"><b>${d.vessels.length}</b><span>Vessels, 24 h</span></div>
+    </div>
+    <div class="tl-head">Military aircraft overhead (last 30 min)</div>${acRows || '<div class="sub">None broadcasting right now.</div>'}
+    <div class="tl-head">Port movements (7 days)</div>${eRows || '<div class="sub">No bay entries/exits logged yet — this fills in over the coming days.</div>'}
+    <div class="tl-head">Vessels seen (24 h)</div>${vRows || '<div class="sub">None yet. AIS receiver coverage here is thin, so sightings are sparse.</div>'}
+    <div class="tl-head">Base news</div>${news}
+    <div class="sub" style="margin-top:6px">Aircraft: public ADS-B (adsb.lol), military-flagged only. Ships: AIS (aisstream.io). Many military aircraft fly without broadcasting.</div>`);
+  const bb = $("pnsBase"); if (bb) bb.onclick = ev => { ev.stopPropagation(); showBaseMap(true); };
+  const w = $("pnsWorld"); if (w) w.onclick = ev => { ev.preventDefault(); ev.stopPropagation(); exitPensacola(); };
+  const r = $("pnsRetry"); if (r) r.onclick = async ev => { ev.stopPropagation(); await pnsLoad(); draw(); showPnsSummary(); };
+}
+
+async function showPnsAircraft(a) {
+  const head = `<h3>${esc(a.flight || a.reg || a.hex)}</h3>
+    <div class="sub">${esc(AC_TYPES[a.type] || a.type || "Unknown type")} · seen ${esc(ago(a.t))}</div>
+    <p style="margin:6px 0 0">Altitude ${a.alt > 0 ? esc(a.alt.toLocaleString()) + " ft" : "on ground / very low"} · Speed ${esc(a.gs != null ? Math.round(a.gs) + " kt" : "?")} · Heading ${esc(a.track != null ? Math.round(a.track) + "°" : "?")}<br>
+    <span class="sub">Tail ${esc(a.reg || "–")} · ICAO ${esc(a.hex)}</span></p>`;
+  openSheet(head + `<div class="tl-head">Loading 24-hour track…</div>` + pnsBackBtn()); wirePnsBack();
+  try {
+    const hx = String(a.hex).replace(/[^0-9a-f]/gi, "");
+    const pts = await runSql(`select coalesce(json_agg(json_build_object('lat',lat,'lon',lon,'alt',alt,'t',seen_at) order by seen_at), '[]'::json) from pns_aircraft_tracks where hex = '${hx}' and seen_at > now() - interval '24 hours'`);
+    track = pts.length > 1 ? { color: "#ffd54f", dashed: true, small: true, pts } : null; draw();
+    $("sheetBody").innerHTML = head + `<div class="tl-head">${pts.length} sightings in the last 24 h (every 10 min while broadcasting)</div>` + pnsBackBtn(); wirePnsBack();
+  } catch { $("sheetBody").innerHTML = head + pnsBackBtn(); wirePnsBack(); }
+}
+
+async function showPnsVessel(v) {
+  const head = `<h3>${esc(v.name || "Unknown vessel")}</h3>
+    <div class="sub">${esc((ZONES[v.zone] || ZONES.gulf)[0])} · seen ${esc(ago(v.t))} · MMSI ${esc(v.mmsi)}</div>
+    <p style="margin:6px 0 0">Speed ${esc(v.sog ?? "?")} kn · Course ${esc(v.cog ?? "?")}°</p>`;
+  openSheet(head + `<div class="tl-head">Loading 45-day track…</div>` + pnsBackBtn()); wirePnsBack();
+  try {
+    const mm = String(v.mmsi).replace(/\D/g, "");
+    const pts = await runSql(`select coalesce(json_agg(json_build_object('lat',lat,'lon',lon,'zone',zone,'t',seen_at) order by seen_at), '[]'::json) from (select * from pns_vessel_tracks where mmsi = '${mm}' order by seen_at desc limit 2000) x`);
+    const evs = pns.data.events.filter(e => e.mmsi === v.mmsi);
+    track = pts.length > 1 ? { color: (ZONES[v.zone] || ZONES.gulf)[1], dashed: false, small: true, pts } : null; draw();
+    $("sheetBody").innerHTML = head + `<div class="tl-head">${pts.length} positions logged (45 days)</div>` +
+      (evs.length ? timelineHtml(evs.map(e => ({ when: new Date(e.t).toLocaleDateString([], { month: "short", day: "numeric" }), where: e.event }))) : "") + pnsBackBtn();
+    wirePnsBack();
+  } catch { $("sheetBody").innerHTML = head + pnsBackBtn(); wirePnsBack(); }
+}
+
+async function enterPensacola() {
+  pns.on = true; document.body.classList.add("pns-mode"); $("pnsBtn").textContent = "🌐 WORLD";
+  zoom.scaleExtent([1, 120]);
+  if (!pns.meta) { try { pns.meta = await (await fetch("data/pensacola.json", { cache: "no-store" })).json(); } catch { pns.meta = { sites: [], news: [] }; } }
+  if (!pns.landHi) {
+    import("https://cdn.jsdelivr.net/npm/world-atlas@2/land-10m.json/+esm")
+      .then(m => { const t = m.default || m; const L = topojson.feature(t, t.objects.land);
+        const polys = L.features.flatMap(f => f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates)
+          .filter(p => d3.geoArea({ type: "Polygon", coordinates: p }) < 2 * Math.PI);   // drop inverted "whole globe" artefacts
+        pns.landHi = { type: "MultiPolygon", coordinates: polys }; if (pns.on) size(); })
+      .catch(() => {});
+  }
+  collapsePanel();
+  await pnsLoad(); draw(); showPnsSummary(); loadBasemap();
+  // Core training area (NAS Pensacola, Whiting Field, Pensacola Pass, near Gulf) in a local projection
+  svg.call(zoom.transform, d3.zoomIdentity); size();
+  clearInterval(pns.timer); pns.timer = setInterval(async () => { if (pns.on) { await pnsLoad(); draw(); } }, 5 * 60 * 1000);
+}
+function exitPensacola() {
+  pns.on = false; document.body.classList.remove("pns-mode"); clearInterval(pns.timer); $("pnsBtn").textContent = "📍 PNS";
+  track = null; $("sheet").style.display = "none";
+  zoom.scaleExtent([1, 40]);
+  svg.call(zoom.transform, d3.zoomIdentity); size();
+}
+
+// ---------- Detail sheet ----------
+function collapsePanel() {
+  if (!$("panel").classList.contains("collapsed")) { $("panel").classList.add("collapsed"); $("toggle").textContent = "Layers ▾"; }
+}
+function timelineHtml(rows) {
+  return `<div class="tl">${rows.map((r, i) =>
+    `<div class="tl-row${i === 0 ? " now" : ""}"><span class="tl-date">${esc(r.when)}</span><span>${esc(r.where)}</span></div>`).join("")}</div>`;
+}
+
+function showShip(s) {
+  selected = s; selAlly = null; selAShip = null;
+  const t = TYPES[s.type] || TYPES.other;
+  const hist = history.ships[s.name] || [];
+  track = hist.length > 1 ? {
+    color: t.hex, dashed: true,
+    pts: hist.map(p => ({ lat: p.lat, lon: p.lon, label: fmtDay(p.date) }))
+  } : null;
+  if (track) track.coords = seaPath(track.pts);
+  near = null;
+  findNear(s).then(n => { if (selected !== s || !n) return; near = n; draw();
+    const slot = $("nearSlot"); if (slot) slot.innerHTML = nearHtml(n); });
+  draw();
+  const rows = hist.slice().reverse().map(p => ({ when: fmtDay(p.date), where: p.area }));
+  const moved = new Set(hist.map(p => p.area)).size;
+  $("sheetBody").innerHTML = `<div class="sheet-kicker">TARGET // ${esc((TYPES[s.type] || TYPES.other).label.toUpperCase())}</div><h3>${shipIcon(s.type, 30)} ${esc(s.name)} <span title="United States">🇺🇸</span></h3>
+    <div class="sub">${esc(s.area)} · approximate</div>
+    <span class="tag">🇺🇸 U.S. Navy</span><span class="tag" style="border-color:${t.hex}">${esc(t.label)}</span><span class="tag">${esc(s.group)}</span>
+    <p style="margin:6px 0 0">${esc(s.note)}</p>
+    <div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div>
+    ${specsHtml(s)}
+    ${hist.length ? `<div class="tl-head">Last 45 days · ${hist.length} weekly reports · ${moved} location${moved === 1 ? "" : "s"}</div>${timelineHtml(rows)}
+    <div class="sub" style="margin-top:4px">Dashed line links weekly positions along main sea lanes. It is not the ship's actual route.</div>` : ""}`;
+  collapsePanel();
+  $("sheet").style.display = "block";
+  fitTrack();
+}
+
+async function showAisShip(v) {
+  selected = null; track = null; selAlly = null; selAShip = null; draw();
+  const head = `<h3>${esc(v.name || "Unknown vessel")} <span title="United States">🇺🇸</span></h3>
+    <div class="sub">Live AIS · MMSI ${esc(v.mmsi)} · U.S. Navy / Military Sealift Command</div>
+    <p style="margin:6px 0 0">Speed ${esc(v.sog ?? "?")} kn · Course ${esc(v.cog ?? "?")}°<br>
+    ${esc(v.lat.toFixed(3))}, ${esc(v.lon.toFixed(3))}<br>
+    <span class="sub">Last seen ${esc(new Date(v.time).toLocaleString())}</span></p>`;
+  $("sheetBody").innerHTML = head + `<div class="tl-head">Loading 45-day track…</div>`;
+  collapsePanel();
+  $("sheet").style.display = "block";
+  try {
+    if (!mcp) throw new Error("no connector");
+    const mm = String(v.mmsi).replace(/\D/g, "");
+    const pts = await runSql(`select coalesce(json_agg(json_build_object('lat',lat,'lon',lon,'t',seen_at) order by seen_at), '[]'::json)
+               from (select lat, lon, seen_at from navy_ais_tracks where mmsi = '${mm}' and seen_at > now() - interval '45 days'
+                     order by seen_at desc limit 2000) x`);
+    track = pts.length > 1 ? { color: "#00e5a0", dashed: false, small: true, pts: pts.map(p => ({ lat: p.lat, lon: p.lon })) } : null;
+    draw();
+    // One timeline row per day: last fix of that day
+    const byDay = new Map();
+    for (const p of pts) byDay.set(new Date(p.t).toDateString(), p);
+    const tl = [...byDay.values()].reverse().map(p => ({
+      when: new Date(p.t).toLocaleDateString([], { month: "short", day: "numeric" }),
+      where: `${p.lat.toFixed(2)}, ${p.lon.toFixed(2)}`
+    }));
+    $("sheetBody").innerHTML = head + `<div class="tl-head">Tracked since ${pts.length ? esc(new Date(pts[0].t).toLocaleDateString()) : "–"} · ${pts.length} fixes</div>` + timelineHtml(tl);
+    fitTrack();
+  } catch {
+    $("sheetBody").innerHTML = head + `<div class="sub" style="margin-top:6px">Track history needs your Supabase connection.</div>`;
+  }
+}
+function srcList(srcs) {
+  if (!srcs || !srcs.length) return "";
+  return `<div class="tl-head">Sources</div>` + srcs.map(s =>
+    `<div class="src"><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a></div>`).join("");
+}
+function openSheet(html) {
+  selected = null; track = null; selAlly = null; selAShip = null; BM.sel = null; draw();
+  $("sheetBody").innerHTML = html; collapsePanel(); $("sheet").style.display = "block";
+}
+function showBase(b) {
+  const [label, color] = BRANCH[b.branch] || BRANCH.joint;
+  openSheet(`<div class="sheet-kicker">INSTALLATION</div><h3>${esc(b.name)}</h3><div class="sub">${esc(b.where)} · US installation</div>
+    <span class="tag" style="border-color:${color}">${esc(label)}</span>
+    <p style="margin:6px 0 0">${esc(b.note)}</p>`);
+}
+function showDeploy(d) {
+  const [label, color] = DKIND[d.kind] || DKIND.rotation;
+  openSheet(`<div class="sheet-kicker">INTEL // DEPLOYMENT</div><h3>${esc(d.title)}</h3><div class="sub">${esc(d.region)} · since ${esc(d.since)}</div>
+    <span class="tag" style="border-color:${color}">${esc(label)}</span>${(d.branches || []).map(b => `<span class="tag">${esc((BRANCH[b] || [b])[0])}</span>`).join("")}
+    <p style="margin:6px 0 2px"><b>Size:</b> ${esc(d.size)}</p>
+    <p style="margin:2px 0"><b>Status:</b> ${esc(d.status)}</p>
+    ${d.units && d.units.length ? `<div class="tl-head">Units / assets</div>` + d.units.map(u => `<div class="src">• ${esc(u)}</div>`).join("") : ""}
+    ${srcList(d.sources)}
+    <div class="sub" style="margin-top:6px">Marker shows the country or region, not unit positions. Data as of ${esc(deployMeta.asOf || "")}.</div>`);
+}
+function showAlly(a) {
+  openSheet(`<div class="sheet-kicker">ALLIED FORCE</div><div style="display:flex;height:4px;margin:2px 0 6px;box-shadow:0 0 8px rgba(255,255,255,.25)">${flagCols((a.countries || [])[0]).map(c => `<span style="flex:1;background:${c}"></span>`).join("")}</div><h3>${flagOf((a.countries || [])[0])} ${esc(a.title)}</h3><div class="sub">${esc(a.place)}, ${esc(a.host)}</div>
+    <span class="tag" style="border-color:#7dd3fc">${a.kind === "battlegroup" ? "NATO battlegroup" : "Allied base"}</span><span class="tag">Lead: ${flagOf((a.countries || [])[0])} ${esc(a.lead)}</span>
+    ${allyCountry ? `<p style="margin:6px 0 0"><b>${esc(allyCountry)}:</b> ${(a.lead || "").includes(allyCountry) ? "leads" : a.host === allyCountry ? "host country" : "contributes troops"}</p>` : ""}
+    <p style="margin:6px 0 0">${esc(a.contributors)}</p>
+    <div style="margin-top:6px">${(a.countries || []).map(c => `<button class="chip${c === allyCountry ? " on" : ""}" data-c="${esc(c)}">${flagOf(c)} ${esc(c)}</button>`).join("")}</div>
+    ${a.src ? srcList([a.src]) : ""}`);
+  selAlly = a; draw();
+  $("sheetBody").querySelectorAll(".chip").forEach(b => b.onclick = ev => { ev.stopPropagation(); setAllyCountry(b.dataset.c === allyCountry ? "" : b.dataset.c, true); showAlly(a); });
+}
+
+async function showAllyShip(d) {
+  const t = TYPES[d.type] || TYPES.other, stripe = `<div style="display:flex;height:4px;margin:2px 0 6px;box-shadow:0 0 8px rgba(255,255,255,.25)">${flagCols(d.country).map(c => `<span style="flex:1;background:${c}"></span>`).join("")}</div>`;
+  const head = `<div class="sheet-kicker">ALLIED // ${esc(d.live ? "LIVE AIS" : t.label.toUpperCase())}</div>${stripe}
+    <h3>${allyShipIcon(d.type, d.country, 34)} ${esc(d.name)} <span title="${esc(d.country)}">${flagOf(d.country)}</span></h3>
+    <span class="tag" style="border-color:var(--gc,#7dd3fc)">${flagOf(d.country)} ${esc((NAVY_NAME[d.country] || d.country).toUpperCase())}</span>${d.cls ? `<span class="tag">${esc(d.cls)}</span>` : ""}`;
+  openSheet(d.live
+    ? head + `<p style="margin:6px 0 0">Speed ${esc(d.sog ?? "?")} kn · Course ${esc(d.cog ?? "?")}°<br>${esc(d.lat.toFixed(3))}, ${esc(d.lon.toFixed(3))}<br>
+        <span class="sub">Last seen ${esc(new Date(d.time).toLocaleString())} · MMSI ${esc(d.mmsi)}</span></p><div class="tl-head" id="aTrk">Loading 45-day track…</div>`
+    : head + `<p style="margin:6px 0 2px"><b>Area:</b> ${esc(d.area)}</p><p style="margin:2px 0"><b>Last reported:</b> ${esc(d.reported)}</p>
+        <p style="margin:6px 0 0">${esc(d.note)}</p>${d.src ? srcList([d.src]) : ""}
+        <div class="sub" style="margin-top:6px">Position is approximate, placed in open water near the reported area. Allied list as of ${esc(allyShipsMeta.asOf || "")}.</div>`);
+  selAShip = d; draw();
+  if (!d.live) return;
+  try {
+    if (!mcp) throw new Error("no connector");
+    const mm = String(d.mmsi).replace(/\D/g, "");
+    const pts = await runSql(`select coalesce(json_agg(json_build_object('lat',lat,'lon',lon,'t',seen_at) order by seen_at), '[]'::json)
+      from (select lat, lon, seen_at from allied_ais_tracks where mmsi = '${mm}' and seen_at > now() - interval '45 days' order by seen_at desc limit 2000) x`);
+    if (selAShip !== d) return;
+    track = pts.length > 1 ? { color: flagCols(d.country).find(c => c !== "#ffffff") || "#38bdf8", dashed: false, small: true, pts: pts.map(p => ({ lat: p.lat, lon: p.lon })) } : null;
+    draw(); if (track) fitTrack();
+    const el2 = $("aTrk"); if (el2) el2.textContent = `Tracked since ${pts.length ? new Date(pts[0].t).toLocaleDateString() : "–"} · ${pts.length} fixes`;
+  } catch { const el2 = $("aTrk"); if (el2) el2.textContent = "Track history needs your Supabase connection."; }
+}
+
+function fillAllyCountries() {
+  const cur = allyCountry;
+  const all = [...allyShips, ...allyAis];
+  const cs = [...new Set([...allies.flatMap(a => a.countries || []), ...all.map(d => d.country)])].filter(Boolean).sort((a, b) => a.localeCompare(b));
+  $("allyCountry").innerHTML = `<option value="">All ally countries</option>` + cs.map(c => {
+    const n = allies.filter(a => (a.countries || []).includes(c)).length + all.filter(d => d.country === c).length;
+    return `<option value="${esc(c)}">${flagOf(c)} ${esc(c)} (${n})</option>`; }).join("");
+  $("allyCountry").value = cur;
+}
+
+function setAllyCountry(c, keepSheet) {
+  allyCountry = c; $("allyCountry").value = c;
+  if (c && !show.allies) { show.allies = true; document.querySelector('[data-g="allies"]').checked = true; }
+  const n = c ? allies.filter(a => (a.countries || []).includes(c)).length : allies.length;
+  $("c-allies").textContent = n; $("c-allyShips").textContent = aShipList().length;
+  draw();
+  if (c && (n || aShipList().length) && !keepSheet) {
+    const pts = [...allies.filter(a => (a.countries || []).includes(c)), ...(show.allyShips ? aShipList() : [])];
+    track = null; fitPoints(pts);
+  }
+}
+const trunc = (s, n) => s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s;
+function openCluster(c) {
+  if (T.k < 30) { fitPoints(c.members, 40); return; }      // zoom in until they separate
+  openSheet(`<div class="sheet-kicker">CONTACTS // ${c.members.length} SHIPS</div><h3>${esc(c.members[0].area)}</h3>
+    ${c.members.map((s, i) => `<button class="contact" data-i="${i}">${shipIcon(s.type, 26)}<span>${esc(s.name)}</span></button>`).join("")}`);
+  $("sheetBody").querySelectorAll(".contact").forEach(b => b.onclick = ev => { ev.stopPropagation(); showShip(c.members[+b.dataset.i]); });
+}
+function visibleBox() {
+  const w = el.clientWidth, h = el.clientHeight;
+  const top = $("panel").getBoundingClientRect().bottom + 10;
+  const sheetR = $("sheet").getBoundingClientRect();
+  const wide = w >= 800;
+  const bottom = (!wide && sheetR.height) ? sheetR.top - 10 : h - 10;
+  const right = (wide && sheetR.width) ? sheetR.left - 10 : w;
+  return { left: 0, top, width: Math.max(80, right), height: Math.max(80, bottom - top) };
+}
+function fitPoints(pts, maxK) {
+  const xy = pts.map(p => projection([p.lon, p.lat]));
+  const [x0, x1] = d3.extent(xy, d => d[0]), [y0, y1] = d3.extent(xy, d => d[1]);
+  const vb = visibleBox();
+  const s = Math.max(1, Math.min(maxK || (pns.on ? 30 : 6), 0.9 / Math.max((x1 - x0) / vb.width, (y1 - y0) / vb.height, maxK ? 0.0005 : 0.03)));
+  svg.transition().duration(600).call(zoom.transform,
+    d3.zoomIdentity.translate(vb.left + vb.width / 2, vb.top + vb.height / 2).scale(s).translate(-(x0 + x1) / 2, -(y0 + y1) / 2));
+}
+
+function hideSheet() { $("sheet").style.display = "none"; near = null; if (selected || track || selAlly || selAShip) { selected = null; track = null; selAlly = null; selAShip = null; draw(); } }
+$("close").onclick = hideSheet;
+
+// ---------- Panel ----------
+$("toggle").onclick = (ev) => {
+  ev.stopPropagation();
+  const c = $("panel").classList.toggle("collapsed");
+  $("toggle").textContent = c ? "Layers ▾" : "Done ▴";
+  if (!c) $("sheet").style.display = "none";
+};
+$("panel").addEventListener("click", e => e.stopPropagation());
+for (const [t, cfg] of Object.entries(TYPES)) {
+  const lab = document.createElement("label");
+  lab.innerHTML = `<input type="checkbox" checked data-t="${t}">${shipIcon(t, 24)}${cfg.label} <span class="sub" id="c-${t}"></span>`;
+  $("legend").appendChild(lab);
+}
+function updateGroundCounts() {
+  const bs = branchSel ? bases.filter(b => b.branch === branchSel) : bases;
+  const dp = branchSel ? deploys.filter(d => branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)) : deploys;
+  $("c-bases").textContent = bs.length; $("c-deploy").textContent = dp.length;
+}
+$("branchSel").onclick = e => e.stopPropagation();
+$("branchSel").onchange = e => { branchSel = e.target.value; updateGroundCounts(); draw(); };
+$("groundLegend").addEventListener("change", e => {
+  const g = e.target.dataset.g; if (!g) return; show[g] = e.target.checked; draw();
+});
+$("legend").addEventListener("change", e => {
+  const t = e.target.dataset.t; if (!t) return;
+  e.target.checked ? hidden.delete(t) : hidden.add(t); draw();
+});
+
+// ---------- HUD readouts ----------
+setInterval(() => { const d = new Date(); $("hudClock").textContent = d.toISOString().slice(11, 19) + "Z"; }, 1000);
+function hud() {
+  $("hudUnits").textContent = String(ships.length).padStart(2, "0");
+  $("hudAis").textContent = String(ais.length).padStart(2, "0");
+  $("hudDep").textContent = String(deploys.length).padStart(2, "0");
+}
+setInterval(hud, 2000);
+
+// ---------- Weekly USNI data ----------
+try {
+  const d = await (await fetch("data/usni.json", { cache: "no-store" })).json();
+  ships = d.ships;
+  $("asof").innerHTML = `Weekly positions as of <b>${esc(d.asOf)}</b> · <a href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">USNI News</a>`;
+  $("tBF").textContent = d.totals.battleForce;
+  $("tDep").textContent = d.totals.deployed;
+  $("tUw").textContent = d.totals.underway;
+  try { history = await (await fetch("data/history.json", { cache: "no-store" })).json(); } catch {}
+  try {
+    const [b, dj, aj, sj] = await Promise.all(["data/bases.json", "data/deployments.json", "data/allies.json", "data/allied_ships.json"]
+      .map(f => fetch(f, { cache: "no-store" }).then(r => r.json()).catch(() => null)));
+    if (b) bases = b.items.map(([name, branch, lat, lon, where, note]) => ({ name, branch, lat, lon, where, note }));
+    if (dj) { deploys = dj.items; deployMeta = dj; }
+    if (sj) { allyShips = sj.items; allyShipsMeta = sj; }
+    $("aShipKey").innerHTML = allyShipIcon("destroyer", "United Kingdom", 24);
+    if (aj) {
+      allies = aj.items; alliesMeta = aj;
+      fillAllyCountries();
+      $("allyCountry").onchange = e => setAllyCountry(e.target.value);
+      $("allyCountry").onclick = e => e.stopPropagation();
+    }
+    $("c-bases").textContent = bases.length; $("c-deploy").textContent = deploys.length; $("c-allies").textContent = allies.length;
+    $("c-allyShips").textContent = aShipList().length;
+  } catch {}
+  const counts = d3.rollup(ships, v => v.length, s => s.type);
+  for (const [t, n] of counts) { const c = $("c-" + t); if (c) c.textContent = n; }
+} catch { $("asof").textContent = "Could not load weekly data."; }
+size();
+
+// ---------- Live AIS ----------
+$("aisOn").onchange = e => { showAis = e.target.checked; draw(); if (showAis) loadAis(); };
+// Live positions are collected every 10 min by a Supabase edge function
+// (project navy-fleet-tracker) and read here through the viewer's Supabase connector.
+const SUPA_PROJECT = "jpuzfptdrlotbsgsiphs";
+const AIS_SQL_INNER = `select json_build_object(
+  'vessels', coalesce((select json_agg(json_build_object('mmsi',mmsi,'name',name,'lat',lat,'lon',lon,'sog',sog,'cog',cog,'time',seen_at) order by name)
+             from navy_ais_positions where seen_at > now() - interval '24 hours'), '[]'::json),
+  'allied', coalesce((select json_agg(json_build_object('mmsi',mmsi,'name',name,'country',country,'lat',lat,'lon',lon,'sog',sog,'cog',cog,'time',seen_at) order by name)
+             from allied_ais_positions where seen_at > now() - interval '24 hours'), '[]'::json),
+  'lastRun', (select json_build_object('ranAt',ran_at,'messages',messages,'matched',matched,'error',error)
+              from navy_ais_runs order by id desc limit 1))`;
+
+
+// Wrap a query returning one JSON value so the reply carries it as base64
+// between unique markers; robust to however the connector wraps/escapes text.
+function wrapSql(inner) {
+  return `select 'NAVYDATA:' || translate(encode(convert_to((${inner})::text, 'UTF8'), 'base64'), E'\\n\\r', '') || ':NAVYEND' as x`;
+}
+function decodeSqlReply(res) {
+  const hay = (() => { try { return JSON.stringify(res); } catch { return String(res); } })();
+  const m = hay.match(/NAVYDATA:([A-Za-z0-9+\/=\\n\s]*):NAVYEND/);
+  if (!m) {
+    const err = new SyntaxError("Unrecognized Supabase reply: " + hay.slice(0, 160));
+    err.code = "parse_error"; throw err;
+  }
+  const b64 = m[1].replace(/\\n|\s/g, "");
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  return JSON.parse(new TextDecoder().decode(bytes));
+}
+async function runSql(inner) {
+  const res = await mcp.callTool("Supabase", "execute_sql", { project_id: SUPA_PROJECT, query: wrapSql(inner) });
+  return decodeSqlReply(res);
+}
+
+// (legacy) Supabase's execute_sql reply can arrive in several wrappings: an object
+// {result: "...<untrusted-data-…>[rows]</untrusted-data-…>..."}, that same
+// object as raw JSON text, a {content:[{text}]} envelope, or escaped text.
+// Unwrap layer by layer until we reach the rows array.
+function parseSqlResult(payload) {
+  const tryJSON = s => { try { return JSON.parse(s); } catch { return undefined; } };
+  const TAG = /<untrusted-data-[^>]*>\s*([\s\S]*?)\s*<\/untrusted-data/;
+  let x = payload;
+  for (let i = 0; i < 8; i++) {
+    if (Array.isArray(x)) {
+      if (x.length && x[0] && typeof x[0] === "object" && "type" in x[0] && "text" in x[0]) { x = x.map(c => c.text || "").join(""); continue; }
+      return x;
+    }
+    if (x && typeof x === "object") {
+      if ("result" in x) { x = x.result; continue; }
+      if (x.structuredContent) { x = x.structuredContent; continue; }
+      if (Array.isArray(x.content)) { x = x.content.map(c => c.text || "").join(""); continue; }
+      if ("d" in x) return [x];
+      break;
+    }
+    if (typeof x === "string") {
+      const s = x.trim();
+      const j = tryJSON(s);
+      if (j !== undefined && j !== s) { x = j; continue; }
+      const m = s.match(TAG);
+      let body = m ? m[1] : (s.includes("[") ? s.slice(s.indexOf("["), s.lastIndexOf("]") + 1) : "");
+      let parsed = tryJSON(body);
+      if (parsed === undefined) {                    // still escaped (\" inside)
+        const unesc = tryJSON('"' + body.replace(/"/g, '\\"').replace(/\\\\"/g, '\\"') + '"');
+        parsed = typeof unesc === "string" ? tryJSON(unesc) : undefined;
+        if (parsed === undefined) parsed = tryJSON(body.replace(/\\"/g, '"').replace(/\\\\/g, "\\"));
+      }
+      if (parsed !== undefined) { x = parsed; continue; }
+      break;
+    }
+    break;
+  }
+  const peek = (() => { try { return JSON.stringify(payload).slice(0, 160); } catch { return String(payload).slice(0, 160); } })();
+  const err = new SyntaxError("Unrecognized Supabase reply: " + peek);
+  err.code = "parse_error"; throw err;
+}
+
+let mcp;
+async function loadAis() {
+  if (!showAis) return;
+  $("aisStatus").textContent = "loading live feed…";
+  try {
+    if (mcp === undefined) mcp = await claude.use("mcp");
+  } catch { mcp = null; }
+  if (!mcp) { $("aisStatus").textContent = "live feed needs your Supabase connection"; return; }
+  try {
+    const d = await runSql(AIS_SQL_INNER);
+    const run = d.lastRun;
+    if (run && run.error && /API_KEY/.test(run.error) && !d.vessels.length) {
+      $("aisStatus").textContent = "waiting for AIS API key"; return;
+    }
+    ais = d.vessels.map(v => ({ ...v, time: new Date(v.time).getTime() }));
+    allyAis = (d.allied || []).map(v => ({ ...v, time: new Date(v.time).getTime() }));
+    fillAllyCountries(); $("c-allyShips").textContent = aShipList().length;
+    draw();
+    const t = run ? new Date(run.ranAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "–";
+    $("aisStatus").textContent = `${ais.length} ship${ais.length === 1 ? "" : "s"} · updated ${t}`;
+  } catch (e) {
+    const code = (e && (e.code || e.name)) || "unknown";
+    if (e && e.retryable && !loadAis.retried) {
+      loadAis.retried = true;
+      setTimeout(() => { loadAis(); }, Math.min(e.retryAfterMs || 3000, 15000) + Math.random() * 1000);
+      $("aisStatus").textContent = "retrying…"; return;
+    }
+    loadAis.retried = false;
+    const msgs = {
+      approval_required: ["Supabase needs your OK", true],
+      not_in_manifest: ["Supabase not allowed for this page", true],
+      upstream_error: ["Supabase didn't answer", true],
+      server_unavailable: ["Supabase busy, try again", true],
+      server_not_connected: ["Connect Supabase in claude.ai Settings → Connectors", false],
+      needs_reauth: ["Reconnect Supabase in claude.ai Settings → Connectors", false],
+      selection_required: ["Pick which Supabase connection to use", true],
+      not_granted: ["Connectors not available in this view", false],
+      capability_disabled: ["Connectors not available in this view", false],
+      tool_error: [`Supabase query failed: ${String(e.message || "").slice(0, 80)}`, true],
+      parse_error: [`Couldn't read Supabase reply: ${String(e.message || "").replace("Unrecognized Supabase reply: ", "").slice(0, 90)}`, true],
+    };
+    const [text, retry] = msgs[code] || [`live feed error (${code})`, true];
+    $("aisStatus").innerHTML = esc(text) + (retry ? ` <button class="retry" id="aisRetry">Tap to load</button>` : "");
+    const b = $("aisRetry"); if (b) b.onclick = (ev) => { ev.stopPropagation(); loadAis(); };
+    console.warn("AIS load failed", code, e && e.message);
+  }
+}
+loadAis();
+setInterval(loadAis, 5 * 60 * 1000);
+</script>
+</body>
+</html>

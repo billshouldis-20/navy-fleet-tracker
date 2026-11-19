@@ -1,0 +1,11 @@
+# Supabase project: navy-fleet-tracker
+project_id = "jpuzfptdrlotbsgsiphs"
+
+[functions.navy-ais-sampler]
+verify_jwt = true
+
+[functions.pensacola-watch]
+verify_jwt = true
+
+[functions.pns-basemap]
+verify_jwt = true
