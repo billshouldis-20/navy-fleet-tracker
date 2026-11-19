@@ -327,6 +327,11 @@
   .ot-ship:hover { background:var(--acc); } .ot-ship:hover .ot-sn, .ot-ship:hover .ot-st { color:#15160f; }
   .ot-tier + .ot-tier { margin-top:6px; }
   .allrow { display:flex; gap:6px; margin:8px 0 2px; } .allrow .barbtn { flex:1; }
+  .route { margin-top:4px; border-left:3px solid #ffd54f; padding-left:10px; }
+  .rt-row { display:grid; grid-template-columns:44px 1fr; gap:8px; padding:5px 0; }
+  .rt-row + .rt-row { border-top:1px dashed rgba(214,197,146,.2); }
+  .rt-k { font:800 13px var(--body); letter-spacing:.1em; color:#ffd54f; text-transform:uppercase; padding-top:2px; }
+  .rt-row b { font:700 16px/1.25 var(--body); color:#fff; }
   /* loadout stat bars */
   .lo { margin:6px 0 2px; }
   .lo-row { display:grid; grid-template-columns:92px 1fr 64px; align-items:center; gap:8px; margin:5px 0; }
@@ -1012,7 +1017,11 @@ const PNS_BOX = { lon0: -87.75, lon1: -86.35, lat0: 29.95, lat1: 30.85 };
 const AC_TYPES = { TEX2: "T-6B Texan II trainer", A119: "TH-73A Thrasher training helicopter", AS65: "MH-65 Dolphin (Coast Guard)",
   T45: "T-45 Goshawk jet trainer", F35: "F-35 Lightning II", H60: "MH-60 Seahawk", F18S: "F/A-18E/F Super Hornet", F18H: "F/A-18 Hornet",
   F16: "F-16", F15: "F-15", C130: "C-130 Hercules", C30J: "C-130J", B350: "C-12 / King Air", K35R: "KC-135", C17: "C-17", V22: "V-22 Osprey",
-  TH57: "TH-57 Sea Ranger", P8: "P-8 Poseidon", E6: "E-6 Mercury", U28: "U-28A", C146: "C-146A Wolfhound", MQ9: "MQ-9 Reaper" };
+  TH57: "TH-57 Sea Ranger", P8: "P-8 Poseidon", E6: "E-6 Mercury", U28: "U-28A", C146: "C-146A Wolfhound", MQ9: "MQ-9 Reaper",
+  F22: "F-22 Raptor", H64: "AH-64 Apache", H47: "CH-47 Chinook", UH60: "UH-60 Black Hawk", H53S: "CH-53E Super Stallion", H53: "CH-53", C5M: "C-5M Super Galaxy",
+  KC46: "KC-46 Pegasus", K10: "KC-10", E3TF: "E-3 Sentry (AWACS)", C40: "C-40 Clipper", C2: "C-2A Greyhound", E2: "E-2 Hawkeye", T38: "T-38 Talon",
+  T1: "T-1 Jayhawk", AC30: "AC-130", MC30: "MC-130", CN35: "C-27 / CN-235", B52: "B-52 Stratofortress", B1: "B-1 Lancer", H1: "UH-1 / AH-1", A10: "A-10 Thunderbolt II",
+  PC12: "U-28A / PC-12", BE40: "Beechjet (T-1)", GLF5: "C-37 Gulfstream", C560: "UC-35 Citation" };
 const ZONES = { bay: ["In Pensacola Bay / sound", "#4fc3f7"], gulf: ["Gulf approach", "#00e5a0"], perdido: ["Perdido Bay", "#a5d6a7"] };
 const pns = { on: false, meta: null, landHi: null, data: { vessels: [], aircraft: [], events: [], stats: {} }, timer: null, err: null };
 
@@ -1174,7 +1183,7 @@ async function pnsLoad() {
   try {
     pns.data = await runSql(`select json_build_object(
       'vessels', coalesce((select json_agg(json_build_object('mmsi',mmsi,'name',name,'type',ship_type,'lat',lat,'lon',lon,'sog',sog,'cog',cog,'zone',zone,'t',seen_at) order by seen_at desc) from pns_vessels where seen_at > now() - interval '24 hours'), '[]'::json),
-      'aircraft', coalesce((select json_agg(json_build_object('hex',hex,'flight',flight,'reg',reg,'type',type,'lat',lat,'lon',lon,'alt',alt,'gs',gs,'track',track,'t',seen_at) order by flight) from pns_aircraft where seen_at > now() - interval '30 minutes'), '[]'::json),
+      'aircraft', coalesce((select json_agg(json_build_object('hex',hex,'flight',flight,'reg',reg,'type',type,'lat',lat,'lon',lon,'alt',alt,'gs',gs,'track',track,'t',seen_at,'route_from',route_from,'route_to',route_to) order by flight) from pns_aircraft where seen_at > now() - interval '30 minutes'), '[]'::json),
       'events', coalesce((select json_agg(json_build_object('name',name,'mmsi',mmsi,'event',event,'t',seen_at) order by seen_at desc) from (select * from pns_port_events where seen_at > now() - interval '7 days' order by seen_at desc limit 30) e), '[]'::json),
       'stats', json_build_object('vessels45', (select count(distinct mmsi) from pns_vessel_tracks), 'aircraft24', (select count(distinct hex) from pns_aircraft_tracks where seen_at > now() - interval '24 hours'),
                                  'lastRun', (select ran_at from pns_runs order by id desc limit 1)))`);
@@ -1212,18 +1221,77 @@ function showPnsSummary() {
   const r = $("pnsRetry"); if (r) r.onclick = async ev => { ev.stopPropagation(); await pnsLoad(); draw(); showPnsSummary(); };
 }
 
+// Airfields used to work out where an aircraft took off from / is heading (ICAO, name, lat, lon)
+const AIRFIELDS = [["KNPA", "NAS Pensacola (Forrest Sherman Field)", 30.3527, -87.3186], ["KNSE", "NAS Whiting Field North", 30.7244, -87.0219],
+  ["KNDZ", "NAS Whiting Field South", 30.6977, -87.0230], ["KNUN", "Saufley Field", 30.4694, -87.3381], ["KNBJ", "NOLF Barin", 30.3896, -87.6355],
+  ["KNFJ", "NOLF Choctaw", 30.5069, -86.9597], ["KPNS", "Pensacola International", 30.4734, -87.1866], ["KVPS", "Eglin AFB", 30.4832, -86.5254],
+  ["KHRT", "Hurlburt Field", 30.4278, -86.6893], ["KEGI", "Duke Field", 30.6519, -86.5226], ["KDTS", "Destin Executive", 30.4001, -86.4715],
+  ["KMOB", "Mobile Regional", 30.6912, -88.2428], ["KBFM", "Mobile Downtown", 30.6268, -88.0681], ["KBIX", "Keesler AFB", 30.4104, -88.9244],
+  ["KCEW", "Bob Sikes (Crestview)", 30.7788, -86.5221], ["KECP", "Northwest Florida Beaches Intl", 30.3571, -85.7956], ["KPAM", "Tyndall AFB", 30.0696, -85.5754],
+  ["KJKA", "Jack Edwards (Gulf Shores)", 30.2896, -87.6718], ["KNMM", "NAS Meridian", 32.5521, -88.5556], ["KOZR", "Cairns AAF (Fort Novosel)", 31.2757, -85.7135]];
+// Common military callsign prefixes → operator
+const CALLSIGNS = [[/^RCH/, "U.S. Air Force Air Mobility Command (\"Reach\")"], [/^(CNV|VV)/, "U.S. Navy"], [/^PAT/, "U.S. Army priority air transport"],
+  [/^SPAR/, "U.S. Air Force VIP transport"], [/^SAM/, "Special Air Mission (VIP)"], [/^(CGNR|COAST)/, "U.S. Coast Guard"], [/^BLUE ?ANGEL|^BLUE/, "Blue Angels"],
+  [/^(SHARK|PCOLA|NAVY)/, "Naval air training"], [/^TOPCAT|^KATANA/, "Naval air training squadron"], [/^(TALON|ROCKY|ROBIN)/, "Training squadron"]];
+const kmBetween = (a, b) => d3.geoDistance(a, b) * 6371;
+const compass = deg => ["north", "northeast", "east", "southeast", "south", "southwest", "west", "northwest"][Math.round(((deg % 360) + 360) % 360 / 45) % 8];
+const bearing = (a, b) => { const r = Math.PI / 180, y = Math.sin((b[0] - a[0]) * r) * Math.cos(b[1] * r),
+  x = Math.cos(a[1] * r) * Math.sin(b[1] * r) - Math.sin(a[1] * r) * Math.cos(b[1] * r) * Math.cos((b[0] - a[0]) * r); return (Math.atan2(y, x) / r + 360) % 360; };
+const nearestField = (p, maxKm) => { let best = null; for (const f of AIRFIELDS) { const d = kmBetween(p, [f[3], f[2]]); if (d <= maxKm && (!best || d < best.d)) best = { f, d }; } return best; };
+const fmtTime = t => new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+const agoMin = t => { const m = Math.round((Date.now() - new Date(t).getTime()) / 60000); return m < 60 ? `${m} min ago` : `${Math.floor(m / 60)} h ${m % 60} min ago`; };
+
+// Where it came from / where it's going: published route if known, otherwise worked out from the flight path
+function routeGuess(a, pts) {
+  // the current flight = the latest run of fixes with no gap over 40 minutes
+  let seg = pts.slice(); for (let i = pts.length - 1; i > 0; i--) if (new Date(pts[i].t) - new Date(pts[i - 1].t) > 40 * 60000) { seg = pts.slice(i); break; }
+  const now = [a.lon, a.lat], first = seg[0];
+  let from, to;
+  if (a.route_from) from = { text: a.route_from, how: "published route" };
+  else if (first && seg.length > 1) {
+    const fp = [first.lon, first.lat], f = nearestField(fp, 15);
+    if (f && first.alt < 3000) from = { text: `${f.f[1]} (${f.f[0]})`, how: `took off around ${fmtTime(first.t)} — first seen ${f.d < 2 ? "over" : Math.round(f.d) + " km from"} the field at ${Math.max(0, first.alt).toLocaleString()} ft` };
+    else from = { text: `from the ${compass(bearing(now, fp))}`, how: `first picked up ${agoMin(first.t)} at ${Math.max(0, first.alt).toLocaleString()} ft, ${Math.round(kmBetween(now, fp))} km from here` };
+  } else from = { text: "Not known yet", how: "only one sighting so far — check back after the next 10-minute update" };
+  if (a.route_to) to = { text: a.route_to, how: "published route" };
+  else if (a.alt <= 200 && (a.gs ?? 0) < 60) { const f = nearestField(now, 5); to = { text: f ? `On the ground at ${f.f[1]}` : "On the ground", how: "not moving fast enough to be flying" }; }
+  else if (a.track != null) {
+    const prev = seg.length > 1 ? seg[seg.length - 2] : null, descending = prev && a.alt < prev.alt - 300;
+    let best = null;
+    for (const f of AIRFIELDS) { const fp = [f[3], f[2]], d = kmBetween(now, fp), off = Math.abs(((bearing(now, fp) - a.track + 540) % 360) - 180);
+      if (d > 2 && d < 150 && off < 30) { const sc = d * (1 + off / 15); if (!best || sc < best.sc) best = { f, d, sc }; } }
+    if (best && (descending || a.alt < 6000)) to = { text: `${best.f[1]} (${best.f[0]})`, how: `${Math.round(best.d)} km ahead on its current heading${descending ? ", descending" : ""}${a.gs ? ` — about ${Math.max(1, Math.round(best.d / (a.gs * 1.852) * 60))} min away` : ""}` };
+    else to = { text: `Heading ${compass(a.track)}`, how: best ? `${best.f[1]} is ${Math.round(best.d)} km ahead on this heading, but it isn't descending yet` : "no airfield directly ahead within 150 km" };
+  } else to = { text: "Not known", how: "no heading broadcast" };
+  return { from, to, seg };
+}
+
 async function showPnsAircraft(a) {
-  const head = `<h3>${esc(a.flight || a.reg || a.hex)}</h3>
-    <div class="sub">${esc(AC_TYPES[a.type] || a.type || "Unknown type")} · seen ${esc(ago(a.t))}</div>
-    <p style="margin:6px 0 0">Altitude ${a.alt > 0 ? esc(a.alt.toLocaleString()) + " ft" : "on ground / very low"} · Speed ${esc(a.gs != null ? Math.round(a.gs) + " kt" : "?")} · Heading ${esc(a.track != null ? Math.round(a.track) + "°" : "?")}<br>
-    <span class="sub">Tail ${esc(a.reg || "–")} · ICAO ${esc(a.hex)}</span></p>`;
-  openSheet(head + `<div class="tl-head">Loading 24-hour track…</div>` + pnsBackBtn()); wirePnsBack();
+  const op = (CALLSIGNS.find(([re]) => re.test(String(a.flight || "").toUpperCase())) || [])[1];
+  const typeName = AC_TYPES[a.type] || (a.type ? `Type code ${a.type}` : "Unknown type");
+  const head = `<div class="sheet-kicker">AIRCRAFT // ${esc(a.flight ? "CALLSIGN" : "TAIL")}</div><h3>✈ ${esc(a.flight || a.reg || a.hex)}</h3>
+    <div class="sub">${esc(typeName)}${op ? ` · ${esc(op)}` : ""} · seen ${esc(ago(a.t))}</div>
+    <div class="stats" style="margin-top:8px">
+      <div class="stat"><b>${a.alt > 0 ? esc(a.alt.toLocaleString()) : "GND"}</b><span>Altitude ft</span></div>
+      <div class="stat"><b>${esc(a.gs != null ? Math.round(a.gs) : "–")}</b><span>Speed kt</span></div>
+      <div class="stat"><b>${esc(a.track != null ? Math.round(a.track) + "°" : "–")}</b><span>${a.track != null ? esc(compass(a.track)) : "Heading"}</span></div>
+    </div>`;
+  const tail = `<div class="sub" style="margin-top:6px">Tail ${esc(a.reg || "–")} · ICAO ${esc(a.hex)}${a.type ? " · type " + esc(a.type) : ""}</div>${pnsBackBtn()}`;
+  const routeHtml = (from, to, n) => `<div class="tl-head">Flight</div>
+    <div class="route"><div class="rt-row"><span class="rt-k">From</span><div><b>${esc(from.text)}</b><div class="sub">${esc(from.how)}</div></div></div>
+    <div class="rt-row"><span class="rt-k">To</span><div><b>${esc(to.text)}</b><div class="sub">${esc(to.how)}</div></div></div></div>
+    <div class="sub" style="margin-top:4px">${a.route_from || a.route_to ? "Route from the adsb.lol route database." : "Military flights rarely publish routes, so this is worked out from its flight path and nearby airfields — an estimate."} ${n ? `${n} sightings in the last 24 h; the yellow line on the map is its path.` : ""}</div>`;
+  openSheet(head + `<div class="tl-head">Working out its route…</div>` + tail); wirePnsBack();
   try {
     const hx = String(a.hex).replace(/[^0-9a-f]/gi, "");
     const pts = await runSql(`select coalesce(json_agg(json_build_object('lat',lat,'lon',lon,'alt',alt,'t',seen_at) order by seen_at), '[]'::json) from pns_aircraft_tracks where hex = '${hx}' and seen_at > now() - interval '24 hours'`);
-    track = pts.length > 1 ? { color: "#ffd54f", dashed: true, small: true, pts } : null; draw();
-    $("sheetBody").innerHTML = head + `<div class="tl-head">${pts.length} sightings in the last 24 h (every 10 min while broadcasting)</div>` + pnsBackBtn(); wirePnsBack();
-  } catch { $("sheetBody").innerHTML = head + pnsBackBtn(); wirePnsBack(); }
+    const r = routeGuess(a, pts);
+    track = r.seg.length > 1 ? { color: "#ffd54f", dashed: true, small: true, pts: r.seg } : null; draw();
+    $("sheetBody").innerHTML = head + routeHtml(r.from, r.to, pts.length) + tail; wirePnsBack();
+  } catch {
+    const r = routeGuess(a, []);
+    $("sheetBody").innerHTML = head + routeHtml(r.from, r.to, 0) + tail; wirePnsBack();
+  }
 }
 
 async function showPnsVessel(v) {
