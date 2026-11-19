@@ -1,6 +1,6 @@
 {
  "asOf": "2026-11-19",
- "note": "Russian and Chinese navy ships from public reporting (Japan Joint Staff Office, Taiwan MND, Royal Navy, news and OSINT). Positions are approximate, placed in open water near the last reported area; live AIS sightings are added when these ships broadcast, which is rare.",
+ "note": "Russian, Chinese, Iranian and North Korean navy ships from public reporting (Japan Joint Staff Office, Taiwan MND, Royal Navy, news and OSINT). Positions are approximate, placed in open water near the last reported area; live AIS sightings are added when these ships broadcast, which is rare.",
  "items": [
   {
    "id": "liaoning",
@@ -69,6 +69,40 @@
     "url": "https://united24media.com/world/russian-corvette-escorts-mystery-cargo-convoys-through-danish-straits-toward-atlantic-24203"
    },
    "wiki": "Russian_corvette_Stoikiy"
+  },
+  {
+   "id": "irgcn",
+   "name": "IRGC Navy fast-attack boats",
+   "country": "Iran",
+   "type": "other",
+   "cls": "Revolutionary Guard fast attack craft and small boats",
+   "area": "Strait of Hormuz",
+   "lat": 26.45,
+   "lon": 56.45,
+   "reported": "Nov",
+   "note": "The regular Iranian Navy lost its frigates and corvettes in the 2026 war, but the Revolutionary Guard's small boats were still attacking tankers in the strait in November. Marker shows the area, not individual boats.",
+   "src": {
+    "title": "AeroCorner — Iran's Navy in 2026",
+    "url": "https://aerocorner.com/blog/iranian-navy/"
+   },
+   "wiki": "Islamic_Revolutionary_Guard_Corps_Navy"
+  },
+  {
+   "id": "choehyon",
+   "name": "Choe Hyon (51)",
+   "country": "North Korea",
+   "type": "destroyer",
+   "cls": "Choe Hyon-class destroyer (5,000 t)",
+   "area": "West Sea (Yellow Sea), off Nampho",
+   "lat": 38.55,
+   "lon": 124.85,
+   "reported": "home waters",
+   "note": "North Korea's largest warship, commissioned June 23, 2026 into the West Sea Fleet to defend the western coast. A sister ship, Kang Kon, followed in September. Exact position not reported.",
+   "src": {
+    "title": "USNI News — North Korea commissions destroyer Choe Hyon",
+    "url": "https://news.usni.org/2026/06/24/north-korea-commissions-first-in-class-destroyer-choe-hyon"
+   },
+   "wiki": "Choe_Hyon-class_destroyer"
   }
  ]
 }

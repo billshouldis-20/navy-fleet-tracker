@@ -1,6 +1,6 @@
 {
  "asOf": "2026-11-18",
- "note": "Major allied warships from public news and navy releases. Positions are approximate, placed in open water near the last reported area; live AIS sightings of allied warships are added on top when they broadcast.",
+ "note": "Major allied and partner warships from public news and navy releases. Positions are approximate, placed in open water near the last reported area; live AIS sightings of allied warships are added on top when they broadcast.",
  "items": [
   {
    "id": "pow",
@@ -222,6 +222,40 @@
     "url": "https://news.usni.org/2026/11/13/usni-news-western-pacific-pulse-nov-13-2026"
    },
    "wiki": "HMAS_Stalwart_(A304)"
+  },
+  {
+   "id": "vikrant",
+   "name": "INS Vikrant (R11)",
+   "country": "India",
+   "type": "carrier",
+   "cls": "Vikrant-class aircraft carrier",
+   "area": "Arabian Sea, off India's west coast (approx.)",
+   "lat": 15.0,
+   "lon": 72.6,
+   "reported": "Oct 29",
+   "note": "India's home-built carrier; hosted the first Rafale M landing trials on Oct 29, 2026. Exact position not reported.",
+   "src": {
+    "title": "Naval News via Daily Sun — Rafale M trials on INS Vikrant",
+    "url": "https://www.daily-sun.com/world/907001"
+   },
+   "wiki": "INS_Vikrant_(2013)"
+  },
+  {
+   "id": "sahyadri",
+   "name": "INS Sahyadri (F49)",
+   "country": "India",
+   "type": "destroyer",
+   "cls": "Shivalik-class stealth frigate",
+   "area": "Pacific, south of Japan (heading home)",
+   "lat": 33.6,
+   "lon": 137.8,
+   "reported": "Nov 13",
+   "note": "Took part in Quad exercise Malabar 2026 and left Yokosuka afterwards.",
+   "src": {
+    "title": "IDRW — INS Sahyadri leaves Yokosuka after Malabar",
+    "url": "https://idrw.org/?p=430132"
+   },
+   "wiki": "INS_Sahyadri"
   }
  ]
 }
