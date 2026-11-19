@@ -326,6 +326,7 @@
   .ot-ship.big .ot-sn { font-size:15px; }
   .ot-ship:hover { background:var(--acc); } .ot-ship:hover .ot-sn, .ot-ship:hover .ot-st { color:#15160f; }
   .ot-tier + .ot-tier { margin-top:6px; }
+  .allrow { display:flex; gap:6px; margin:8px 0 2px; } .allrow .barbtn { flex:1; }
   /* loadout stat bars */
   .lo { margin:6px 0 2px; }
   .lo-row { display:grid; grid-template-columns:92px 1fr 64px; align-items:center; gap:8px; margin:5px 0; }
@@ -351,6 +352,7 @@
   <div class="body">
     <div class="sub" id="asof">Loading…</div>
     <div class="sub statline"><b id="tBF">–</b> battle force · <b id="tDep">–</b> deployed · <b id="tUw">–</b> underway</div>
+    <div class="allrow"><button class="barbtn" id="allOn">All on</button><button class="barbtn" id="allOff">All off</button></div>
     <div class="sect">Ships</div>
     <div class="legend" id="legend"></div>
     <div class="ais-row">
@@ -1523,6 +1525,17 @@ $("legend").addEventListener("change", e => {
   const t = e.target.dataset.t; if (!t) return;
   e.target.checked ? hidden.delete(t) : hidden.add(t); draw();
 });
+
+// One-tap show/hide for every layer (ship types, live AIS, forces)
+function setAllLayers(on) {
+  document.querySelectorAll('#panel input[type=checkbox]').forEach(cb => { cb.checked = on; });
+  hidden.clear(); if (!on) Object.keys(TYPES).forEach(t => hidden.add(t));
+  for (const g of Object.keys(show)) show[g] = on;
+  showAis = on; if (on) loadAis();
+  draw();
+}
+$("allOn").onclick = ev => { ev.stopPropagation(); setAllLayers(true); };
+$("allOff").onclick = ev => { ev.stopPropagation(); setAllLayers(false); };
 
 // ---------- HUD readouts ----------
 setInterval(() => { const d = new Date(); $("hudClock").textContent = d.toISOString().slice(11, 19) + "Z"; }, 1000);
