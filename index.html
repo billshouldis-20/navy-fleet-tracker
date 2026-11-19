@@ -867,7 +867,7 @@ function draw() {
   ret.attr("transform", d => `translate(${SPJ([d.lon, d.lat])})`).raise();
 
   // Allied warships: silhouette filled in the country's flag stripes; selected one grows, glows and pulses
-  const as = aShipList().filter(d => !hidden.has(d.type));
+  const as = aShipList().filter(d => allyCountry || !hidden.has(d.type));   // a picked country shows all its ship types
   const defs = svg.selectAll("defs.flaggrads").data([0]).join("defs").attr("class", "flaggrads");
   const need = [...new Set(as.map(d => d.country))].filter(c => defs.select("#fg" + slug(c)).empty());
   for (const c of need) defs.node().insertAdjacentHTML("beforeend", flagGrad(c, "fg" + slug(c)));
@@ -1483,15 +1483,31 @@ function shipCounts() {
   $("c-rivalShips").textContent = all.filter(d => RIVAL.has(d.country)).length;
 }
 function fillAllyCountries() {
-  const cur = allyCountry;
+  const cur = $("allyCountry").value || allyCountry;
   const all = [...allyShips, ...rivalShips, ...allyAis];
-  const cs = [...new Set([...allies.flatMap(a => a.countries || []), ...all.map(d => d.country)])].filter(Boolean).sort((a, b) => a.localeCompare(b));
+  const cs = [...new Set([...allies.flatMap(a => a.countries || []), ...all.map(d => d.country)])].filter(c => c && c !== "United States").sort((a, b) => a.localeCompare(b));
+  cs.unshift("United States");
   $("allyCountry").innerHTML = `<option value="">All countries</option>` + cs.map(c => {
-    const n = allies.filter(a => (a.countries || []).includes(c)).length + all.filter(d => d.country === c).length;
+    const n = c === "United States" ? ships.length + ais.length : allies.filter(a => (a.countries || []).includes(c)).length + all.filter(d => d.country === c).length;
     return `<option value="${esc(c)}">${flagOf(c)} ${esc(c)} (${n})</option>`; }).join("");
   $("allyCountry").value = cur;
 }
 
+// Country focus (from the picker): show everything that country has, hide everything else.
+function focusCountry(c) {
+  if (!c) { setAllyCountry(""); setAllLayers(true); return; }
+  const us = c === "United States";
+  const setG = (g, on) => { show[g] = on; const cb = document.querySelector(`[data-g="${g}"]`); if (cb) cb.checked = on; };
+  setG("allies", !us); setG("allyShips", !us); setG("rivalShips", !us); setG("bases", us); setG("deploy", us);
+  hidden.clear(); if (!us) Object.keys(TYPES).forEach(t => hidden.add(t));
+  document.querySelectorAll('#legend input[data-t]').forEach(cb => { cb.checked = us; });
+  showAis = us; $("aisOn").checked = us; if (us) loadAis();
+  hideSheet();
+  setAllyCountry(us ? "" : c, true);
+  if (us) { allyCountry = ""; $("allyCountry").value = c; }
+  const pts = us ? [...ships, ...ais] : [...allies.filter(a => (a.countries || []).includes(c)), ...aShipList()];
+  if (pts.length) { track = null; fitPoints(pts); }
+}
 function setAllyCountry(c, keepSheet) {
   allyCountry = c; $("allyCountry").value = c;
   if (c && !show.allies) { show.allies = true; document.querySelector('[data-g="allies"]').checked = true; }
@@ -1600,7 +1616,7 @@ try {
     if (aj) {
       allies = aj.items; alliesMeta = aj;
       fillAllyCountries();
-      $("allyCountry").onchange = e => setAllyCountry(e.target.value);
+      $("allyCountry").onchange = e => focusCountry(e.target.value);
       $("allyCountry").onclick = e => e.stopPropagation();
     }
     $("c-bases").textContent = bases.length; $("c-deploy").textContent = deploys.length; $("c-allies").textContent = allies.length;
