@@ -64,6 +64,28 @@ async function sampleAircraft() {
       seen_at: new Date().toISOString() }));
 }
 
+// Published routes (origin/destination) for callsigns adsb.lol knows; most military callsigns have none.
+async function lookupRoutes(air: any[]) {
+  for (const a of air) { a.route_from = null; a.route_to = null; a.route_codes = null; }
+  const planes = air.filter((a) => a.flight).map((a) => ({ callsign: a.flight, lat: a.lat, lng: a.lon }));
+  if (!planes.length) return;
+  try {
+    const r = await fetch("https://api.adsb.lol/api/0/routeset", {
+      method: "POST", headers: { "Content-Type": "application/json", "User-Agent": "navy-fleet-tracker" }, body: JSON.stringify({ planes }),
+    });
+    if (!r.ok) return;
+    const routes = await r.json();
+    for (const rt of Array.isArray(routes) ? routes : []) {
+      const aps = rt._airports || [];
+      if (!aps.length || rt.plausible === false || rt.plausible === 0) continue;
+      const name = (x: any) => [x.name, x.location].filter(Boolean).join(", ") + (x.icao ? ` (${x.icao})` : "");
+      for (const a of air) if (a.flight === rt.callsign) {
+        a.route_from = name(aps[0]); a.route_to = aps.length > 1 ? name(aps[aps.length - 1]) : null; a.route_codes = rt.airport_codes || null;
+      }
+    }
+  } catch { /* best effort */ }
+}
+
 Deno.serve(async () => {
   const supa = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
   const { data: key } = await supa.rpc("get_aisstream_key");
@@ -99,6 +121,7 @@ Deno.serve(async () => {
     if (!ais.pos.has(mmsi) && n.name) await supa.from("pns_vessels").update({ name: n.name, ship_type: n.type }).eq("mmsi", mmsi);
   }
   if (air.length) {
+    await lookupRoutes(air);
     const { error: e2 } = await supa.from("pns_aircraft").upsert(air);
     if (e2) errors.push(e2.message);
     await supa.from("pns_aircraft_tracks").insert(air.map(a => ({ hex: a.hex, lat: a.lat, lon: a.lon, alt: a.alt, seen_at: a.seen_at })));
