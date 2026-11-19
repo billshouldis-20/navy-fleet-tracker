@@ -1,0 +1,22 @@
+{
+ "asOf": "2026-11-19",
+ "note": "Russian and Chinese navy ships from public reporting (Japan Joint Staff Office, Taiwan MND, Royal Navy, news and OSINT). Positions are approximate, placed in open water near the last reported area; live AIS sightings are added when these ships broadcast, which is rare.",
+ "items": [
+  { "id": "liaoning", "name": "CNS Liaoning (16)", "country": "China", "type": "carrier", "cls": "Type 001 aircraft carrier",
+    "area": "Philippine Sea, beyond the first island chain", "lat": 21.5, "lon": 130.5, "reported": "mid-Nov",
+    "note": "Leading a PLA Navy task group on training in the Western Pacific since late October; Taiwan's defense minister said on Nov 10 the group practiced area-denial operations.",
+    "src": { "title": "Army Recognition — Liaoning carrier group area-denial drills (Nov 2026)", "url": "https://www.armyrecognition.com/news/navy-news/2026/taiwan-says-chinas-liaoning-aircraft-carrier-group-practiced-restricting-naval-access-in-western-pacific" } },
+  { "id": "fujian", "name": "CNS Fujian (18)", "country": "China", "type": "carrier", "cls": "Type 003 catapult aircraft carrier",
+    "area": "South China Sea", "lat": 16.5, "lon": 113.0, "reported": "Nov 2",
+    "note": "China's newest carrier, based at Sanya on Hainan; seen at sea in the South China Sea in Nov 2 satellite imagery and expected to reach full readiness by the end of 2026.",
+    "src": { "title": "Newsweek — China's carriers active in the Western Pacific", "url": "https://newsweek.com/china-just-exposed-americas-carrier-gap-in-the-pacific-again-12656064" } },
+  { "id": "anshan", "name": "CNS Anshan (103)", "country": "China", "type": "cruiser", "cls": "Type 055 (Renhai-class) destroyer",
+    "area": "Pacific, east of the Osumi Strait (Japan)", "lat": 30.6, "lon": 131.7, "reported": "Nov 11",
+    "note": "Led a three-ship PLA Navy group east through the Osumi Strait into the Pacific on Nov 11, tracked by Japan's Maritime Self-Defense Force.",
+    "src": { "title": "Defence Blog — Japan confirms Chinese warships sailing east of Kyushu", "url": "https://defence-blog.com/japan-confirms-chinese-warships-sailing-east-of-kyushu/" } },
+  { "id": "stoikiy", "name": "RFS Stoikiy (545)", "country": "Russia", "type": "destroyer", "cls": "Steregushchiy-class corvette",
+    "area": "Danish straits / Kattegat", "lat": 56.5, "lon": 11.6, "reported": "Nov 7",
+    "note": "Baltic Fleet corvette escorting convoys of Russian cargo ships out of the Baltic through the Danish straits; seen in the Great Belt on Nov 7 (OSINT reporting).",
+    "src": { "title": "United24 — Russian corvette escorts cargo convoys through Danish straits", "url": "https://united24media.com/world/russian-corvette-escorts-mystery-cargo-convoys-through-danish-straits-toward-atlantic-24203" } }
+ ]
+}

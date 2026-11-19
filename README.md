@@ -9,10 +9,10 @@ Live page: https://claude.ai/artifact/SurshG4Mn7j15AdAx4aK8p (a Claude artifact;
 - `sealanes.js` — sea-lane waypoint graph used to route ship tracks around land (inlined into `index.html`).
 - `data/` — weekly data refreshed by a scheduled task every Monday:
   - `usni.json`, `history.json`, `specs.json` — U.S. ship positions (USNI News Fleet Tracker), 45-day history, ship specs
-  - `deployments.json`, `bases.json`, `allies.json`, `allied_ships.json` — ground deployments, U.S. bases, NATO battlegroups/allied bases, allied warships
+  - `deployments.json`, `bases.json`, `allies.json`, `allied_ships.json`, `rival_ships.json` — ground deployments, U.S. bases, NATO battlegroups/allied bases, allied warships, Russian/Chinese navy ships
   - `pensacola.json` — Pensacola sites, water labels, base news and NAS Pensacola points of interest
 - `supabase/` — Supabase project `navy-fleet-tracker` (ref `jpuzfptdrlotbsgsiphs`):
-  - `functions/navy-ais-sampler` — every 10 min, samples aisstream.io for U.S. Navy/MSC and allied warships
+  - `functions/navy-ais-sampler` — every 10 min, samples aisstream.io for U.S. Navy/MSC, allied, Russian and Chinese warships
   - `functions/pensacola-watch` — every 10 min, logs Pensacola-area vessels (AIS) and military aircraft (adsb.lol)
   - `functions/pns-basemap` — builds the NAS Pensacola / Corry Station base map from OpenStreetMap (run on demand)
   - `config.toml` — project link for the Supabase CLI / GitHub integration

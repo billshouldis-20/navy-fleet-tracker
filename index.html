@@ -183,6 +183,7 @@
   .poi circle { stroke:#04080b; stroke-width:1.2; }
   .poi.on circle.ring { animation:pulse 1.8s ease-out infinite; transform-box:fill-box; transform-origin:center; }
   .aship { filter:drop-shadow(0 0 2px rgba(255,255,255,.35)); }
+  .aship.rival { filter:drop-shadow(0 0 3px rgba(255,59,59,.9)); }
   .aship.on { filter:drop-shadow(0 0 7px var(--gc)) drop-shadow(0 0 2px #fff); }
   .aship .glow { animation:pulse 1.8s ease-out infinite; transform-box:fill-box; transform-origin:center; }
   .src a { color:var(--acc2); }
@@ -213,10 +214,11 @@
       <label><input type="checkbox" data-g="bases"><span class="dot" style="background:#0a1520;border-color:#9ccc65;border-radius:2px"></span>US bases <span class="sub" id="c-bases"></span></label>
       <label><input type="checkbox" data-g="allies"><span style="font-size:13px">🇬🇧🇫🇷</span>Allies <span class="sub" id="c-allies"></span></label>
       <label><input type="checkbox" checked data-g="allyShips"><span id="aShipKey"></span>Allied ships <span class="sub" id="c-allyShips"></span></label>
+      <label><input type="checkbox" checked data-g="rivalShips"><span id="rShipKey"></span>Russia / China ships <span class="sub" id="c-rivalShips"></span></label>
     </div>
     <div class="filters">
       <select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select>
-      <select id="allyCountry" class="country"><option value="">All ally countries</option></select>
+      <select id="allyCountry" class="country"><option value="">All countries</option></select>
     </div>
     <div class="sub" style="margin-top:8px">Weekly positions are approximate (sea area, not GPS). Live AIS shows only ships broadcasting a transponder.</div>
   </div>
@@ -338,6 +340,40 @@ const g = svg.append("g");
 let projection = d3.geoNaturalEarth1();
 let path = d3.geoPath(projection);
 const landGeo = topojson.feature(land110, land110.objects.land);
+// Coastline rings for the "is this AIS fix impossibly far inland?" test
+const LAND_RINGS = landGeo.features.flatMap(f => f.geometry.type === "Polygon" ? f.geometry.coordinates : f.geometry.coordinates.flat());
+function inlandKm(lon, lat) {
+  if (!d3.geoContains(landGeo, [lon, lat])) return 0;
+  const c = Math.cos(lat * Math.PI / 180); let best = Infinity;
+  for (const r of LAND_RINGS) for (let i = 0; i < r.length - 1; i++) {
+    const [x1, y1] = r[i], [x2, y2] = r[i + 1];
+    const ax = (x1 - lon) * c, ay = y1 - lat, bx = (x2 - lon) * c, by = y2 - lat, dx = bx - ax, dy = by - ay, L = dx * dx + dy * dy;
+    const t = L ? Math.max(0, Math.min(1, -(ax * dx + ay * dy) / L)) : 0, ex = ax + t * dx, ey = ay + t * dy, d = ex * ex + ey * ey;
+    if (d < best) best = d;
+  }
+  return Math.sqrt(best) * 111;
+}
+// AIS fixes more than 80 km inside the coastline (Great Lakes excepted) are transponder errors (e.g. a ship "in" Berlin); ones near the coast are in port
+const cleanAis = list => list.map(v => ({ ...v, time: new Date(v.time).getTime(), _in: inlandKm(v.lon, v.lat) }))
+  .filter(v => v._in <= 80 || (v.lat > 41 && v.lat < 49.5 && v.lon > -93 && v.lon < -75.5)).map(v => ({ ...v, inPort: v._in > 0 }));
+// Sharper 1:50m coastline, loaded on first zoom-in; only polygons near the view are drawn
+const land50 = { polys: null, loading: false };
+function loadLand50() {
+  if (land50.polys || land50.loading) return; land50.loading = true;
+  import("https://cdn.jsdelivr.net/npm/world-atlas@2/land-50m.json/+esm").then(m => { const t = m.default || m;
+    const L = topojson.feature(t, t.objects.land);
+    land50.polys = L.features.flatMap(f => f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates)
+      .filter(p => d3.geoArea({ type: "Polygon", coordinates: p }) < 2 * Math.PI)
+      .map(p => ({ p, b: d3.geoBounds({ type: "Polygon", coordinates: p }) }));
+    draw(); }).catch(() => { land50.loading = false; });
+}
+function visibleLand50() {
+  const W = el.clientWidth, H = el.clientHeight, pts = [[0, 0], [W, 0], [0, H], [W, H], [W / 2, 0], [W / 2, H], [0, H / 2], [W, H / 2], [W / 2, H / 2]].map(q => SPJ.invert(q));
+  if (pts.some(q => !q || !isFinite(q[0]))) return null;
+  const lo0 = d3.min(pts, q => q[0]) - 2, lo1 = d3.max(pts, q => q[0]) + 2, la0 = d3.min(pts, q => q[1]) - 2, la1 = d3.max(pts, q => q[1]) + 2;
+  if (lo1 - lo0 > 120) return null;
+  return { type: "MultiPolygon", coordinates: land50.polys.filter(({ b: [[a, c], [e, f]] }) => a > e || (e >= lo0 && a <= lo1 && f >= la0 && c <= la1)).map(x => x.p) };
+}
 const seaRoute = makeSeaRouter(d3, landGeo);
 // Weekly points -> one path that stays at sea between consecutive positions
 function seaPath(pts) {
@@ -381,7 +417,7 @@ function screenProj() {
 let k = 1, ships = [], ais = [], hidden = new Set(), showAis = true, selected = null;
 let history = { ships: {} }, track = null;
 let bases = [], deploys = [], allies = [], deployMeta = {}, alliesMeta = {};
-const show = { bases: false, deploy: true, allies: false, allyShips: true };
+const show = { bases: false, deploy: true, allies: false, allyShips: true, rivalShips: true };
 let allyCountry = "", branchSel = "";
 const BRANCH = { guard: ["National Guard", "#a5d6a7"], army: ["Army", "#9ccc65"], marines: ["Marines", "#e57373"], navy: ["Navy", "#64b5f6"], af: ["Air Force", "#90caf9"], space: ["Space Force", "#b0bec5"], joint: ["Joint", "#ffd54f"] };
 const FLAGS = { "Albania": "🇦🇱", "Australia": "🇦🇺", "Belgium": "🇧🇪", "Bulgaria": "🇧🇬", "Canada": "🇨🇦", "Croatia": "🇭🇷", "Czechia": "🇨🇿",
@@ -389,7 +425,7 @@ const FLAGS = { "Albania": "🇦🇱", "Australia": "🇦🇺", "Belgium": "🇧
   "Japan": "🇯🇵", "Latvia": "🇱🇻", "Lithuania": "🇱🇹", "Luxembourg": "🇱🇺", "Montenegro": "🇲🇪", "North Macedonia": "🇲🇰", "Poland": "🇵🇱",
   "Portugal": "🇵🇹", "Romania": "🇷🇴", "Slovakia": "🇸🇰", "Slovenia": "🇸🇮", "Spain": "🇪🇸", "Sweden": "🇸🇪", "Türkiye": "🇹🇷",
   "United Kingdom": "🇬🇧", "United States": "🇺🇸" };
-Object.assign(FLAGS, { "Norway": "🇳🇴", "Netherlands": "🇳🇱", "Denmark": "🇩🇰", "South Korea": "🇰🇷", "Philippines": "🇵🇭", "New Zealand": "🇳🇿" });
+Object.assign(FLAGS, { "Norway": "🇳🇴", "Netherlands": "🇳🇱", "Denmark": "🇩🇰", "South Korea": "🇰🇷", "Philippines": "🇵🇭", "New Zealand": "🇳🇿", "Russia": "🇷🇺", "China": "🇨🇳" });
 const flagOf = c => FLAGS[c] || "🏳️";
 // Main flag colors per lead country — used to paint allied markers in their nation's colors.
 const FLAGCOL = { "United Kingdom": ["#012169", "#ffffff", "#c8102e"], "Canada": ["#d52b1e", "#ffffff"], "Germany": ["#000000", "#dd0000", "#ffce00"],
@@ -400,14 +436,16 @@ const FLAGCOL = { "United Kingdom": ["#012169", "#ffffff", "#c8102e"], "Canada":
   "Poland": ["#ffffff", "#dc143c"], "Portugal": ["#046a38", "#da291c"], "Greece": ["#0d5eaf", "#ffffff"], "Belgium": ["#000000", "#fdda24", "#ef3340"],
   "Finland": ["#ffffff", "#002f6c"], "Estonia": ["#0072ce", "#000000", "#ffffff"], "Latvia": ["#9e3039", "#ffffff"], "Lithuania": ["#fdb913", "#006a44", "#c1272d"],
   "Romania": ["#002b7f", "#fcd116", "#ce1126"], "Bulgaria": ["#ffffff", "#00966e", "#d62612"], "Croatia": ["#ff0000", "#ffffff", "#171796"],
-  "South Korea": ["#ffffff", "#cd2e3a", "#0047a0"], "Philippines": ["#0038a8", "#ce1126"], "New Zealand": ["#012169", "#c8102e"] };
+  "South Korea": ["#ffffff", "#cd2e3a", "#0047a0"], "Philippines": ["#0038a8", "#ce1126"], "New Zealand": ["#012169", "#c8102e"],
+  "Russia": ["#ffffff", "#0039a6", "#d52b1e"], "China": ["#de2910", "#de2910", "#ffde00"] };
 // Flags whose stripes run vertically (tricolours); the rest are painted as horizontal bands.
 const FLAG_VERT = new Set(["France", "Italy", "Belgium", "Romania", "Canada", "Portugal"]);
 const NAVY_NAME = { "United Kingdom": "Royal Navy", "France": "French Navy (Marine nationale)", "Italy": "Italian Navy (Marina Militare)",
   "Japan": "Japan Maritime Self-Defense Force", "Australia": "Royal Australian Navy", "Canada": "Royal Canadian Navy", "Norway": "Royal Norwegian Navy",
   "Türkiye": "Turkish Naval Forces", "Germany": "German Navy", "Spain": "Spanish Navy", "Netherlands": "Royal Netherlands Navy", "Denmark": "Royal Danish Navy",
   "South Korea": "Republic of Korea Navy", "New Zealand": "Royal New Zealand Navy", "Philippines": "Philippine Navy", "Greece": "Hellenic Navy",
-  "Poland": "Polish Navy", "Portugal": "Portuguese Navy", "Sweden": "Swedish Navy", "Finland": "Finnish Navy" };
+  "Poland": "Polish Navy", "Portugal": "Portuguese Navy", "Sweden": "Swedish Navy", "Finland": "Finnish Navy",
+  "Russia": "Russian Navy", "China": "PLA Navy (China)" };
 const slug = c => String(c || "x").normalize("NFD").replace(/[^A-Za-z]/g, "");
 // <linearGradient> with hard stops so a shape is filled in flag stripes
 const flagGrad = (c, id) => { const cols = flagCols(c), n = cols.length, v = FLAG_VERT.has(c);
@@ -417,9 +455,12 @@ const allyShipIcon = (t, c, size = 26) => { const cfg = TYPES[t] || TYPES.other,
   return `<svg width="${size}" height="${Math.round(size * 14 / 26)}" viewBox="-13.5 -9.5 27 15" style="vertical-align:middle"><defs>${flagGrad(c, id)}</defs><path d="${cfg.path}" fill="url(#${id})" stroke="#fff" stroke-opacity=".8" stroke-width=".7"/></svg>`; };
 const flagCols = c => FLAGCOL[c] || ["#38bdf8"];
 let selAlly = null;
-let allyShips = [], allyAis = [], selAShip = null, allyShipsMeta = {};
+let allyShips = [], allyAis = [], selAShip = null, allyShipsMeta = {}, rivalShips = [], rivalMeta = {};
+const RIVAL = new Set(["Russia", "China"]);
 // Allied warships: curated list plus live AIS sightings, filtered by the ally-country picker
-const aShipList = () => { const all = [...allyShips, ...allyAis.map(v => ({ ...v, live: true, id: "ais" + v.mmsi, type: "destroyer" }))];
+// Russian / Chinese ships share the drawing code but have their own layer switch
+const aShipList = () => { const all = [...allyShips, ...rivalShips, ...allyAis.map(v => ({ ...v, live: true, id: "ais" + v.mmsi, type: "destroyer" }))]
+    .filter(d => RIVAL.has(d.country) ? show.rivalShips : show.allyShips);
   return allyCountry ? all.filter(d => d.country === allyCountry) : all; };
 const DKIND = { surge: ["Surge", "#ff5c5c"], rotation: ["Rotation", "#ffa94d"], domestic: ["Domestic", "#ce93d8"], drawdown: ["Drawdown / canceled", "#8aa0b4"] }; // track: {pts:[{lat,lon,label}], color, dashed}
 
@@ -566,7 +607,9 @@ const GRAT = d3.geoGraticule10();
 function drawBase() {
   const local = typeof pns !== "undefined" && pns.on, sp = d3.geoPath(SPJ);
   gGrat.attr("d", local ? null : sp(GRAT));
-  gLand.attr("d", sp(local && pns.landHi ? pns.landHi : landGeo)).classed("coast", !!(local && pns.landHi));
+  let geo = local && pns.landHi ? pns.landHi : landGeo;
+  if (!local && T.k >= 4) { loadLand50(); const v = land50.polys && visibleLand50(); if (v) geo = v; }
+  gLand.attr("d", sp(geo)).classed("coast", !!(local && pns.landHi));
   spath = sp;
 }
 let spath = null;
@@ -639,7 +682,7 @@ function draw() {
   ret.attr("transform", d => `translate(${SPJ([d.lon, d.lat])})`).raise();
 
   // Allied warships: silhouette filled in the country's flag stripes; selected one grows, glows and pulses
-  const as = show.allyShips ? aShipList().filter(d => !hidden.has(d.type)) : [];
+  const as = aShipList().filter(d => !hidden.has(d.type));
   const defs = svg.selectAll("defs.flaggrads").data([0]).join("defs").attr("class", "flaggrads");
   const need = [...new Set(as.map(d => d.country))].filter(c => defs.select("#fg" + slug(c)).empty());
   for (const c of need) defs.node().insertAdjacentHTML("beforeend", flagGrad(c, "fg" + slug(c)));
@@ -648,7 +691,7 @@ function draw() {
     x.append("circle").attr("class", "glow"); x.append("circle").attr("class", "hit").attr("r", 14).attr("fill", "transparent");
     x.append("path").attr("class", "hull"); x.append("text").attr("class", "flag"); return x;
   });
-  gas.classed("on", d => d === selAShip)
+  gas.classed("on", d => d === selAShip).classed("rival", d => RIVAL.has(d.country))
     .style("--gc", d => flagCols(d.country).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8")
     .attr("transform", d => `translate(${SPJ([d.lon, d.lat])})`)
     .on("click", (e, d) => { e.stopPropagation(); showAllyShip(d); });
@@ -1132,15 +1175,15 @@ function showAlly(a) {
 
 async function showAllyShip(d) {
   const t = TYPES[d.type] || TYPES.other, stripe = `<div style="display:flex;height:4px;margin:2px 0 6px;box-shadow:0 0 8px rgba(255,255,255,.25)">${flagCols(d.country).map(c => `<span style="flex:1;background:${c}"></span>`).join("")}</div>`;
-  const head = `<div class="sheet-kicker">ALLIED // ${esc(d.live ? "LIVE AIS" : t.label.toUpperCase())}</div>${stripe}
+  const head = `<div class="sheet-kicker"${RIVAL.has(d.country) ? ' style="color:#ff6b6b"' : ""}>${RIVAL.has(d.country) ? "WATCH" : "ALLIED"} // ${esc(d.live ? "LIVE AIS" : t.label.toUpperCase())}</div>${stripe}
     <h3>${allyShipIcon(d.type, d.country, 34)} ${esc(d.name)} <span title="${esc(d.country)}">${flagOf(d.country)}</span></h3>
     <span class="tag" style="border-color:var(--gc,#7dd3fc)">${flagOf(d.country)} ${esc((NAVY_NAME[d.country] || d.country).toUpperCase())}</span>${d.cls ? `<span class="tag">${esc(d.cls)}</span>` : ""}`;
   openSheet(d.live
-    ? head + `<p style="margin:6px 0 0">Speed ${esc(d.sog ?? "?")} kn · Course ${esc(d.cog ?? "?")}°<br>${esc(d.lat.toFixed(3))}, ${esc(d.lon.toFixed(3))}<br>
+    ? head + `<p style="margin:6px 0 0">${d.inPort ? "<b>In port / alongside</b><br>" : ""}Speed ${esc(d.sog ?? "?")} kn · Course ${esc(d.cog ?? "?")}°<br>${esc(d.lat.toFixed(3))}, ${esc(d.lon.toFixed(3))}<br>
         <span class="sub">Last seen ${esc(new Date(d.time).toLocaleString())} · MMSI ${esc(d.mmsi)}</span></p><div class="tl-head" id="aTrk">Loading 45-day track…</div>`
     : head + `<p style="margin:6px 0 2px"><b>Area:</b> ${esc(d.area)}</p><p style="margin:2px 0"><b>Last reported:</b> ${esc(d.reported)}</p>
         <p style="margin:6px 0 0">${esc(d.note)}</p>${d.src ? srcList([d.src]) : ""}
-        <div class="sub" style="margin-top:6px">Position is approximate, placed in open water near the reported area. Allied list as of ${esc(allyShipsMeta.asOf || "")}.</div>`);
+        <div class="sub" style="margin-top:6px">Position is approximate, placed in open water near the reported area. List as of ${esc((RIVAL.has(d.country) ? rivalMeta : allyShipsMeta).asOf || "")}.</div>`);
   selAShip = d; draw();
   if (!d.live) return;
   try {
@@ -1155,11 +1198,16 @@ async function showAllyShip(d) {
   } catch { const el2 = $("aTrk"); if (el2) el2.textContent = "Track history needs your Supabase connection."; }
 }
 
+function shipCounts() {
+  const all = [...allyShips, ...rivalShips, ...allyAis];
+  $("c-allyShips").textContent = all.filter(d => !RIVAL.has(d.country)).length;
+  $("c-rivalShips").textContent = all.filter(d => RIVAL.has(d.country)).length;
+}
 function fillAllyCountries() {
   const cur = allyCountry;
-  const all = [...allyShips, ...allyAis];
+  const all = [...allyShips, ...rivalShips, ...allyAis];
   const cs = [...new Set([...allies.flatMap(a => a.countries || []), ...all.map(d => d.country)])].filter(Boolean).sort((a, b) => a.localeCompare(b));
-  $("allyCountry").innerHTML = `<option value="">All ally countries</option>` + cs.map(c => {
+  $("allyCountry").innerHTML = `<option value="">All countries</option>` + cs.map(c => {
     const n = allies.filter(a => (a.countries || []).includes(c)).length + all.filter(d => d.country === c).length;
     return `<option value="${esc(c)}">${flagOf(c)} ${esc(c)} (${n})</option>`; }).join("");
   $("allyCountry").value = cur;
@@ -1169,7 +1217,7 @@ function setAllyCountry(c, keepSheet) {
   allyCountry = c; $("allyCountry").value = c;
   if (c && !show.allies) { show.allies = true; document.querySelector('[data-g="allies"]').checked = true; }
   const n = c ? allies.filter(a => (a.countries || []).includes(c)).length : allies.length;
-  $("c-allies").textContent = n; $("c-allyShips").textContent = aShipList().length;
+  $("c-allies").textContent = n; shipCounts();
   draw();
   if (c && (n || aShipList().length) && !keepSheet) {
     const pts = [...allies.filter(a => (a.countries || []).includes(c)), ...(show.allyShips ? aShipList() : [])];
@@ -1251,11 +1299,13 @@ try {
   $("tUw").textContent = d.totals.underway;
   try { history = await (await fetch("data/history.json", { cache: "no-store" })).json(); } catch {}
   try {
-    const [b, dj, aj, sj] = await Promise.all(["data/bases.json", "data/deployments.json", "data/allies.json", "data/allied_ships.json"]
+    const [b, dj, aj, sj, rj] = await Promise.all(["data/bases.json", "data/deployments.json", "data/allies.json", "data/allied_ships.json", "data/rival_ships.json"]
       .map(f => fetch(f, { cache: "no-store" }).then(r => r.json()).catch(() => null)));
     if (b) bases = b.items.map(([name, branch, lat, lon, where, note]) => ({ name, branch, lat, lon, where, note }));
     if (dj) { deploys = dj.items; deployMeta = dj; }
     if (sj) { allyShips = sj.items; allyShipsMeta = sj; }
+    if (rj) { rivalShips = rj.items; rivalMeta = rj; }
+    $("rShipKey").innerHTML = allyShipIcon("destroyer", "Russia", 24);
     $("aShipKey").innerHTML = allyShipIcon("destroyer", "United Kingdom", 24);
     if (aj) {
       allies = aj.items; alliesMeta = aj;
@@ -1264,7 +1314,7 @@ try {
       $("allyCountry").onclick = e => e.stopPropagation();
     }
     $("c-bases").textContent = bases.length; $("c-deploy").textContent = deploys.length; $("c-allies").textContent = allies.length;
-    $("c-allyShips").textContent = aShipList().length;
+    shipCounts();
   } catch {}
   const counts = d3.rollup(ships, v => v.length, s => s.type);
   for (const [t, n] of counts) { const c = $("c-" + t); if (c) c.textContent = n; }
@@ -1362,9 +1412,9 @@ async function loadAis() {
     if (run && run.error && /API_KEY/.test(run.error) && !d.vessels.length) {
       $("aisStatus").textContent = "waiting for AIS API key"; return;
     }
-    ais = d.vessels.map(v => ({ ...v, time: new Date(v.time).getTime() }));
-    allyAis = (d.allied || []).map(v => ({ ...v, time: new Date(v.time).getTime() }));
-    fillAllyCountries(); $("c-allyShips").textContent = aShipList().length;
+    ais = cleanAis(d.vessels);
+    allyAis = cleanAis(d.allied || []);
+    fillAllyCountries(); shipCounts();
     draw();
     const t = run ? new Date(run.ranAt).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "–";
     $("aisStatus").textContent = `${ais.length} ship${ais.length === 1 ? "" : "s"} · updated ${t}`;

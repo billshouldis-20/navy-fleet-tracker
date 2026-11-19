@@ -2,7 +2,7 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 // Listens to the AISStream.io global feed for a short window. Stores the latest
-// position of each US Navy / MSC ship and of each allied warship (by navy name
+// position of each US Navy / MSC ship and of each allied (or Russian / Chinese) warship (by navy name
 // prefix, checked against the MMSI country code), plus a 45-day track log for both.
 const SAMPLE_MS = 40_000;
 const KEEP_DAYS = 45;
@@ -21,6 +21,8 @@ const MID: Record<string, string> = {
   "261": "Poland", "264": "Romania", "207": "Bulgaria", "237": "Greece", "239": "Greece", "240": "Greece", "241": "Greece",
   "271": "Türkiye", "238": "Croatia", "316": "Canada", "503": "Australia", "512": "New Zealand",
   "431": "Japan", "432": "Japan", "440": "South Korea", "441": "South Korea", "548": "Philippines",
+  // Watched (non-allied) navies, stored alongside allies and shown on their own layer
+  "273": "Russia", "412": "China", "413": "China", "414": "China",
 };
 // Navy ship prefixes. "mid" lists which country codes must match for prefixes that
 // civilian ships also use (e.g. FS, JS, ITS, HS).
@@ -36,6 +38,7 @@ const PREFIX: [RegExp, string, string[]?][] = [
   [/^(JS|JMSDF)\b/i, "Japan", ["431", "432"]],
   [/^HS\b/i, "Greece", ["237", "239", "240", "241"]],
   [/^(FNS|SUOMEN)\b/i, "Finland", ["230"]], [/^BNS\b/i, "Belgium", ["205"]],
+  [/^(RFS|RFN|VMF)\b/i, "Russia", ["273"]], [/^(CNS|PLAN|PLANS)\b/i, "China", ["412", "413", "414"]],
 ];
 
 function classify(name: string, mmsi: string): { side: "us" | "ally"; country?: string } | null {
