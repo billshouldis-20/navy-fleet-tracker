@@ -336,6 +336,39 @@
   .lo-bar i { background:rgba(214,197,146,.14); }
   .lo-bar i.on { background:var(--acc); }
   .lo-bar i.on.hi { background:#fff; }
+
+  /* ===== readability pass: larger, brighter, less tracking; condensed type only for titles ===== */
+  :root { --muted:#cfcab0; --text:#f7f4ea; --body:"Barlow", system-ui, sans-serif; }
+  html,body { font:500 16px/1.45 var(--body); }
+  .sub, .sub a { font:500 14px/1.45 var(--body); color:var(--muted); letter-spacing:0; }
+  .sheet p, .sheet .src, .oob-note { font:500 15px/1.5 var(--body); letter-spacing:0; }
+  .legend, .legend label, .ais-row { font:600 15px/1.3 var(--body); letter-spacing:0; }
+  .hudstat { font:600 13px/1 var(--body); letter-spacing:.04em; color:#ddd8bf; }
+  .barbtn, .retry, .chip, .zoom button, .pns-exit { font:700 14px/1 var(--body); letter-spacing:.06em; }
+  select.country { font:600 15px var(--body); letter-spacing:0; }
+  .sect, .tl-head { font:800 13px/1.2 var(--body); letter-spacing:.12em; }
+  .tl-row { font:500 15px/1.4 var(--body); letter-spacing:0; }
+  .tag { font:700 13px/1.5 var(--body); letter-spacing:.04em; }
+  .sheet .sheet-kicker { font:800 13px/1 var(--body); letter-spacing:.12em; }
+  .sheet h3 { letter-spacing:.02em; }
+  .spec-k, .lo-k { font:700 13px/1.6 var(--body); letter-spacing:.06em; color:var(--muted); }
+  .spec-v, .lo-v { font:600 15px var(--body); letter-spacing:0; }
+  .lo-row { grid-template-columns:96px 1fr 72px; }
+  .stat span, .oob-sum span { font:700 12px var(--body); letter-spacing:.06em; color:var(--muted); }
+  .contact { font:600 16px var(--body); letter-spacing:0; }
+  .photo-cr { font:500 13px var(--body); letter-spacing:0; }
+  .oob-tabs button { font:800 15px var(--body); letter-spacing:.06em; }
+  .ot-k { font:700 12px/1.25 var(--body); letter-spacing:.06em; }
+  .ot-c { font:500 13px/1.3 var(--body); letter-spacing:0; color:var(--muted); }
+  .ot-ship .ot-sn { font:700 15px/1.15 var(--body); letter-spacing:0; text-transform:none; }
+  .ot-ship .ot-st { font:600 11px var(--body); letter-spacing:.04em; }
+  .ot-grp b { font:800 15px/1.15 var(--body); letter-spacing:.03em; }
+  /* map labels */
+  .lbl { font-family:var(--body); font-weight:700; letter-spacing:.02em; }
+  .near-lbl { font:800 13px var(--body); letter-spacing:.06em; }
+  .water { font:italic 600 13px var(--body); letter-spacing:.08em; fill-opacity:.7; }
+  .bm-lbl, .bm-rwylbl { font-family:var(--body); letter-spacing:.03em; }
+  .site-lbl, .poi .lbl { font-size:12px; }
 </style>
 </head>
 <body>
@@ -875,7 +908,7 @@ function draw() {
       const [x, y] = SPJ([d.lon, d.lat]), flip = x > el.clientWidth - 150;
       d3.select(this).attr("x", flip ? x - 26 : x + 26).attr("y", y + 4).attr("text-anchor", flip ? "end" : "start");
     })
-    .attr("font-size", 12).attr("stroke-width", 3)
+    .attr("font-size", 14).attr("stroke-width", 3)
     .text(d => trunc(d.name.replace(/^USS /, "").replace(/ \(.*\)$/, ""), 22));
 }
 
@@ -1002,7 +1035,7 @@ function drawPns() {
   gs.select("path").attr("class", d => "site-ico " + (d.kind || "air"))
     .attr("d", d => d.kind === "port" ? "M0,-5L5,0L0,5L-5,0Z" : d.kind === "school" ? "M-4,0a4,4 0 1,0 8,0a4,4 0 1,0 -8,0" : "M-5,-5H5V5H-5Z M-4,4L4,-4");
   gs.select("text").each(function (d) { const x = P(d)[0], flip = x > W - 90; d3.select(this).attr("x", flip ? -9 : 9).attr("text-anchor", flip ? "end" : "start"); })
-    .attr("y", 4).attr("font-size", 11).attr("stroke-width", 3).text(d => d.short || d.name);
+    .attr("y", 4).attr("font-size", 13).attr("stroke-width", 3).text(d => d.short || d.name);
 
   const vs = pns.data.vessels;
   gPns.selectAll("path.vsl").data(vs, d => d.mmsi).join("path").attr("class", "vsl")
@@ -1093,14 +1126,14 @@ function drawPois() {
   // Greedy label placement: selected first, then gates, airfield, galley/barracks, shops, the rest; skip overlaps
   const PR = { gate: 1, air: 2, food: 3, barracks: 3, shop: 4, medical: 5, history: 6, svc: 7 }, boxes = [], shown = new Set();
   for (const x of [...list].sort((p, q) => (p === BM.sel ? -1 : q === BM.sel ? 1 : PR[p.cat] - PR[q.cat]))) {
-    const [px, py] = SPJ([x.lon, x.lat]), w = x.short.length * 6.6 + 4, flip = px > W - 110;
+    const [px, py] = SPJ([x.lon, x.lat]), w = x.short.length * 7.6 + 4, flip = px > W - 110;
     const bx = [flip ? px - 13 - w : px + 13, py - 7, w, 13];
     const dotHit = list.some(o => o !== x && (([ox, oy]) => ox > bx[0] - 8 && ox < bx[0] + bx[2] + 8 && oy > bx[1] - 6 && oy < bx[1] + bx[3] + 6)(SPJ([o.lon, o.lat])));
     if (x !== BM.sel && (boxes.some(b => bx[0] < b[0] + b[2] && b[0] < bx[0] + bx[2] && bx[1] < b[1] + b[3] && b[1] < bx[1] + bx[3]) || (dotHit && !labelAll))) continue;
     boxes.push(bx); shown.add(x);
   }
   gp.select(".lbl").each(function (x) { const px = SPJ([x.lon, x.lat])[0], flip = px > W - 110; d3.select(this).attr("x", flip ? -13 : 13).attr("text-anchor", flip ? "end" : "start"); })
-    .attr("y", 4).attr("font-size", 10).attr("stroke-width", 3)
+    .attr("y", 4).attr("font-size", 12).attr("stroke-width", 3)
     .text(x => shown.has(x) ? x.short : "");
   gp.filter(x => x === BM.sel).raise();
 }
