@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>US Navy Fleet Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#0a1520; --land:#1d2e3d; --landline:#2c4256; --grat:#132433; --panel:#12212f; --line:#24384b;
           --text:#e6edf3; --muted:#8aa0b4; --ais:#00e5a0; }
@@ -187,6 +187,117 @@
   .aship.on { filter:drop-shadow(0 0 7px var(--gc)) drop-shadow(0 0 2px #fff); }
   .aship .glow { animation:pulse 1.8s ease-out infinite; transform-box:fill-box; transform-origin:center; }
   .src a { color:var(--acc2); }
+
+  /* ===================== MILITARY-SHOOTER MENU THEME (olive / sand / white) ===================== */
+  :root { --bg:#0e100b; --land:#2b2f20; --landline:#5d6244; --grat:rgba(216,201,163,.07); --panel:rgba(18,20,13,.93); --line:#47492f;
+          --text:#f3efe2; --muted:#a9a588; --acc:#d6c592; --acc2:#bcc85c; --warn:#e9c84a; --ais:#9fd3e3;
+          --cond:"Barlow Condensed", "Rajdhani", system-ui, sans-serif; }
+  html,body { font:500 15px/1.35 "Barlow", system-ui, sans-serif; letter-spacing:.01em;
+    background:radial-gradient(ellipse at 50% 35%, #1b1e14 0%, #0b0c08 80%); }
+  body::after { background:radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%),
+    repeating-linear-gradient(90deg, rgba(214,197,146,.025) 0 1px, transparent 1px 64px),
+    repeating-linear-gradient(0deg, rgba(214,197,146,.025) 0 1px, transparent 1px 64px); }
+  .land { fill:var(--land); stroke:var(--landline); stroke-width:.8; }
+  .land.coast { fill:#262a1c; stroke:var(--acc); stroke-opacity:.55; stroke-width:1.1; }
+  .grat { stroke:var(--grat); }
+  b, .stat b, .statline b { font-family:var(--cond); font-weight:700; color:#fff; }
+  a { color:var(--acc); }
+  /* flat dark panels with a sand accent bar, like a loadout menu */
+  .panel, .sheet { clip-path:none; border:1px solid rgba(214,197,146,.22); border-left:3px solid var(--acc);
+    background:linear-gradient(180deg, rgba(30,33,22,.95), rgba(14,15,10,.95)); box-shadow:0 8px 28px rgba(0,0,0,.55); backdrop-filter:blur(6px); }
+  .panel::before, .sheet::before, .panel::after, .sheet::after { display:none; }
+  .bar h1 { font:800 18px/1 var(--cond); letter-spacing:.07em; color:#fff; text-shadow:none; }
+  .bar h1::before { content:""; width:10px; height:18px; background:repeating-linear-gradient(90deg, var(--acc) 0 3px, transparent 3px 5px); display:inline-block; }
+  .radar { display:none; }
+  .hudstat { font:600 12px/1 var(--cond); letter-spacing:.12em; color:var(--muted); }
+  .hudstat b { color:var(--acc2); }
+  .barbtn, .retry, .chip, select.country, .zoom button, .pns-exit {
+    clip-path:none; border-radius:0; font:700 13px/1 var(--cond); letter-spacing:.14em; text-transform:uppercase;
+    background:rgba(214,197,146,.07); border:1px solid rgba(214,197,146,.3); color:#f3efe2; }
+  .barbtn:hover, .retry:hover, .zoom button:hover, .chip.on, .contact:hover { background:var(--acc); color:#15160f; box-shadow:none; border-color:var(--acc); }
+  select.country { font:600 13px var(--cond); letter-spacing:.06em; text-transform:none; }
+  .sect { font:800 12px/1 var(--cond); letter-spacing:.24em; color:var(--acc); }
+  .sect::before { content:"▍"; color:var(--acc2); }
+  .tl-head { font:800 12px/1.2 var(--cond); letter-spacing:.22em; color:var(--acc); border-top:1px solid rgba(214,197,146,.18); }
+  .tl-row { font:600 14px var(--cond); letter-spacing:.04em; border-left:1px solid rgba(214,197,146,.25); }
+  .tl-row.now::before { background:var(--acc2); box-shadow:none; }
+  .tl-date { color:var(--acc); }
+  .tag { font:700 12px/1.5 var(--cond); letter-spacing:.12em; background:rgba(188,200,92,.12); border-color:rgba(188,200,92,.45); color:#eef2c8; }
+  .sheet h3 { font:800 24px/1.05 var(--cond); letter-spacing:.04em; color:#fff; }
+  .sheet .close { color:var(--acc); }
+  .sheet .sheet-kicker { display:inline-block; font:800 12px/1 var(--cond); letter-spacing:.22em; color:#15160f; background:var(--acc);
+    padding:4px 10px 4px 8px; margin:-2px 0 8px -12px; }
+  .sheet .sheet-kicker::before { content:"▓▓ "; letter-spacing:0; opacity:.7; }
+  .sheet .sheet-kicker::after { content:""; animation:none; }
+  .stat { background:rgba(214,197,146,.06); border-color:rgba(214,197,146,.22); }
+  .stat span { font:600 11px var(--cond); letter-spacing:.14em; color:var(--muted); }
+  .lbl { fill:#f3efe2; font-family:var(--cond); font-weight:700; letter-spacing:.08em; stroke:#0b0c08; }
+  .sel-lbl { fill:#fff; }
+  .cluster .cl-badge { fill:var(--acc); stroke:none; }
+  .cluster .cl-n { fill:#15160f; font:800 11px var(--cond); }
+  .reticle { stroke:var(--acc2); filter:none; }
+  .nearc { fill:rgba(188,200,92,.14); stroke:var(--acc2); filter:none; }
+  .near-lbl { fill:#eef2c8; font:800 12px var(--cond); }
+  .water { fill:#9fb6b8; fill-opacity:.5; font:italic 600 12px var(--cond); }
+  .spec-hero { filter:none; }
+  .spec-k { font:700 12px/1.6 var(--cond); letter-spacing:.14em; color:var(--muted); }
+  .spec-v { font:600 14px var(--cond); letter-spacing:.03em; color:#f3efe2; }
+  .contact { font:700 15px var(--cond); letter-spacing:.06em; background:rgba(214,197,146,.06); border-color:rgba(214,197,146,.22); border-left:3px solid transparent; }
+  .contact:hover { border-left-color:#15160f; }
+  input[type=checkbox] { accent-color:var(--acc2); }
+  .bm-lbl, .bm-rwylbl { font-family:var(--cond); font-weight:700; letter-spacing:.1em; }
+  .bm-base { fill:rgba(214,197,146,.06); stroke:rgba(214,197,146,.6); }
+  .bm-bld { fill:rgba(214,197,146,.20); stroke:rgba(214,197,146,.55); }
+  .bm-coast { stroke:var(--acc); }
+  .photo { margin:8px 0 2px; position:relative; }
+  .photo img { display:block; width:100%; max-height:220px; object-fit:cover; border:1px solid rgba(214,197,146,.3); filter:saturate(.85) contrast(1.05); }
+  .photo-cr { display:block; font:600 11px var(--cond); letter-spacing:.06em; color:var(--muted); margin-top:3px; text-decoration:none; }
+  .photo-ph { height:120px; display:flex; align-items:center; justify-content:center; font:700 12px var(--cond); letter-spacing:.2em; color:var(--muted);
+    background:repeating-linear-gradient(45deg, rgba(214,197,146,.05) 0 8px, transparent 8px 16px); border:1px solid rgba(214,197,146,.15); text-transform:uppercase; }
+  /* order of battle screen */
+  .oob { position:absolute; inset:0; z-index:30; background:linear-gradient(180deg, rgba(14,16,10,.97), rgba(8,9,6,.98)); overflow-y:auto;
+    padding:calc(12px + env(safe-area-inset-top)) 14px calc(20px + env(safe-area-inset-bottom)); }
+  .oob[hidden] { display:none; }
+  .oob-in { max-width:720px; margin:0 auto; }
+  .oob-top { display:flex; align-items:center; gap:10px; }
+  .oob-title { flex:1; font:800 30px/1 var(--cond); letter-spacing:.06em; color:#fff; text-transform:uppercase; }
+  .oob-title small { display:block; font:700 12px var(--cond); letter-spacing:.22em; color:var(--acc); margin-bottom:4px; }
+  .oob-tabs { display:flex; gap:0; margin:14px 0 10px; border-bottom:1px solid rgba(214,197,146,.25); }
+  .oob-tabs button { flex:1; padding:10px 6px; background:none; border:none; border-bottom:3px solid transparent; color:var(--muted);
+    font:800 14px var(--cond); letter-spacing:.16em; text-transform:uppercase; cursor:pointer; }
+  .oob-tabs button.on { color:#fff; border-bottom-color:var(--acc); background:rgba(214,197,146,.07); }
+  .oob-sum { display:flex; gap:6px; margin:8px 0 12px; }
+  .oob-sum div { flex:1; background:rgba(214,197,146,.06); border:1px solid rgba(214,197,146,.2); padding:6px 8px; }
+  .oob-sum b { display:block; font:800 22px/1 var(--cond); color:#fff; }
+  .oob-sum span { font:700 10px var(--cond); letter-spacing:.18em; color:var(--muted); text-transform:uppercase; }
+  .oob-fleet { margin:10px 0; border-left:3px solid var(--acc); background:rgba(214,197,146,.04); }
+  .oob-fleet > summary { list-style:none; cursor:pointer; padding:10px 12px; display:flex; align-items:baseline; gap:10px; }
+  .oob-fleet > summary::-webkit-details-marker { display:none; }
+  .oob-fleet > summary .fn { font:800 19px var(--cond); letter-spacing:.06em; color:#fff; text-transform:uppercase; }
+  .oob-fleet > summary .fa { flex:1; font:600 13px var(--cond); letter-spacing:.06em; color:var(--muted); }
+  .oob-fleet > summary .fc { font:800 13px var(--cond); color:#15160f; background:var(--acc); padding:2px 7px; }
+  .oob-fleet[open] > summary { border-bottom:1px solid rgba(214,197,146,.15); }
+  .oob-grp { padding:6px 12px 8px 22px; position:relative; }
+  .oob-grp::before { content:""; position:absolute; left:12px; top:0; bottom:0; border-left:1px dashed rgba(214,197,146,.3); }
+  .oob-gn { font:800 13px var(--cond); letter-spacing:.18em; color:var(--acc2); text-transform:uppercase; margin:4px 0 2px; }
+  .oob-ship { display:flex; align-items:center; gap:10px; width:100%; padding:6px 8px; margin:2px 0; background:none; border:none; border-left:2px solid transparent;
+    color:var(--text); text-align:left; font:700 15px var(--cond); letter-spacing:.04em; cursor:pointer; position:relative; }
+  .oob-ship::before { content:""; position:absolute; left:-10px; top:50%; width:9px; border-top:1px dashed rgba(214,197,146,.3); }
+  .oob-ship:hover { background:var(--acc); color:#15160f; }
+  .oob-ship .ty { margin-left:auto; font:700 11px var(--cond); letter-spacing:.14em; color:var(--muted); text-transform:uppercase; }
+  .oob-ship:hover .ty { color:#15160f; }
+  .oob-ship.lead { font-size:16px; color:#fff; }
+  .oob-note { font:600 12px var(--cond); letter-spacing:.04em; color:var(--muted); margin:10px 2px; }
+  @media (max-width:420px){ .bar h1 { font-size:15px; letter-spacing:.03em; } .bar h1::before { width:6px; } .barbtn { padding:6px 7px; letter-spacing:.08em; } }
+  /* loadout stat bars */
+  .lo { margin:6px 0 2px; }
+  .lo-row { display:grid; grid-template-columns:92px 1fr 64px; align-items:center; gap:8px; margin:5px 0; }
+  .lo-k { font:800 12px var(--cond); letter-spacing:.18em; color:var(--muted); }
+  .lo-v { font:700 13px var(--cond); color:#fff; text-align:right; letter-spacing:.04em; }
+  .lo-bar { display:grid; grid-template-columns:repeat(12, 1fr); gap:2px; height:9px; }
+  .lo-bar i { background:rgba(214,197,146,.14); }
+  .lo-bar i.on { background:var(--acc); }
+  .lo-bar i.on.hi { background:#fff; }
 </style>
 </head>
 <body>
@@ -195,6 +306,7 @@
 <div class="panel collapsed" id="panel">
   <div class="bar">
     <h1><span class="radar"></span>Fleet Command</h1>
+    <button class="barbtn" id="oobBtn" title="Order of battle — fleet hierarchy">OOB</button>
     <button class="barbtn" id="pnsBtn" title="Pensacola live view">📍 PNS</button>
     <button class="barbtn" id="toggle">Layers ▾</button>
   </div>
@@ -746,6 +858,19 @@ window.addEventListener("resize", size);
 // ---------- Ship specs ----------
 let specs = null;
 fetch("data/specs.json", { cache: "no-store" }).then(r => r.json()).then(j => { specs = j; }).catch(() => {});
+// Loadout-style stat bars from the class figures (12 segments, scaled to the biggest US ships)
+function loadoutBars(c) {
+  const num = t => { const m = String(t || "").replace(/,/g, "").match(/\d+(\.\d+)?/); return m ? +m[0] : null; };
+  const metres = t => { const m = String(t || "").match(/\((\d+)\s*m\)/); if (m) return +m[1]; const f = num(t); return f ? f * 0.3048 : null; };
+  const crew = t => (String(t || "").replace(/,/g, "").match(/\d+/g) || []).reduce((a, b) => a + +b, 0) || null;
+  const rows = [["SPEED", num(c.speed), 35, c.speed && c.speed.replace(/ knots?/, " KT")],
+    ["SIZE", metres(c.length), 340, metres(c.length) && Math.round(metres(c.length)) + " M"],
+    ["TONNAGE", num(c.displacement), 100000, num(c.displacement) && (num(c.displacement) >= 1000 ? Math.round(num(c.displacement) / 1000) + "K T" : num(c.displacement) + " T")],
+    ["CREW", crew(c.crew), 6000, crew(c.crew) && crew(c.crew).toLocaleString()]].filter(r => r[1]);
+  if (!rows.length) return "";
+  return `<div class="lo">${rows.map(([k, v, max, txt]) => { const n = Math.max(1, Math.min(12, Math.round(v / max * 12)));
+    return `<div class="lo-row"><span class="lo-k">${k}</span><span class="lo-bar">${Array.from({ length: 12 }, (_, i) => `<i class="${i < n ? "on" + (n >= 11 ? " hi" : "") : ""}"></i>`).join("")}</span><span class="lo-v">${esc(txt)}</span></div>`; }).join("")}</div>`;
+}
 function specsHtml(s) {
   const sp = specs && specs.ships[s.name]; if (!sp) return "";
   const c = specs.classes[sp.c] || {};
@@ -753,8 +878,8 @@ function specsHtml(s) {
     ["Height", c.height], ["Draft", c.draft], ["Displacement", c.displacement], ["Top speed", c.speed], ["Power", c.power],
     ["Crew", c.crew], ["Carries", c.carries]].filter(r => r[1]);
   const photo = `https://en.wikipedia.org/wiki/${encodeURIComponent(sp.wiki)}`;
-  return `<div class="tl-head">Ship profile</div>
-    <div class="spec-hero">${shipIcon(s.type, 120)}</div>
+  return `<div class="tl-head">Loadout</div>
+    <div class="spec-hero">${shipIcon(s.type, 120)}</div>${loadoutBars(c)}
     <div class="spec-grid">${rows.map(([k, v]) => `<div class="spec-k">${esc(k)}</div><div class="spec-v">${esc(v)}</div>`).join("")}</div>
     <div style="margin-top:8px"><a class="retry spec-link" href="${esc(photo)}" target="_blank" rel="noopener">📷 Photos &amp; full history ↗</a></div>
     <div class="sub" style="margin-top:4px">Class figures from public Navy fact files, rounded. Exact top speeds aren't published.</div>`;
@@ -790,7 +915,7 @@ async function findNear(s) {
   return { ship: s, list };
 }
 function drawNear() {
-  const list = near && selected === near.ship ? near.list : [];
+  const list = near && (selected || selAShip) === near.ship ? near.list : [];
   gNear.selectAll("path").data(list, d => d.name).join("path")
     .attr("class", "nearc").attr("d", d => spath(d.f));
   gNearLbl.selectAll("text").data(list, d => d.name).join("text")
@@ -1078,6 +1203,73 @@ function timelineHtml(rows) {
     `<div class="tl-row${i === 0 ? " now" : ""}"><span class="tl-date">${esc(r.when)}</span><span>${esc(r.where)}</span></div>`).join("")}</div>`;
 }
 
+// ---------- Ship photos (Wikipedia lead image, fetched by Supabase function ship-photos) ----------
+const photoCache = new Map();
+const photoSlot = () => `<div id="photoSlot" class="photo"><div class="photo-ph">Loading photo…</div></div>`;
+async function loadPhoto(key) {
+  const slot = () => $("photoSlot");
+  const show = p => { const el2 = slot(); if (!el2) return;
+    el2.innerHTML = p ? `<img alt="" src="data:${esc(p.m)};base64,${p.b}"><a class="photo-cr" href="${esc(p.u)}" target="_blank" rel="noopener">Photo: Wikipedia / Wikimedia Commons ↗</a>` : ""; };
+  if (photoCache.has(key)) return show(photoCache.get(key));
+  try {
+    if (mcp === undefined) mcp = await claude.use("mcp");
+    if (!mcp) return show(null);
+    const k = String(key).replace(/'/g, "''");
+    const p = await runSql(`select json_build_object('m',mime,'b',b64,'u',page_url) from ship_photos where key = '${k}'`);
+    photoCache.set(key, p && p.b ? p : null); show(photoCache.get(key));
+  } catch { show(null); }
+}
+// ---------- Order of battle: fleet → group → ship ----------
+const FLEETS = [
+  ["5th Fleet", "Middle East · Bahrain", s => /Arabian|Red Sea|Middle East|Gulf|Oman|Aden/i.test(s.area) || (s.lon > 32 && s.lon <= 68 && s.lat < 32 && s.lat > -10)],
+  ["6th Fleet", "Europe & Africa · Naples", s => /Mediterranean|Baltic|North Sea|Black Sea/i.test(s.area) || (s.lon > -20 && s.lon <= 45 && s.lat >= 30)],
+  ["7th Fleet", "Western Pacific & Indian Ocean · Yokosuka", s => /Philippine|Japan|South China|Korea|Guam|Indian Ocean|Sasebo|Yokosuka/i.test(s.area) || s.lon > 68 || s.lon < -160],
+  ["4th Fleet", "Caribbean & Latin America · Mayport", s => /Caribbean|Latin|Panama/i.test(s.area) || (s.lat < 30 && s.lon > -100 && s.lon < -50)],
+  ["3rd Fleet", "Eastern Pacific · San Diego", s => /San Diego|Eastern Pacific|Hawaii|Pearl/i.test(s.area) || (s.lon <= -100 && s.lon >= -160)],
+  ["2nd Fleet / Home", "Atlantic · Norfolk", s => true]];
+const TYPE_ORDER = { carrier: 0, amphib: 1, cruiser: 2, destroyer: 3, other: 4 };
+let oobTab = "us", usniMeta = {};
+function oobHtml() {
+  const tabs = [["us", "U.S. Navy"], ["ally", "Allies"], ["rival", "Russia / China"]];
+  let body = "";
+  if (oobTab === "us") {
+    const byFleet = FLEETS.map(([n, a]) => ({ n, a, ships: [] }));
+    for (const s of ships) byFleet[FLEETS.findIndex(f => f[2](s))].ships.push(s);
+    const deployed = ships.filter(s => !/Returned home/i.test(s.group || "")).length;
+    body = `<div class="oob-sum"><div><b>${ships.length}</b><span>Ships tracked</span></div><div><b>${ships.filter(s => s.type === "carrier").length}</b><span>Carriers</span></div>
+      <div><b>${new Set(ships.map(s => s.group).filter(g => /CSG|ARG/.test(g || ""))).size}</b><span>Strike groups</span></div><div><b>${deployed}</b><span>Deployed</span></div></div>` +
+      byFleet.filter(f => f.ships.length).map(f => {
+        const groups = d3.groups(f.ships, s => s.group || "Independent")
+          .sort((a, b) => Math.min(...a[1].map(s => TYPE_ORDER[s.type])) - Math.min(...b[1].map(s => TYPE_ORDER[s.type])));
+        return `<details class="oob-fleet" open><summary><span class="fn">${esc(f.n)}</span><span class="fa">${esc(f.a)}</span><span class="fc">${f.ships.length}</span></summary>` +
+          groups.map(([g, list]) => { list.sort((a, b) => TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
+            const lead = list[0].type === "carrier" || list[0].type === "amphib" ? list[0] : null;
+            const gname = /^CSG/.test(g) && lead ? `${g} · ${lead.name.replace(/^USS /, "").replace(/ \(.*\)$/, "")} strike group` : g;
+            return `<div class="oob-grp"><div class="oob-gn">${esc(gname)}</div>${list.map(s => `<button class="oob-ship${s === lead ? " lead" : ""}" data-k="us" data-n="${esc(s.name)}">${shipIcon(s.type, 26)}<span>${esc(s.name)}</span><span class="ty">${esc((TYPES[s.type] || TYPES.other).label)}</span></button>`).join("")}</div>`; }).join("") + `</details>`;
+      }).join("") + `<div class="oob-note">Fleets are assigned from each ship's reported sea area (USNI News, ${esc(usniMeta.asOf || "")}). Positions and groupings are approximate.</div>`;
+  } else {
+    const rival = oobTab === "rival";
+    const list = [...(rival ? rivalShips : allyShips), ...allyAis.map(v => ({ ...v, live: true, id: "ais" + v.mmsi, type: "destroyer", cls: "Live AIS sighting" }))]
+      .filter(d => RIVAL.has(d.country) === rival);
+    const byC = d3.groups(list, d => d.country).sort((a, b) => b[1].length - a[1].length);
+    body = `<div class="oob-sum"><div><b>${list.length}</b><span>Ships</span></div><div><b>${byC.length}</b><span>Navies</span></div><div><b>${list.filter(d => d.type === "carrier").length}</b><span>Carriers</span></div></div>` +
+      byC.map(([c, l]) => { l.sort((a, b) => (a.live ? 1 : 0) - (b.live ? 1 : 0) || TYPE_ORDER[a.type] - TYPE_ORDER[b.type]);
+        return `<details class="oob-fleet" open style="border-left-color:${flagCols(c).find(x => x !== "#ffffff") || "#d6c592"}"><summary><span class="fn">${flagOf(c)} ${esc(NAVY_NAME[c] || c)}</span><span class="fa"></span><span class="fc">${l.length}</span></summary>
+          <div class="oob-grp">${l.map(d => `<button class="oob-ship${d.type === "carrier" ? " lead" : ""}" data-k="as" data-n="${esc(d.id)}">${allyShipIcon(d.type, d.country, 26)}<span>${esc(d.name)}</span><span class="ty">${esc(d.live ? "Live AIS" : (d.area || ""))}</span></button>`).join("")}</div></details>`; }).join("") +
+      `<div class="oob-note">${rival ? "Russian and Chinese ships from public reporting plus any live AIS sightings." : "Major allied warships from public reporting plus live AIS sightings."} Positions are approximate.</div>`;
+  }
+  return `<div class="oob-in"><div class="oob-top"><div class="oob-title"><small>▓▓ FLEET COMMAND</small>Order of battle</div><button class="barbtn" id="oobClose">✕ Close</button></div>
+    <div class="oob-tabs">${tabs.map(([k, l]) => `<button data-t="${k}" class="${k === oobTab ? "on" : ""}">${l}</button>`).join("")}</div>${body}</div>`;
+}
+function openOob() {
+  const o = $("oob"); o.innerHTML = oobHtml(); o.hidden = false; o.scrollTop = 0;
+  $("oobClose").onclick = ev => { ev.stopPropagation(); o.hidden = true; };
+  o.querySelectorAll(".oob-tabs button").forEach(b => b.onclick = ev => { ev.stopPropagation(); oobTab = b.dataset.t; openOob(); });
+  o.querySelectorAll(".oob-ship").forEach(b => b.onclick = ev => { ev.stopPropagation(); o.hidden = true;
+    if (b.dataset.k === "us") { const sh = ships.find(x => x.name === b.dataset.n); if (sh) { if (pns.on) exitPensacola(); showShip(sh); fitPoints([sh], 8); } }
+    else { const d = aShipList().concat(allyShips, rivalShips).find(x => x.id === b.dataset.n); if (d) { if (pns.on) exitPensacola(); showAllyShip(d); fitPoints([d], 8); } } });
+}
+$("oobBtn").onclick = ev => { ev.stopPropagation(); collapsePanel(); openOob(); };
 function showShip(s) {
   selected = s; selAlly = null; selAShip = null;
   const t = TYPES[s.type] || TYPES.other;
@@ -1091,12 +1283,13 @@ function showShip(s) {
   findNear(s).then(n => { if (selected !== s || !n) return; near = n; draw();
     const slot = $("nearSlot"); if (slot) slot.innerHTML = nearHtml(n); });
   draw();
+  setTimeout(() => loadPhoto(s.name), 0);
   const rows = hist.slice().reverse().map(p => ({ when: fmtDay(p.date), where: p.area }));
   const moved = new Set(hist.map(p => p.area)).size;
   $("sheetBody").innerHTML = `<div class="sheet-kicker">TARGET // ${esc((TYPES[s.type] || TYPES.other).label.toUpperCase())}</div><h3>${shipIcon(s.type, 30)} ${esc(s.name)} <span title="United States">🇺🇸</span></h3>
     <div class="sub">${esc(s.area)} · approximate</div>
     <span class="tag">🇺🇸 U.S. Navy</span><span class="tag" style="border-color:${t.hex}">${esc(t.label)}</span><span class="tag">${esc(s.group)}</span>
-    <p style="margin:6px 0 0">${esc(s.note)}</p>
+    <p style="margin:6px 0 0">${esc(s.note)}</p>${photoSlot()}
     <div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div>
     ${specsHtml(s)}
     ${hist.length ? `<div class="tl-head">Last 45 days · ${hist.length} weekly reports · ${moved} location${moved === 1 ? "" : "s"}</div>${timelineHtml(rows)}
@@ -1180,12 +1373,14 @@ async function showAllyShip(d) {
     <span class="tag" style="border-color:var(--gc,#7dd3fc)">${flagOf(d.country)} ${esc((NAVY_NAME[d.country] || d.country).toUpperCase())}</span>${d.cls ? `<span class="tag">${esc(d.cls)}</span>` : ""}`;
   openSheet(d.live
     ? head + `<p style="margin:6px 0 0">${d.inPort ? "<b>In port / alongside</b><br>" : ""}Speed ${esc(d.sog ?? "?")} kn · Course ${esc(d.cog ?? "?")}°<br>${esc(d.lat.toFixed(3))}, ${esc(d.lon.toFixed(3))}<br>
-        <span class="sub">Last seen ${esc(new Date(d.time).toLocaleString())} · MMSI ${esc(d.mmsi)}</span></p><div class="tl-head" id="aTrk">Loading 45-day track…</div>`
-    : head + `<p style="margin:6px 0 2px"><b>Area:</b> ${esc(d.area)}</p><p style="margin:2px 0"><b>Last reported:</b> ${esc(d.reported)}</p>
-        <p style="margin:6px 0 0">${esc(d.note)}</p>${d.src ? srcList([d.src]) : ""}
+        <span class="sub">Last seen ${esc(new Date(d.time).toLocaleString())} · MMSI ${esc(d.mmsi)}</span></p><div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div><div class="tl-head" id="aTrk">Loading 45-day track…</div>`
+    : head + `${photoSlot()}<p style="margin:6px 0 2px"><b>Area:</b> ${esc(d.area)}</p><p style="margin:2px 0"><b>Last reported:</b> ${esc(d.reported)}</p>
+        <p style="margin:6px 0 0">${esc(d.note)}</p><div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div>${d.src ? srcList([d.src]) : ""}
         <div class="sub" style="margin-top:6px">Position is approximate, placed in open water near the reported area. List as of ${esc((RIVAL.has(d.country) ? rivalMeta : allyShipsMeta).asOf || "")}.</div>`);
   selAShip = d; draw();
-  if (!d.live) return;
+  findNear(d).then(n => { if (selAShip !== d || !n) return; near = n; draw();
+    const slot = $("nearSlot"); if (slot) slot.innerHTML = nearHtml(n); });
+  if (!d.live) { loadPhoto(d.id); return; }
   try {
     if (!mcp) throw new Error("no connector");
     const mm = String(d.mmsi).replace(/\D/g, "");
@@ -1295,7 +1490,7 @@ try {
   ships = d.ships;
   $("asof").innerHTML = `Weekly positions as of <b>${esc(d.asOf)}</b> · <a href="${esc(d.sourceUrl)}" target="_blank" rel="noopener">USNI News</a>`;
   $("tBF").textContent = d.totals.battleForce;
-  $("tDep").textContent = d.totals.deployed;
+  $("tDep").textContent = d.totals.deployed; usniMeta = d;
   $("tUw").textContent = d.totals.underway;
   try { history = await (await fetch("data/history.json", { cache: "no-store" })).json(); } catch {}
   try {
@@ -1448,5 +1643,6 @@ async function loadAis() {
 loadAis();
 setInterval(loadAis, 5 * 60 * 1000);
 </script>
+<div id="oob" class="oob" hidden></div>
 </body>
 </html>
