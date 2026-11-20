@@ -1657,7 +1657,7 @@ function updateGroundCounts() {
   $("c-bases").textContent = bs.length; $("c-deploy").textContent = dp.length;
 }
 $("branchSel").onclick = e => e.stopPropagation();
-$("branchSel").onchange = e => { branchSel = e.target.value; updateGroundCounts(); draw(); };
+$("branchSel").onchange = e => { branchSel = e.target.value; const logo = $("branchLogo"); if (logo) { const key = BRAND_LOGOS[branchSel] || "navy"; logo.hidden = false; logo.src = `assets/branding/${key}-128.webp`; } updateGroundCounts(); draw(); };
 $("groundLegend").addEventListener("change", e => {
   const g = e.target.dataset.g; if (!g) return; show[g] = e.target.checked; draw();
 });
