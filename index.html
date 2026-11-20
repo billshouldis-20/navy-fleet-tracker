@@ -435,8 +435,16 @@ const TYPES = {
   other:     { label:"Other",     hex:"#8dff6a", s:1.0,
     path:"M-11,1H11L8,5H-9.5Z M-4.5,1V-2H1V-6H1.6V-2H4V1Z" }
 };
-const shipIcon = (t, size = 26) => { const c = TYPES[t] || TYPES.other;
-  return `<svg width="${size}" height="${Math.round(size * 14 / 26)}" viewBox="-13.5 -9.5 27 15" style="vertical-align:middle"><path d="${c.path}" fill="${c.hex}" stroke="#fff" stroke-opacity=".55" stroke-width=".6"/></svg>`; };
+
+const SHIP_ART_PATHS = {"carrier":"M25 330H487L481 344L452 350H66L38 346Z M31 306H481V331H31Z M128 306V245H147V230H172V212H200V195H216V305Z M158 212V166H166V212M181 195V146H190V195M144 181H208V187H144M169 162H199V168H169 M210 302H242V290H264V302M286 302H317V290H337V302M356 302H386V290H409V302","amphib":"M30 324H482L475 342L444 350H65L40 344Z M37 303H480V325H37Z M135 304V274H153V244H171V217H230V247H255V303Z M179 217V172H187V217M206 216V155H213V216M164 186H221V192H164 M298 288H350L341 297H307Z M311 288L319 275H328L340 288M300 273H347V278H300M325 273V264H330V273 M381 288H435L425 297H390Z M395 288L401 275H412L425 288M384 273H433V278H384M408 273V264H413V273","cruiser":"M25 331L483 316L456 349H45Z M87 330V310H129V293H166V270H194V244H237V224H268V250H293V270H339V289H381V319Z M226 224L238 172H245L259 224M232 204H253V210H232M222 188H263V193H222M242 172V147H247V172 M292 268V212H299V268M310 270V228H317V270 M396 321V303H420L434 317H423L436 308L439 312L423 327Z M142 294V260H148V294M159 271V244H165V271","destroyer":"M27 330L486 319L450 350H43Z M97 330V314H141V297H186L201 266H228L245 233H286L302 274H341L355 298H394V324Z M263 233L275 175H281L294 233M251 199H309V205H251M274 175V152H281V175M257 221H303V227H257 M217 267V236H224V267M235 267V217H242V267 M405 323V307H427L437 321H425L450 312L452 317L427 329Z","other":"M34 331L476 319L450 350H56Z M131 331V312H174V288H199V265H235V246H270V269H298V288H329V310H374V326Z M250 246V194H258V246M226 218H276V225H226M236 199H266V205H236 M376 320V305H397L408 315H396L421 309L424 315L399 325Z"};
+const shipAsset = t => "assets/ships/" + (SHIP_ART_PATHS[t] ? t : "other") + ".svg";
+const shipPath = t => SHIP_ART_PATHS[t] || SHIP_ART_PATHS.other;
+const aircraftAsset = t => /^(A119|AS65|H60|TH57|H64|H47|UH60|H53S|H53|H1)$/.test(t || "") ? "assets/aircraft/helicopter.svg"
+  : /^(TEX2|T45|T38|T1|BE9L|BE40)$/.test(t || "") ? "assets/aircraft/trainer.svg"
+  : /^(P8|E6|C130|C30J|B350|C17|C5M|C40|C2|E2|K35R|KC46|K10|E3TF|AC30|MC30|CN35|HC30|BE20|B190|GLF5|C560)$/.test(t || "") ? "assets/aircraft/patrol.svg"
+  : "assets/aircraft/jet.svg";
+const svgArt = (url, width, height = width) => `<img src="${url}" width="${width}" height="${height}" alt="" style="object-fit:contain;vertical-align:middle;filter:drop-shadow(0 0 3px #38bdf888)">`;
+const shipIcon = (t, size = 26) => svgArt(shipAsset(t), size, Math.round(size * 14 / 26));
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $ = id => document.getElementById(id);
 
@@ -641,8 +649,8 @@ const slug = c => String(c || "x").normalize("NFD").replace(/[^A-Za-z]/g, "");
 const flagGrad = (c, id) => { const cols = flagCols(c), n = cols.length, v = FLAG_VERT.has(c);
   return `<linearGradient id="${id}" x1="0" y1="0" x2="${v ? 1 : 0}" y2="${v ? 0 : 1}">` +
     cols.map((col, i) => `<stop offset="${i / n}" stop-color="${col}"/><stop offset="${(i + 1) / n}" stop-color="${col}"/>`).join("") + `</linearGradient>`; };
-const allyShipIcon = (t, c, size = 26) => { const cfg = TYPES[t] || TYPES.other, id = "ig" + slug(c) + Math.random().toString(36).slice(2, 7);
-  return `<svg width="${size}" height="${Math.round(size * 14 / 26)}" viewBox="-13.5 -9.5 27 15" style="vertical-align:middle"><defs>${flagGrad(c, id)}</defs><path d="${cfg.path}" fill="url(#${id})" stroke="#fff" stroke-opacity=".8" stroke-width=".7"/></svg>`; };
+const allyShipIcon = (t, c, size = 26) => { const id = "ig" + slug(c) + Math.random().toString(36).slice(2, 7);
+  return `<svg width="${size}" height="${Math.round(size * 14 / 26)}" viewBox="0 115 512 260" style="vertical-align:middle"><defs>${flagGrad(c, id)}</defs><path d="${shipPath(t)}" fill="url(#${id})" stroke="#fff" stroke-opacity=".8" stroke-width="5"/></svg>`; };
 const flagCols = c => FLAGCOL[c] || ["#38bdf8"];
 let selAlly = null;
 let allyShips = [], allyAis = [], selAShip = null, allyShipsMeta = {}, rivalShips = [], rivalMeta = {};
@@ -777,14 +785,14 @@ function drawGround() {
   const dp = !show.deploy ? [] : branchSel ? deploys.filter(d => branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)) : deploys;
   const sel = gDeploy.selectAll("g.dep").data(dp, d => d.id).join(enter => {
     const gg = enter.append("g").attr("class", "dep").style("cursor", "pointer");
-    gg.append("circle").attr("class", "halo"); gg.append("circle").attr("class", "core"); gg.append("text").attr("class", "lbl");
+    gg.append("circle").attr("class", "halo"); gg.append("image").attr("class", "core"); gg.append("text").attr("class", "lbl");
     return gg;
   });
   sel.attr("transform", d => `translate(${P(d)[0]},${P(d)[1]})`)
     .on("click", (e, d) => { e.stopPropagation(); showDeploy(d); });
   sel.select(".halo").attr("r", 13 / Math.sqrt(k)).attr("fill", d => (DKIND[d.kind] || DKIND.rotation)[1]).attr("fill-opacity", .18)
     .attr("stroke", d => (DKIND[d.kind] || DKIND.rotation)[1]).attr("stroke-width", 1 / k).attr("stroke-dasharray", d => d.kind === "drawdown" ? `${3 / k} ${3 / k}` : null);
-  sel.select(".core").attr("r", 4 / Math.sqrt(k)).attr("fill", d => (DKIND[d.kind] || DKIND.rotation)[1]);
+  sel.select(".core").attr("href", "assets/operations/mobilization.svg").attr("x", -11).attr("y", -11).attr("width", 22).attr("height", 22);
   sel.select("text").attr("font-size", 10).attr("stroke-width", 3).attr("y", 4)
     .each(function (d) { const flip = P(d)[0] > el.clientWidth - 140;
       d3.select(this).attr("x", flip ? -15 : 15).attr("text-anchor", flip ? "end" : "start"); })
@@ -835,9 +843,9 @@ function draw() {
   });
   gsh.attr("transform", d => { const [x, y] = SPJ([d.lon, d.lat]), c = TYPES[d.type] || TYPES.other; return `translate(${x},${y}) scale(${c.s})`; })
     .on("click", (e, d) => { e.stopPropagation(); showShip(d); });
-  gsh.select("path").attr("d", d => (TYPES[d.type] || TYPES.other).path)
+  gsh.select("path").attr("d", d => shipPath(d.type)).attr("transform", "translate(-13,-13) scale(.052)")
     .attr("fill", d => (TYPES[d.type] || TYPES.other).hex).style("color", d => (TYPES[d.type] || TYPES.other).hex)
-    .attr("stroke", d => d === selected ? "#fff" : "#04080b").attr("stroke-width", d => d === selected ? 1.6 : 0.9)
+    .attr("stroke", d => d === selected ? "#fff" : "#04080b").attr("stroke-width", d => d === selected ? 19 : 9)
     .attr("stroke-linejoin", "round");
   // US flag on every US ship (constant ~10px whatever the hull scale)
   gsh.select(".usflag").attr("x", d => -12.5).attr("y", -7).attr("text-anchor", "middle").attr("dominant-baseline", "central")
@@ -853,10 +861,10 @@ function draw() {
   });
   gcl.attr("transform", d => `translate(${d.x},${d.y})`)
     .on("click", (e, d) => { e.stopPropagation(); openCluster(d); });
-  gcl.select(".cl-ship").attr("d", d => (TYPES[d.lead.type] || TYPES.other).path)
-    .attr("transform", d => `scale(${(TYPES[d.lead.type] || TYPES.other).s})`)
+  gcl.select(".cl-ship").attr("d", d => shipPath(d.lead.type))
+    .attr("transform", d => `translate(-13,-13) scale(${.052 * (TYPES[d.lead.type] || TYPES.other).s})`)
     .attr("fill", d => (TYPES[d.lead.type] || TYPES.other).hex).style("color", d => (TYPES[d.lead.type] || TYPES.other).hex)
-    .attr("stroke", "#04080b").attr("stroke-width", .9).attr("stroke-linejoin", "round");
+    .attr("stroke", "#04080b").attr("stroke-width", 9).attr("stroke-linejoin", "round");
   gcl.select(".cl-badge").attr("x", 10).attr("y", -19).attr("width", d => String(d.members.length).length * 7 + 9).attr("height", 14);
   gcl.select(".usflag").attr("x", -16).attr("y", -11).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 10).text("🇺🇸");
   gcl.select(".cl-n").attr("x", d => 10 + (String(d.members.length).length * 7 + 9) / 2).attr("y", -9.2).attr("text-anchor", "middle").text(d => d.members.length);
@@ -885,10 +893,10 @@ function draw() {
     .style("--gc", d => flagCols(d.country).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8")
     .attr("transform", d => `translate(${SPJ([d.lon, d.lat])})`)
     .on("click", (e, d) => { e.stopPropagation(); showAllyShip(d); });
-  gas.select(".hull").attr("d", d => (TYPES[d.type] || TYPES.other).path)
-    .attr("transform", d => `scale(${(TYPES[d.type] || TYPES.other).s * (d === selAShip ? 1.5 : 1.05)})`)
+  gas.select(".hull").attr("d", d => shipPath(d.type))
+    .attr("transform", d => `translate(-13,-13) scale(${.052 * (TYPES[d.type] || TYPES.other).s * (d === selAShip ? 1.5 : 1.05)})`)
     .attr("fill", d => `url(#fg${slug(d.country)})`).attr("stroke", "#fff").attr("stroke-opacity", d => d === selAShip ? 1 : .75)
-    .attr("stroke-width", d => d === selAShip ? .9 : .7).style("stroke-dasharray", d => d.live ? null : null);
+    .attr("stroke-width", d => d === selAShip ? 13 : 8).style("stroke-dasharray", d => d.live ? null : null);
   gas.select(".glow").attr("r", d => d === selAShip ? 26 : 0).attr("fill", "none").attr("stroke-width", 2.5)
     .attr("stroke", d => flagCols(d.country).find(c => c !== "#ffffff" && c !== "#000000") || "#38bdf8");
   gas.select(".flag").attr("x", d => d === selAShip ? 20 : 13).attr("y", -9).attr("font-size", d => d === selAShip ? 13 : 10)
@@ -1036,13 +1044,15 @@ function drawPns() {
     .attr("x", d => P(d)[0]).attr("y", d => P(d)[1]).attr("text-anchor", "middle").text(d => d.name);
   // once the base map's own points show, drop the regional markers they would collide with
   const sites = (pns.meta ? pns.meta.sites : []).filter(x => !(T.k >= 3 && pns.meta.base && /^(NAS PNS|CORRY STA)$/.test(x.short || "")));
-  const gs = gPns.selectAll("g.site").data(sites, d => d.name).join(en => { const x = en.append("g").attr("class", "site"); x.append("rect").attr("class", "hit"); x.append("path"); x.append("text").attr("class", "lbl site-lbl"); return x; });
+  const gs = gPns.selectAll("g.site").data(sites, d => d.name).join(en => { const x = en.append("g").attr("class", "site"); x.append("rect").attr("class", "hit"); x.append("path"); x.append("image").attr("class", "base-art"); x.append("text").attr("class", "lbl site-lbl"); return x; });
   gs.attr("transform", d => `translate(${P(d)})`).style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); openSheet(`<div class="sheet-kicker">INSTALLATION</div><h3>${esc(d.name)}</h3><p style="margin:6px 0 0">${esc(d.note)}</p>${/NAS PNS|Pensacola/i.test(d.short || d.name) && !/Pass|Whiting|Eglin|Hurlburt/i.test(d.name) ? `<div style="margin-top:8px"><button class="retry" id="siteBase">🗺 Open base map</button></div>` : ""}${pnsBackBtn()}`); wirePnsBack();
       const sb = $("siteBase"); if (sb) sb.onclick = ev => { ev.stopPropagation(); showBaseMap(true); }; });
   gs.select("rect.hit").attr("x", -10).attr("y", -10).attr("width", 20).attr("height", 20).attr("fill", "transparent");
   // airfield = square with runway stroke; port = anchor-like diamond; school = circle
   gs.select("path").attr("class", d => "site-ico " + (d.kind || "air"))
     .attr("d", d => d.kind === "port" ? "M0,-5L5,0L0,5L-5,0Z" : d.kind === "school" ? "M-4,0a4,4 0 1,0 8,0a4,4 0 1,0 -8,0" : "M-5,-5H5V5H-5Z M-4,4L4,-4");
+  gs.select(".base-art").attr("href", "assets/operations/pensacola.svg").attr("x", -10).attr("y", -10).attr("width", 20).attr("height", 20).style("display", d => /NAS PNS|Pensacola/i.test(d.short || d.name) ? null : "none");
+  gs.select("path.site-ico").style("display", d => /NAS PNS|Pensacola/i.test(d.short || d.name) ? "none" : null);
   gs.select("text").each(function (d) { const x = P(d)[0], flip = x > W - 90; d3.select(this).attr("x", flip ? -9 : 9).attr("text-anchor", flip ? "end" : "start"); })
     .attr("y", 4).attr("font-size", 13).attr("stroke-width", 3).text(d => d.short || d.name);
 
@@ -1054,10 +1064,10 @@ function drawPns() {
     .style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); showPnsVessel(d); });
 
   const ac = pns.data.aircraft;
-  const plane = `M0,${-9 * s}L${1.6 * s},${-3 * s}L${8 * s},${1 * s}L${8 * s},${3 * s}L${1.6 * s},${1 * s}L${1.2 * s},${6 * s}L${3.5 * s},${8 * s}L${3.5 * s},${9.5 * s}L0,${8.5 * s}L${-3.5 * s},${9.5 * s}L${-3.5 * s},${8 * s}L${-1.2 * s},${6 * s}L${-1.6 * s},${1 * s}L${-8 * s},${3 * s}L${-8 * s},${1 * s}L${-1.6 * s},${-3 * s}Z`;
-  const ga = gPns.selectAll("g.ac").data(ac, d => d.hex).join(en => { const x = en.append("g").attr("class", "ac"); x.append("path"); x.append("text").attr("class", "lbl"); return x; });
+  // Aircraft silhouettes are type-specific SVG assets, including helicopters.
+  const ga = gPns.selectAll("g.ac").data(ac, d => d.hex).join(en => { const x = en.append("g").attr("class", "ac"); x.append("image"); x.append("text").attr("class", "lbl"); return x; });
   ga.attr("transform", d => `translate(${P(d)})`).style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); showPnsAircraft(d); });
-  ga.select("path").attr("d", plane).attr("transform", d => `rotate(${d.track ?? 0})`).attr("fill", "#ffd54f").attr("stroke", "#0a1520").attr("stroke-width", .8 * s);
+  ga.select("image").attr("href", d => aircraftAsset(d.type)).attr("x", -11).attr("y", -11).attr("width", 22).attr("height", 22).attr("transform", d => `rotate(${d.track ?? 0})`);
   ga.select("text").attr("y", 4).attr("font-size", 10).attr("stroke-width", 3)
     .each(function (d) { const x = P(d)[0], flip = x > W - 70; d3.select(this).attr("x", flip ? -11 : 11).attr("text-anchor", flip ? "end" : "start"); })
     .text(d => inView(P(d)) ? (d.flight || d.reg || d.hex) : "");
@@ -1202,7 +1212,7 @@ function showPnsSummary() {
   const vRows = d.vessels.slice(0, 15).map(v => `<div class="tl-row"><span class="tl-date">${esc(ago(v.t))}</span><span>${esc(v.name || "MMSI " + v.mmsi)} · ${esc((ZONES[v.zone] || ZONES.gulf)[0])}</span></div>`).join("");
   const eRows = d.events.map(e => `<div class="tl-row"><span class="tl-date">${esc(new Date(e.t).toLocaleDateString([], { month: "short", day: "numeric" }))}</span><span>${esc(e.name || "MMSI " + e.mmsi)} ${esc(e.event)}</span></div>`).join("");
   const news = (pns.meta ? pns.meta.news : []).map(n => `<div class="src"><span class="sub">${esc(fmtDay(n.date))}</span> <a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a><br><span class="sub">${esc(n.summary)}</span></div>`).join("");
-  openSheet(`<div class="sheet-kicker">SECTOR // PENSACOLA</div><h3>Pensacola area</h3>
+  openSheet(`<div class="sheet-kicker">SECTOR // PENSACOLA</div><h3>${svgArt("assets/operations/pensacola.svg", 30)} Pensacola area</h3>
     <div class="sub">${st.lastRun ? "Live data updated " + esc(ago(st.lastRun)) : "Live data every 10 min"} · <a href="#" id="pnsWorld">← back to world map</a></div>
     <div style="margin-top:8px"><button class="retry" id="pnsBase">🗺 NAS Pensacola base map — gates, galley, barracks, NEX, airfield</button></div>
     ${pns.err ? `<p style="margin:6px 0 0;color:#ffb4a9">${esc(pns.err)} <button class="retry" id="pnsRetry">Tap to load</button></p>` : ""}
@@ -1269,7 +1279,7 @@ function routeGuess(a, pts) {
 async function showPnsAircraft(a) {
   const op = (CALLSIGNS.find(([re]) => re.test(String(a.flight || "").toUpperCase())) || [])[1];
   const typeName = AC_TYPES[a.type] || (a.type ? `Type code ${a.type}` : "Unknown type");
-  const head = `<div class="sheet-kicker">AIRCRAFT // ${esc(a.flight ? "CALLSIGN" : "TAIL")}</div><h3>✈ ${esc(a.flight || a.reg || a.hex)}</h3>
+  const head = `<div class="sheet-kicker">AIRCRAFT // ${esc(a.flight ? "CALLSIGN" : "TAIL")}</div><h3>${svgArt(aircraftAsset(a.type), 30)} ${esc(a.flight || a.reg || a.hex)}</h3>
     <div class="sub">${esc(typeName)}${op ? ` · ${esc(op)}` : ""} · seen ${esc(ago(a.t))}</div>
     <div class="stats" style="margin-top:8px">
       <div class="stat"><b>${a.alt > 0 ? esc(a.alt.toLocaleString()) : "GND"}</b><span>Altitude ft</span></div>
@@ -1499,7 +1509,7 @@ function showBase(b) {
 }
 function showDeploy(d) {
   const [label, color] = DKIND[d.kind] || DKIND.rotation;
-  openSheet(`<div class="sheet-kicker">INTEL // DEPLOYMENT</div><h3>${esc(d.title)}</h3><div class="sub">${esc(d.region)} · since ${esc(d.since)}</div>
+  openSheet(`<div class="sheet-kicker">INTEL // DEPLOYMENT</div><h3>${svgArt("assets/operations/mobilization.svg", 32)} ${esc(d.title)}</h3><div class="sub">${esc(d.region)} · since ${esc(d.since)}</div>
     <span class="tag" style="border-color:${color}">${esc(label)}</span>${(d.branches || []).map(b => `<span class="tag">${esc((BRANCH[b] || [b])[0])}</span>`).join("")}
     <p style="margin:6px 0 2px"><b>Size:</b> ${esc(d.size)}</p>
     <p style="margin:2px 0"><b>Status:</b> ${esc(d.status)}</p>
