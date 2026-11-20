@@ -374,6 +374,15 @@
   .water { font:italic 600 13px var(--body); letter-spacing:.08em; fill-opacity:.7; }
   .bm-lbl, .bm-rwylbl { font-family:var(--body); letter-spacing:.03em; }
   .site-lbl, .poi .lbl { font-size:12px; }
+
+/* Military-inspired artwork. Images are optional until their asset bundle is installed. */
+.brand-emblem { width:29px; height:29px; object-fit:contain; vertical-align:middle; flex:none; margin-right:7px; }
+.brand-emblem.hero { width:64px; height:64px; margin-right:14px; }
+.brand-emblem.small { width:23px; height:23px; margin-right:5px; }
+.oob-title .brand-emblem { width:45px; height:45px; margin-right:12px; }
+.brand-emblem[hidden] { display:none !important; }
+.brand-filter-line { display:flex; align-items:center; gap:6px; }
+.brand-filter-line #branchSel { flex:1; min-width:0; }
 </style>
 </head>
 <body>
@@ -381,7 +390,7 @@
 
 <div class="panel collapsed" id="panel">
   <div class="bar">
-    <h1><span class="radar"></span>Fleet Command</h1>
+    <h1><img class="brand-emblem" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><span class="radar"></span>Fleet Command</h1>
     <button class="barbtn" id="oobBtn" title="Order of battle — fleet hierarchy">FLEET</button>
     <button class="barbtn" id="pnsBtn" title="Pensacola live view">📍 PNS</button>
     <button class="barbtn" id="toggle">Layers ▾</button>
@@ -406,7 +415,7 @@
       <label><input type="checkbox" checked data-g="rivalShips"><span id="rShipKey"></span>Rival navies (RU · CN · IR · NK) <span class="sub" id="c-rivalShips"></span></label>
     </div>
     <div class="filters">
-      <select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select>
+      <span class="brand-filter-line"><img id="branchLogo" class="brand-emblem small" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select></span>
       <select id="allyCountry" class="country"><option value="">All countries</option></select>
     </div>
     <div class="sub" style="margin-top:8px">Weekly positions are approximate (sea area, not GPS). Live AIS shows only ships broadcasting a transponder.</div>
@@ -445,6 +454,10 @@ const aircraftAsset = t => /^(A119|AS65|H60|TH57|H64|H47|UH60|H53S|H53|H1)$/.tes
   : "assets/aircraft/jet.svg";
 const svgArt = (url, width, height = width) => `<img src="${url}" width="${width}" height="${height}" alt="" style="object-fit:contain;vertical-align:middle;filter:drop-shadow(0 0 3px #38bdf888)">`;
 const shipIcon = (t, size = 26) => svgArt(shipAsset(t), size, Math.round(size * 14 / 26));
+
+const BRAND_LOGOS = { navy:"navy", army:"army", marines:"marine-corps", af:"air-force", coast:"coast-guard", space:"space-force", hierarchy:"hierarchy" };
+const brandImg = (branch, klass = "") => { const key = BRAND_LOGOS[branch] || branch; const safe = /^[a-z-]+$/.test(key) ? key : "navy";
+  return `<img class="brand-emblem ${klass}" src="assets/branding/${safe}-128.webp" alt="" loading="lazy" onerror="this.hidden=true">`; };
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $ = id => document.getElementById(id);
 
@@ -1396,7 +1409,7 @@ function oobHtml() {
     const byFleet = FLEETS.map(([n, a]) => ({ n, a, ships: [] }));
     for (const x of ships) byFleet[FLEETS.findIndex(f => f[2](x))].ships.push(x);
     const fleets = byFleet.filter(f => f.ships.length).sort((a, b) => score(b.ships) - score(a.ships));
-    root = `<div class="ot-node ot-root"><span class="ot-k">Chief of Naval Operations</span><b>🇺🇸 U.S. Navy</b><span class="ot-c">${ships.length} ships tracked · ${ships.filter(x => x.type === "carrier").length} carriers</span></div>`;
+    root = `<div class="ot-node ot-root"><span class="ot-k">Chief of Naval Operations</span><b>${brandImg("navy", "hero")} 🇺🇸 U.S. Navy</b><span class="ot-c">${ships.length} ships tracked · ${ships.filter(x => x.type === "carrier").length} carriers</span></div>`;
     tiers = fleets.map((f, i) => {
       const groups = d3.groups(f.ships, x => x.group || "Independent").map(([g, l]) => ({ g, l: l.sort((a, b) => WEIGHT[b.type] - WEIGHT[a.type] || a.name.localeCompare(b.name)) }))
         .sort((a, b) => score(b.l) - score(a.l));
@@ -1419,7 +1432,7 @@ function oobHtml() {
         <ul class="ot-col">${l.map(x => leafHtml(x, "as", allyShipIcon(x.type, x.country, 22))).join("")}</ul></li></ul></div>`).join("");
     note = `Ranked by firepower. ${rival ? "Russian, Chinese, Iranian and North Korean ships from public reporting" : "Major allied and partner warships from public reporting"} plus any live AIS sightings; positions are approximate.`;
   }
-  return `<div class="oob-in"><div class="oob-top"><div class="oob-title"><small>▓▓ FLEET COMMAND</small>Order of battle</div><button class="barbtn" id="oobClose">✕ Close</button></div>
+  return `<div class="oob-in"><div class="oob-top"><div class="oob-title">${brandImg("hierarchy")}<small>▓▓ FLEET COMMAND</small>Order of battle</div><button class="barbtn" id="oobClose">✕ Close</button></div>
     <div class="oob-tabs">${tabs.map(([k, l]) => `<button data-t="${k}" class="${k === oobTab ? "on" : ""}">${l}</button>`).join("")}</div>
     <div class="ot-wrap">${root}<div class="ot-spine">${tiers}</div></div><div class="oob-note">${note}</div></div>`;
 }
