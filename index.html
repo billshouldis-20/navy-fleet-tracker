@@ -1086,7 +1086,7 @@ function drawPns() {
   // once the base map's own points show, drop the regional markers they would collide with
   const sites = (pns.meta ? pns.meta.sites : []).filter(x => !(T.k >= 3 && pns.meta.base && /^(NAS PNS|CORRY STA)$/.test(x.short || "")));
   const gs = gPns.selectAll("g.site").data(sites, d => d.name).join(en => { const x = en.append("g").attr("class", "site"); x.append("rect").attr("class", "hit"); x.append("path"); x.append("image").attr("class", "base-art"); x.append("text").attr("class", "lbl site-lbl"); return x; });
-  gs.attr("transform", d => `translate(${P(d)})`).style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); openSheet(`<div class="sheet-kicker">INSTALLATION</div><h3>${esc(d.name)}</h3><p style="margin:6px 0 0">${esc(d.note)}</p>${/NAS PNS|Pensacola/i.test(d.short || d.name) && !/Pass|Whiting|Eglin|Hurlburt/i.test(d.name) ? `<div style="margin-top:8px"><button class="retry" id="siteBase">🗺 Open base map</button></div>` : ""}${pnsBackBtn()}`); wirePnsBack();
+  gs.attr("transform", d => `translate(${P(d)})`).style("cursor", "pointer").on("click", (e, d) => { e.stopPropagation(); openSheet(`<div class="sheet-kicker">INSTALLATION</div><h3>${esc(d.name)}</h3><p style="margin:6px 0 0">${esc(d.note)}</p>${hasLiveConnector() && /NAS PNS|Pensacola/i.test(d.short || d.name) && !/Pass|Whiting|Eglin|Hurlburt/i.test(d.name) ? `<div style="margin-top:8px"><button class="retry" id="siteBase">🗺 Open base map</button></div>` : ""}${pnsBackBtn()}`); wirePnsBack();
       const sb = $("siteBase"); if (sb) sb.onclick = ev => { ev.stopPropagation(); showBaseMap(true); }; });
   gs.select("rect.hit").attr("x", -10).attr("y", -10).attr("width", 20).attr("height", 20).attr("fill", "transparent");
   // airfield = square with runway stroke; port = anchor-like diamond; school = circle
@@ -1245,28 +1245,31 @@ async function pnsLoad() {
   } catch (e) { pns.err = `Couldn't load live Pensacola data (${(e && (e.code || e.name)) || "error"}${e && e.message ? ": " + String(e.message).slice(0, 80) : ""})`; }
 }
 
+const hasLiveConnector = () => typeof globalThis.claude?.use === "function";
+
 const ago = t => { const m = Math.round((Date.now() - new Date(t).getTime()) / 60000); return m < 60 ? `${m} min ago` : m < 1440 ? `${Math.round(m / 60)} h ago` : `${Math.round(m / 1440)} d ago`; };
 
 function showPnsSummary() {
+  const live = hasLiveConnector();
   const d = pns.data, st = d.stats || {};
   const acRows = d.aircraft.map(a => `<div class="tl-row"><span class="tl-date">${esc(a.flight || a.reg || a.hex)}</span><span>${esc(AC_TYPES[a.type] || a.type || "Unknown type")}${a.alt > 0 ? ` · ${Math.round(a.alt / 100) * 100} ft` : " · on ground / low"}</span></div>`).join("");
   const vRows = d.vessels.slice(0, 15).map(v => `<div class="tl-row"><span class="tl-date">${esc(ago(v.t))}</span><span>${esc(v.name || "MMSI " + v.mmsi)} · ${esc((ZONES[v.zone] || ZONES.gulf)[0])}</span></div>`).join("");
   const eRows = d.events.map(e => `<div class="tl-row"><span class="tl-date">${esc(new Date(e.t).toLocaleDateString([], { month: "short", day: "numeric" }))}</span><span>${esc(e.name || "MMSI " + e.mmsi)} ${esc(e.event)}</span></div>`).join("");
   const news = (pns.meta ? pns.meta.news : []).map(n => `<div class="src"><span class="sub">${esc(fmtDay(n.date))}</span> <a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a><br><span class="sub">${esc(n.summary)}</span></div>`).join("");
   openSheet(`<div class="sheet-kicker">SECTOR // PENSACOLA</div><h3>${svgArt("assets/operations/pensacola.svg", 30)} Pensacola area</h3>
-    <div class="sub">${st.lastRun ? "Live data updated " + esc(ago(st.lastRun)) : "Live data every 10 min"} · <a href="#" id="pnsWorld">← back to world map</a></div>
-    <div style="margin-top:8px"><button class="retry" id="pnsBase">🗺 NAS Pensacola base map — gates, galley, barracks, NEX, airfield</button></div>
-    ${pns.err ? `<p style="margin:6px 0 0;color:#ffb4a9">${esc(pns.err)} <button class="retry" id="pnsRetry">Tap to load</button></p>` : ""}
-    <div class="stats" style="margin-top:8px">
+    <div class="sub">${live ? (st.lastRun ? "Live data updated " + esc(ago(st.lastRun)) : "Live data every 10 min") + " · " : ""}<a href="#" id="pnsWorld">← back to world map</a></div>
+    ${live ? `<div style="margin-top:8px"><button class="retry" id="pnsBase">🗺 NAS Pensacola base map — gates, galley, barracks, NEX, airfield</button></div>` : ""}
+    ${live && pns.err ? `<p style="margin:6px 0 0;color:#ffb4a9">${esc(pns.err)} <button class="retry" id="pnsRetry">Tap to load</button></p>` : ""}
+    ${live && !pns.err ? `<div class="stats" style="margin-top:8px">
       <div class="stat"><b>${d.aircraft.length}</b><span>Military aircraft now</span></div>
       <div class="stat"><b>${st.aircraft24 ?? "–"}</b><span>Aircraft, 24 h</span></div>
       <div class="stat"><b>${d.vessels.length}</b><span>Vessels, 24 h</span></div>
     </div>
     <div class="tl-head">Military aircraft overhead (last 30 min)</div>${acRows || '<div class="sub">None broadcasting right now.</div>'}
     <div class="tl-head">Port movements (7 days)</div>${eRows || '<div class="sub">No bay entries/exits logged yet — this fills in over the coming days.</div>'}
-    <div class="tl-head">Vessels seen (24 h)</div>${vRows || '<div class="sub">None yet. AIS receiver coverage here is thin, so sightings are sparse.</div>'}
+    <div class="tl-head">Vessels seen (24 h)</div>${vRows || '<div class="sub">None yet. AIS receiver coverage here is thin, so sightings are sparse.</div>'}` : ""}
     <div class="tl-head">Base news</div>${news}
-    <div class="sub" style="margin-top:6px">Aircraft: public ADS-B (adsb.lol), military-flagged only. Ships: AIS (aisstream.io). Many military aircraft fly without broadcasting.</div>`);
+    ${live && !pns.err ? `<div class="sub" style="margin-top:6px">Aircraft: public ADS-B (adsb.lol), military-flagged only. Ships: AIS (aisstream.io). Many military aircraft fly without broadcasting.</div>` : ""}`);
   const bb = $("pnsBase"); if (bb) bb.onclick = ev => { ev.stopPropagation(); showBaseMap(true); };
   const w = $("pnsWorld"); if (w) w.onclick = ev => { ev.preventDefault(); ev.stopPropagation(); exitPensacola(); };
   const r = $("pnsRetry"); if (r) r.onclick = async ev => { ev.stopPropagation(); await pnsLoad(); draw(); showPnsSummary(); };
@@ -1374,10 +1377,13 @@ async function enterPensacola() {
       .catch(() => {});
   }
   collapsePanel();
-  await pnsLoad(); draw(); showPnsSummary(); loadBasemap();
+  if (hasLiveConnector()) await pnsLoad();
+  draw(); showPnsSummary();
+  if (hasLiveConnector()) loadBasemap();
   // Core training area (NAS Pensacola, Whiting Field, Pensacola Pass, near Gulf) in a local projection
   svg.call(zoom.transform, d3.zoomIdentity); size();
-  clearInterval(pns.timer); pns.timer = setInterval(async () => { if (pns.on) { await pnsLoad(); draw(); } }, 5 * 60 * 1000);
+  clearInterval(pns.timer);
+  if (hasLiveConnector()) pns.timer = setInterval(async () => { if (pns.on) { await pnsLoad(); draw(); } }, 5 * 60 * 1000);
 }
 function exitPensacola() {
   pns.on = false; document.body.classList.remove("pns-mode"); clearInterval(pns.timer); $("pnsBtn").textContent = "📍 PNS";
@@ -1816,7 +1822,7 @@ try {
 size();
 
 // ---------- Live AIS ----------
-$("aisRow").hidden = typeof globalThis.claude?.use !== "function";
+$("aisRow").hidden = !hasLiveConnector();
 $("aisOn").onchange = e => { showAis = e.target.checked; draw(); if (showAis) loadAis(); };
 // Live positions are collected every 10 min by a Supabase edge function
 // (project navy-fleet-tracker) and read here through the viewer's Supabase connector.
