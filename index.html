@@ -430,11 +430,17 @@
       <label><input type="checkbox" id="aisOn" checked><span class="dot" style="background:var(--ais);border-radius:2px"></span>Live AIS</label>
       <span class="sub" id="aisStatus">checking…</span>
     </div>
+    <div class="legend ground" id="baseLegend">
+      <label><input type="checkbox" data-g="bases"><span aria-hidden="true">⚑</span>U.S. bases <span class="sub" id="c-bases"></span></label>
+      <select id="baseRegion" class="country" aria-label="U.S. base region">
+        <option value="">All regions</option>
+        <option>Americas</option><option>Europe</option><option>Middle East &amp; Africa</option><option>Indo-Pacific</option>
+      </select>
+    </div>
     <details class="force-filters">
       <summary class="sect">Forces &amp; filters</summary>
       <div class="legend ground" id="groundLegend">
         <label><input type="checkbox" checked data-g="deploy"><span class="dot" style="background:#ffa94d"></span>Deployments <span class="sub" id="c-deploy"></span></label>
-        <label><input type="checkbox" data-g="bases"><span class="dot" style="background:#0a1520;border-color:#9ccc65;border-radius:2px"></span>US bases <span class="sub" id="c-bases"></span></label>
         <label><input type="checkbox" data-g="allies"><span style="font-size:13px">🇬🇧🇫🇷</span>Allies <span class="sub" id="c-allies"></span></label>
         <label><input type="checkbox" checked data-g="allyShips"><span id="aShipKey"></span>Allied ships <span class="sub" id="c-allyShips"></span></label>
         <label><input type="checkbox" checked data-g="rivalShips"><span id="rShipKey"></span>Rival navies (RU · CN · IR · NK) <span class="sub" id="c-rivalShips"></span></label>
@@ -661,7 +667,15 @@ let activeSlot = "A", snapshotDate = "";
 const isHistorical = () => snapshotDate && snapshotDate !== usniMeta.asOf;
 let bases = [], deploys = [], allies = [], deployMeta = {}, alliesMeta = {};
 const show = { bases: false, deploy: true, allies: false, allyShips: true, rivalShips: true };
-let allyCountry = "", branchSel = "";
+let allyCountry = "", branchSel = "", baseRegion = "";
+const baseRegions = {
+  "Europe": ["Belgium", "Germany", "Italy", "Sicily", "Spain", "UK", "Greece", "Romania", "Poland"],
+  "Middle East & Africa": ["Djibouti", "Qatar", "Bahrain", "Kuwait", "UAE", "Saudi Arabia", "Jordan", "Türkiye"],
+  "Indo-Pacific": ["Hawaii", "Indian Ocean", "Japan", "Okinawa", "South Korea", "Guam", "Philippines", "Singapore"]
+};
+const regionForBase = where => Object.keys(baseRegions).find(region => baseRegions[region].includes(where)) || "Americas";
+const filteredBases = () => bases.filter(base =>
+  (!branchSel || base.branch === branchSel) && (!baseRegion || base.region === baseRegion));
 const BRANCH = { guard: ["National Guard", "#a5d6a7"], army: ["Army", "#9ccc65"], marines: ["Marines", "#e57373"], navy: ["Navy", "#64b5f6"], af: ["Air Force", "#90caf9"], space: ["Space Force", "#b0bec5"], joint: ["Joint", "#ffd54f"] };
 const FLAGS = { "Albania": "🇦🇱", "Australia": "🇦🇺", "Belgium": "🇧🇪", "Bulgaria": "🇧🇬", "Canada": "🇨🇦", "Croatia": "🇭🇷", "Czechia": "🇨🇿",
   "Estonia": "🇪🇪", "Finland": "🇫🇮", "France": "🇫🇷", "Germany": "🇩🇪", "Greece": "🇬🇷", "Hungary": "🇭🇺", "Iceland": "🇮🇸", "Italy": "🇮🇹",
@@ -782,14 +796,17 @@ const fmtDay = d => new Date(d + "T12:00:00").toLocaleDateString([], { month: "s
 function drawGround() {
   const k = 1;
   const P = d => SPJ([d.lon, d.lat]);
-  const bs = !show.bases ? [] : branchSel ? bases.filter(b => b.branch === branchSel) : bases;
-  const bsz = 6 / Math.sqrt(k);
-  gBases.selectAll("rect").data(bs, d => d.name).join("rect")
-    .attr("x", d => P(d)[0] - bsz / 2).attr("y", d => P(d)[1] - bsz / 2)
-    .attr("width", bsz).attr("height", bsz)
-    .attr("fill", "#0a1520").attr("stroke", d => (BRANCH[d.branch] || BRANCH.joint)[1]).attr("stroke-width", 1.4 / k)
-    .style("cursor", "pointer")
+  const bs = show.bases ? filteredBases() : [];
+  const markers = gBases.selectAll("g.base-marker").data(bs, d => d.name).join(enter => {
+    const marker = enter.append("g").attr("class", "base-marker").style("cursor", "pointer");
+    marker.append("circle").attr("r", 10).attr("fill", "transparent");
+    marker.append("path").attr("d", "M-4,6V-6H5L2,-2L5,2H-4")
+      .attr("fill", "#0a1520").attr("stroke-width", 1.8).attr("stroke-linejoin", "round");
+    return marker;
+  });
+  markers.attr("transform", d => `translate(${P(d)})`)
     .on("click", (e, d) => { e.stopPropagation(); showBase(d); });
+  markers.select("path").attr("stroke", d => (BRANCH[d.branch] || BRANCH.joint)[1]);
 
   const al = !show.allies ? [] : allyCountry ? allies.filter(a => (a.countries || []).includes(allyCountry)) : allies;
   const role = a => !allyCountry ? null : (a.lead || "").includes(allyCountry) ? "lead" : a.host === allyCountry ? "host" : "contributor";
@@ -1569,7 +1586,8 @@ function showBase(b) {
   const [label, color] = BRANCH[b.branch] || BRANCH.joint;
   openSheet(`<div class="sheet-kicker">INSTALLATION</div><h3>${esc(b.name)}</h3><div class="sub">${esc(b.where)} · US installation</div>
     <span class="tag" style="border-color:${color}">${esc(label)}</span>
-    <p style="margin:6px 0 0">${esc(b.note)}</p>`);
+    <p style="margin:6px 0 0">${esc(b.note)}</p>
+    ${b.source ? `<p class="sub"><a href="${esc(b.source)}" target="_blank" rel="noopener">Official source ↗</a></p>` : ""}`);
 }
 function showDeploy(d) {
   const [label, color] = DKIND[d.kind] || DKIND.rotation;
@@ -1703,12 +1721,14 @@ for (const [t, cfg] of Object.entries(TYPES)) {
   $("legend").appendChild(lab);
 }
 function updateGroundCounts() {
-  const bs = branchSel ? bases.filter(b => b.branch === branchSel) : bases;
+  const bs = filteredBases();
   const dp = branchSel ? deploys.filter(d => branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)) : deploys;
   $("c-bases").textContent = bs.length; $("c-deploy").textContent = dp.length;
 }
 $("branchSel").onclick = e => e.stopPropagation();
 $("branchSel").onchange = e => { branchSel = e.target.value; const logo = $("branchLogo"); if (logo) { const key = BRAND_LOGOS[branchSel] || "navy"; logo.hidden = false; logo.src = `assets/branding/${key}-128.webp`; } updateGroundCounts(); draw(); };
+$("baseLegend").querySelector("input").onchange = e => { show.bases = e.target.checked; draw(); };
+$("baseRegion").onchange = e => { baseRegion = e.target.value; updateGroundCounts(); draw(); };
 $("groundLegend").addEventListener("change", e => {
   const g = e.target.dataset.g; if (!g) return; show[g] = e.target.checked; draw();
 });
@@ -1811,7 +1831,7 @@ try {
   try {
     const [b, dj, aj, sj, rj] = await Promise.all(["data/bases.json", "data/deployments.json", "data/allies.json", "data/allied_ships.json", "data/rival_ships.json"]
       .map(f => fetch(f, { cache: "no-store" }).then(r => r.json()).catch(() => null)));
-    if (b) bases = b.items.map(([name, branch, lat, lon, where, note]) => ({ name, branch, lat, lon, where, note }));
+    if (b) bases = b.items.map(([name, branch, lat, lon, where, note, source]) => ({ name, branch, lat, lon, where, note, source, region: regionForBase(where) }));
     if (dj) { deploys = dj.items; deployMeta = dj; }
     if (sj) { allyShips = sj.items; allyShipsMeta = sj; }
     if (rj) { rivalShips = rj.items; rivalMeta = rj; }
