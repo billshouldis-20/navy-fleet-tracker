@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>US Navy Fleet Tracker</title>
+<title>NavalGT</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@500;600&display=swap" rel="stylesheet">
 <style>
@@ -383,6 +383,10 @@
 .brand-emblem[hidden] { display:none !important; }
 .brand-filter-line { display:flex; align-items:center; gap:6px; }
 .brand-filter-line #branchSel { flex:1; min-width:0; }
+  .bar { flex-wrap:wrap; }
+  .bar h1 { flex:1 0 auto; overflow:visible; }
+  .hudstat [hidden], .map-status[hidden] { display:none; }
+  .map-status { position:absolute; z-index:4; top:50%; left:50%; transform:translate(-50%,-50%); max-width:85vw; margin:0; padding:10px 14px; background:var(--panel); border:1px solid var(--line); color:var(--text); text-align:center; pointer-events:none; }
   .ais-row[hidden] { display:none; }
   .force-filters { margin-top:8px; }
   .force-filters > summary { cursor:pointer; }
@@ -400,15 +404,16 @@
 </head>
 <body>
 <div id="map"></div>
+<p class="map-status" id="mapStatus" role="status">Loading weekly fleet reports…</p>
 
 <div class="panel collapsed" id="panel">
   <div class="bar">
-    <h1><img class="brand-emblem" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><span class="radar"></span>Fleet Command</h1>
+    <h1><img class="brand-emblem" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><span class="radar"></span>NavalGT</h1>
     <button class="barbtn" id="oobBtn" title="Order of battle — fleet hierarchy">FLEET</button>
-    <button class="barbtn" id="pnsBtn" title="Pensacola live view">📍 PNS</button>
+    <button class="barbtn" id="pnsBtn" title="Pensacola area map and base news">📍 PNS</button>
     <button class="barbtn" id="toggle">Layers ▾</button>
   </div>
-  <div class="hudstat"><span>UNITS <b id="hudUnits">--</b></span><span>AIS <b id="hudAis">--</b></span><span>DEPL <b id="hudDep">--</b></span><span id="hudClock">--:--:--Z</span></div>
+  <div class="hudstat"><span>UNITS <b id="hudUnits">--</b></span><span id="hudAisGroup" hidden>AIS <b id="hudAis">--</b></span><span>DEPL <b id="hudDep">--</b></span><span id="hudClock">--:--:--Z</span></div>
   <div class="snapshot-controls" aria-label="Fleet snapshot comparison">
     <label>Date A<select class="country" id="dateA" disabled></select></label>
     <label>Date B<select class="country" id="dateB" disabled></select></label>
@@ -439,7 +444,11 @@
         <select id="allyCountry" class="country"><option value="">All countries</option></select>
       </div>
     </details>
-    <div class="sub" style="margin-top:8px">Weekly reports show approximate sea areas.</div>
+    <details class="force-filters">
+      <summary class="sect">Data &amp; methodology</summary>
+      <p class="sub">U.S. ship positions come from USNI News weekly reports. Markers show approximate sea areas or reported ports. Ships can be absent from a weekly report.</p>
+      <p class="sub">Date comparison shows the U.S. fleet for the selected report. The dashed lines connect reported areas and do not show a ship’s actual route.</p>
+    </details>
   </div>
 </div>
 
@@ -1818,11 +1827,15 @@ try {
     shipCounts();
   } catch {}
   setupSnapshots(d);
-} catch { $("asof").textContent = "Could not load weekly data."; }
+  $("mapStatus").hidden = true;
+} catch {
+  $("asof").textContent = "Could not load weekly data.";
+  $("mapStatus").textContent = "Could not load weekly fleet reports. Refresh to try again.";
+}
 size();
 
 // ---------- Live AIS ----------
-$("aisRow").hidden = !hasLiveConnector();
+$("aisRow").hidden = $("hudAisGroup").hidden = !hasLiveConnector();
 $("aisOn").onchange = e => { showAis = e.target.checked; draw(); if (showAis) loadAis(); };
 // Live positions are collected every 10 min by a Supabase edge function
 // (project navy-fleet-tracker) and read here through the viewer's Supabase connector.
