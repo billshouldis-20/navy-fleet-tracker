@@ -383,6 +383,15 @@
 .brand-emblem[hidden] { display:none !important; }
 .brand-filter-line { display:flex; align-items:center; gap:6px; }
 .brand-filter-line #branchSel { flex:1; min-width:0; }
+  .snapshot-controls { display:flex; flex-wrap:wrap; align-items:end; gap:4px 6px; margin-top:6px; }
+  .snapshot-controls label { display:grid; gap:2px; font-size:11px; }
+  .snapshot-controls select { min-height:32px; }
+  .snapshot-controls button { min-height:32px; }
+  .snapshot-controls [aria-pressed="true"] { color:#fff; border-color:var(--acc2); }
+  .snapshot-context { flex-basis:100%; margin:0; }
+  .tl-snapshot { display:flex; width:100%; background:none; border:0; text-align:left; color:inherit; cursor:pointer; }
+  .tl-snapshot:hover, .tl-snapshot:focus-visible { color:var(--acc2); }
+  .usflag { fill:#fff; stroke:#18283c; stroke-width:3px; paint-order:stroke; font:bold 11px system-ui,sans-serif; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -396,6 +405,13 @@
     <button class="barbtn" id="toggle">Layers ▾</button>
   </div>
   <div class="hudstat"><span>UNITS <b id="hudUnits">--</b></span><span>AIS <b id="hudAis">--</b></span><span>DEPL <b id="hudDep">--</b></span><span id="hudClock">--:--:--Z</span></div>
+  <div class="snapshot-controls" aria-label="Fleet snapshot comparison">
+    <button type="button" class="barbtn" id="omanBtn">Arabian Sea (Oman)</button>
+    <label>Date A<select class="country" id="dateA" disabled></select></label>
+    <label>Date B<select class="country" id="dateB" disabled></select></label>
+    <button type="button" class="barbtn" id="compareBtn" aria-pressed="false" disabled>Show B</button>
+    <p class="sub snapshot-context" id="snapshotContext" aria-live="polite"></p>
+  </div>
   <div class="body">
     <div class="sub" id="asof">Loading…</div>
     <div class="sub statline"><b id="tBF">–</b> battle force · <b id="tDep">–</b> deployed · <b id="tUw">–</b> underway</div>
@@ -626,6 +642,9 @@ function screenProj() {
 }
 let k = 1, ships = [], ais = [], hidden = new Set(), showAis = true, selected = null;
 let history = { ships: {} }, track = null;
+const snapshots = new Map();
+let activeSlot = "A", snapshotDate = "";
+const isHistorical = () => snapshotDate && snapshotDate !== usniMeta.asOf;
 let bases = [], deploys = [], allies = [], deployMeta = {}, alliesMeta = {};
 const show = { bases: false, deploy: true, allies: false, allyShips: true, rivalShips: true };
 let allyCountry = "", branchSel = "";
@@ -831,6 +850,9 @@ function draw() {
   drawBasemap();
   drawNear();
   drawTrack();
+  const historical = isHistorical();
+  for (const layer of [gBases, gAllies, gAis, gAShips]) layer.attr("display", historical ? "none" : null);
+  gDeploy.attr("display", historical ? "none" : null);
   drawGround();
   drawPns();
   const vis = ships.filter(s => !hidden.has(s.type));
@@ -860,9 +882,10 @@ function draw() {
     .attr("fill", d => (TYPES[d.type] || TYPES.other).hex).style("color", d => (TYPES[d.type] || TYPES.other).hex)
     .attr("stroke", d => d === selected ? "#fff" : "#04080b").attr("stroke-width", d => d === selected ? 19 : 9)
     .attr("stroke-linejoin", "round");
-  // US flag on every US ship (constant ~10px whatever the hull scale)
-  gsh.select(".usflag").attr("x", d => -12.5).attr("y", -7).attr("text-anchor", "middle").attr("dominant-baseline", "central")
-    .attr("font-size", d => (d === selected ? 12 : 10) / (TYPES[d.type] || TYPES.other).s).text("🇺🇸");
+  // Render an explicit label even on devices without flag emoji support.
+  gsh.select(".usflag")
+    .attr("transform", d => `translate(0,-7) scale(${1 / (TYPES[d.type] || TYPES.other).s})`)
+    .attr("text-anchor", "middle").text("US");
   gsh.filter(d => d === selected).raise();
 
   const gcl = gShips.selectAll("g.cluster").data(clusters, d => d.id).join(en => {
@@ -879,7 +902,7 @@ function draw() {
     .attr("fill", d => (TYPES[d.lead.type] || TYPES.other).hex).style("color", d => (TYPES[d.lead.type] || TYPES.other).hex)
     .attr("stroke", "#04080b").attr("stroke-width", 9).attr("stroke-linejoin", "round");
   gcl.select(".cl-badge").attr("x", 10).attr("y", -19).attr("width", d => String(d.members.length).length * 7 + 9).attr("height", 14);
-  gcl.select(".usflag").attr("x", -16).attr("y", -11).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 10).text("🇺🇸");
+  gcl.select(".usflag").attr("x", -12).attr("y", -9).attr("text-anchor", "middle").text("US");
   gcl.select(".cl-n").attr("x", d => 10 + (String(d.members.length).length * 7 + 9) / 2).attr("y", -9.2).attr("text-anchor", "middle").text(d => d.members.length);
 
   const sel = selected && !hidden.has(selected.type) ? [selected] : [];
@@ -924,7 +947,7 @@ function draw() {
     .on("click", (e, d) => { e.stopPropagation(); showAisShip(d); });
   gAis.selectAll("text.usflag").data(a, d => d.mmsi).join("text").attr("class", "usflag")
     .attr("transform", d => { const [x, y] = SPJ([d.lon, d.lat]); return `translate(${x + 9},${y - 7})`; })
-    .attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 9).style("pointer-events", "none").text("🇺🇸");
+    .attr("text-anchor", "middle").attr("dominant-baseline", "central").text("US");
 
   // Name label only for the selected ship; flips to the left near the right edge
   const lab = selected && !hidden.has(selected.type) ? [selected] : [];
@@ -1420,7 +1443,7 @@ function oobHtml() {
           return `<li><div class="ot-node ot-grp"><b>${esc(label)}</b><span class="ot-c">${l.length} ship${l.length > 1 ? "s" : ""}</span></div>
             <ul class="ot-col">${l.map(x => leafHtml(x, "us", shipIcon(x.type, 22))).join("")}</ul></li>`; }).join("")}</ul></li></ul></div>`;
     }).join("");
-    note = `Ranked by firepower (carriers count most). Fleets are assigned from each ship's reported sea area (USNI News, ${esc(usniMeta.asOf || "")}); positions and groupings are approximate.`;
+    note = `Ranked by firepower (carriers count most). Fleets are assigned from each ship's reported sea area (USNI News, ${esc(snapshotDate || usniMeta.asOf || "")}); positions and groupings are approximate.`;
   } else {
     const rival = oobTab === "rival";
     const list = [...(rival ? rivalShips : allyShips), ...allyAis.map(v => ({ ...v, live: true, id: "ais" + v.mmsi, type: "destroyer" }))].filter(d => RIVAL.has(d.country) === rival);
@@ -1445,11 +1468,11 @@ function openOob() {
     else { const d = aShipList().concat(allyShips, rivalShips).find(x => x.id === b.dataset.n); if (d) { if (pns.on) exitPensacola(); showAllyShip(d); fitPoints([d], 8); } } });
 }
 $("oobBtn").onclick = ev => { ev.stopPropagation(); collapsePanel(); openOob(); };
-function showShip(s) {
+function showShip(s, { fit = true } = {}) {
   selected = s; selAlly = null; selAShip = null;
   const t = TYPES[s.type] || TYPES.other;
   const hist = history.ships[s.name] || [];
-  track = hist.length > 1 ? {
+  track = !isHistorical() && hist.length > 1 ? {
     color: t.hex, dashed: true,
     pts: hist.map(p => ({ lat: p.lat, lon: p.lon, label: fmtDay(p.date) }))
   } : null;
@@ -1459,19 +1482,27 @@ function showShip(s) {
     const slot = $("nearSlot"); if (slot) slot.innerHTML = nearHtml(n); });
   draw();
   setTimeout(() => loadPhoto(s.name), 0);
-  const rows = hist.slice().reverse().map(p => ({ when: fmtDay(p.date), where: p.area }));
+  const rows = hist.slice().reverse().map(p =>
+    `<button type="button" class="tl-row tl-snapshot${p.date === snapshotDate ? " now" : ""}" data-date="${esc(p.date)}" aria-pressed="${p.date === snapshotDate}"><span class="tl-date">${esc(fmtDay(p.date))}</span><span>${esc(p.area)}</span></button>`).join("");
   const moved = new Set(hist.map(p => p.area)).size;
   $("sheetBody").innerHTML = `<div class="sheet-kicker">TARGET // ${esc((TYPES[s.type] || TYPES.other).label.toUpperCase())}</div><h3>${shipIcon(s.type, 30)} ${esc(s.name)} <span title="United States">🇺🇸</span></h3>
-    <div class="sub">${esc(s.area)} · approximate</div>
+    <div class="sub">${esc(s.area)} · approximate · ${esc(snapshotDate)}</div>
     <span class="tag">🇺🇸 U.S. Navy</span><span class="tag" style="border-color:${t.hex}">${esc(t.label)}</span><span class="tag">${esc(s.group)}</span>
     <p style="margin:6px 0 0">${esc(s.note)}</p>${photoSlot()}
     <div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div>
     ${specsHtml(s)}
-    ${hist.length ? `<div class="tl-head">Last 45 days · ${hist.length} weekly reports · ${moved} location${moved === 1 ? "" : "s"}</div>${timelineHtml(rows)}
-    <div class="sub" style="margin-top:4px">Dashed line links weekly positions along main sea lanes. It is not the ship's actual route.</div>` : ""}`;
+    ${hist.length ? `<div class="tl-head">Last 45 days · ${hist.length} weekly reports · ${moved} location${moved === 1 ? "" : "s"}</div><div class="tl">${rows}</div>
+    <div class="sub" style="margin-top:4px">${isHistorical() ? "Select a report date to view it on the map." : "Dashed line links approximate weekly positions. Select a report date to view it on the map."}</div>` : ""}`;
   collapsePanel();
   $("sheet").style.display = "block";
-  fitTrack();
+  $("sheetBody").querySelectorAll(".tl-snapshot").forEach(button => {
+    button.onclick = () => {
+      $("date" + activeSlot).value = button.dataset.date;
+      selectSnapshot(activeSlot);
+      $("sheetBody").querySelector('.tl-snapshot[aria-pressed="true"]')?.focus();
+    };
+  });
+  if (fit) fitTrack();
 }
 
 async function showAisShip(v) {
@@ -1681,10 +1712,80 @@ $("allOff").onclick = ev => { ev.stopPropagation(); setAllLayers(false); };
 setInterval(() => { const d = new Date(); $("hudClock").textContent = d.toISOString().slice(11, 19) + "Z"; }, 1000);
 function hud() {
   $("hudUnits").textContent = String(ships.length).padStart(2, "0");
-  $("hudAis").textContent = String(ais.length).padStart(2, "0");
-  $("hudDep").textContent = String(deploys.length).padStart(2, "0");
+  $("hudAis").textContent = isHistorical() ? "—" : String(ais.length).padStart(2, "0");
+  $("hudDep").textContent = isHistorical() ? "—" : String(deploys.length).padStart(2, "0");
 }
 setInterval(hud, 2000);
+
+function updateShipCounts() {
+  const counts = d3.rollup(ships, v => v.length, s => s.type);
+  for (const type of Object.keys(TYPES)) {
+    const count = $("c-" + type);
+    if (count) count.textContent = counts.get(type) || 0;
+  }
+  hud();
+}
+
+function selectSnapshot(slot) {
+  const date = $("date" + slot).value;
+  if (!snapshots.has(date)) return;
+  const name = selected?.name;
+  const sheet = $("sheet");
+  const scroll = sheet.scrollTop;
+  if (pns.on) exitPensacola();
+  hideSheet();
+  $("oob").hidden = true;
+  activeSlot = slot;
+  snapshotDate = date;
+  ships = snapshots.get(date);
+  $("compareBtn").textContent = slot === "A" ? "Show B" : "Show A";
+  $("compareBtn").setAttribute("aria-pressed", String(slot === "B"));
+  $("compareBtn").disabled = $("dateA").value === $("dateB").value;
+  $("snapshotContext").textContent = `Viewing ${slot} · ${date} · ${isHistorical() ? "Historical U.S. fleet snapshot" : "Latest weekly report"}`;
+  updateShipCounts();
+  fillAllyCountries();
+  const match = name && ships.find(s => s.name === name);
+  if (match) {
+    showShip(match, { fit: false });
+    sheet.scrollTop = scroll;
+  } else {
+    if (name) $("snapshotContext").textContent += ` · ${name} was not listed`;
+    draw();
+  }
+}
+
+function setupSnapshots(latest) {
+  const byName = new Map(latest.ships.map(ship => [ship.name, ship]));
+  for (const [name, reports] of Object.entries(history.ships || {})) {
+    for (const report of reports) {
+      if (!snapshots.has(report.date)) snapshots.set(report.date, []);
+      const current = byName.get(name);
+      snapshots.get(report.date).push({
+        name, type: current?.type || "other", area: report.area,
+        lat: report.lat, lon: report.lon
+      });
+    }
+  }
+  snapshots.set(latest.asOf, latest.ships);
+  const dates = [...snapshots.keys()].sort().reverse();
+  for (const slot of ["A", "B"]) {
+    const select = $("date" + slot);
+    select.replaceChildren(...dates.map(date => new Option(date, date)));
+    select.disabled = dates.length < 2;
+    select.onchange = () => selectSnapshot(slot);
+  }
+  $("dateB").value = dates[1] || dates[0];
+  $("compareBtn").onclick = () => selectSnapshot(activeSlot === "A" ? "B" : "A");
+  selectSnapshot("A");
+}
+
+$("omanBtn").onclick = () => {
+  if (pns.on) exitPensacola();
+  collapsePanel();
+  hideSheet();
+  $("oob").hidden = true;
+  fitPoints([{ lon: 52, lat: 10 }, { lon: 72, lat: 26 }], 10);
+};
 
 // ---------- Weekly USNI data ----------
 try {
@@ -1713,8 +1814,7 @@ try {
     $("c-bases").textContent = bases.length; $("c-deploy").textContent = deploys.length; $("c-allies").textContent = allies.length;
     shipCounts();
   } catch {}
-  const counts = d3.rollup(ships, v => v.length, s => s.type);
-  for (const [t, n] of counts) { const c = $("c-" + t); if (c) c.textContent = n; }
+  setupSnapshots(d);
 } catch { $("asof").textContent = "Could not load weekly data."; }
 size();
 
