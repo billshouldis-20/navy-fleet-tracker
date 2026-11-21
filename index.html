@@ -1900,6 +1900,17 @@ $("shipSearchBtn").onclick = () => {
   query.focus();
 };
 
+const areaAliases = new Map([
+  ["central caribbean sea", "central caribbean"],
+  ["middle east region (exact sea not reported)", "middle east region"],
+  ["mediterranean sea", "mediterranean"],
+  ["norfolk, va. (in port)", "norfolk, va."]
+]);
+function comparableArea(area) {
+  const label = area.trim().toLowerCase();
+  return areaAliases.get(label) || label;
+}
+
 $("diffBtn").onclick = () => {
   const [older, newer] = [$("dateA").value, $("dateB").value].sort();
   const before = new Map(snapshots.get(older).map(ship => [ship.name, ship]));
@@ -1911,7 +1922,7 @@ $("diffBtn").onclick = () => {
     else if (!b) removed.push([name, a.area]);
     else {
       const fromFleet = fleetFor(a)[0], toFleet = fleetFor(b)[0];
-      const areaChanged = a.area.trim().toLowerCase() !== b.area.trim().toLowerCase();
+      const areaChanged = comparableArea(a.area) !== comparableArea(b.area);
       const fleetChanged = fromFleet !== toFleet;
       if (areaChanged || fleetChanged) {
         const area = areaChanged ? `${a.area} → ${b.area}` : b.area;
