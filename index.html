@@ -383,6 +383,10 @@
 .brand-emblem[hidden] { display:none !important; }
 .brand-filter-line { display:flex; align-items:center; gap:6px; }
 .brand-filter-line #branchSel { flex:1; min-width:0; }
+  .ais-row[hidden] { display:none; }
+  .force-filters { margin-top:8px; }
+  .force-filters > summary { cursor:pointer; }
+  .force-filters > summary:focus-visible { outline:2px solid var(--acc2); }
   .snapshot-controls { display:flex; flex-wrap:wrap; align-items:end; gap:4px 6px; margin-top:6px; }
   .snapshot-controls label { display:grid; gap:2px; font-size:11px; }
   .snapshot-controls select { min-height:32px; }
@@ -417,23 +421,25 @@
     <div class="allrow"><button class="barbtn" id="allOn">All on</button><button class="barbtn" id="allOff">All off</button></div>
     <div class="sect">Ships</div>
     <div class="legend" id="legend"></div>
-    <div class="ais-row">
+    <div class="ais-row" id="aisRow" hidden>
       <label><input type="checkbox" id="aisOn" checked><span class="dot" style="background:var(--ais);border-radius:2px"></span>Live AIS</label>
       <span class="sub" id="aisStatus">checking…</span>
     </div>
-    <div class="sect">Forces</div>
-    <div class="legend ground" id="groundLegend">
-      <label><input type="checkbox" checked data-g="deploy"><span class="dot" style="background:#ffa94d"></span>Deployments <span class="sub" id="c-deploy"></span></label>
-      <label><input type="checkbox" data-g="bases"><span class="dot" style="background:#0a1520;border-color:#9ccc65;border-radius:2px"></span>US bases <span class="sub" id="c-bases"></span></label>
-      <label><input type="checkbox" data-g="allies"><span style="font-size:13px">🇬🇧🇫🇷</span>Allies <span class="sub" id="c-allies"></span></label>
-      <label><input type="checkbox" checked data-g="allyShips"><span id="aShipKey"></span>Allied ships <span class="sub" id="c-allyShips"></span></label>
-      <label><input type="checkbox" checked data-g="rivalShips"><span id="rShipKey"></span>Rival navies (RU · CN · IR · NK) <span class="sub" id="c-rivalShips"></span></label>
-    </div>
-    <div class="filters">
-      <span class="brand-filter-line"><img id="branchLogo" class="brand-emblem small" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select></span>
-      <select id="allyCountry" class="country"><option value="">All countries</option></select>
-    </div>
-    <div class="sub" style="margin-top:8px">Weekly positions are approximate (sea area, not GPS). Live AIS shows only ships broadcasting a transponder.</div>
+    <details class="force-filters">
+      <summary class="sect">Forces &amp; filters</summary>
+      <div class="legend ground" id="groundLegend">
+        <label><input type="checkbox" checked data-g="deploy"><span class="dot" style="background:#ffa94d"></span>Deployments <span class="sub" id="c-deploy"></span></label>
+        <label><input type="checkbox" data-g="bases"><span class="dot" style="background:#0a1520;border-color:#9ccc65;border-radius:2px"></span>US bases <span class="sub" id="c-bases"></span></label>
+        <label><input type="checkbox" data-g="allies"><span style="font-size:13px">🇬🇧🇫🇷</span>Allies <span class="sub" id="c-allies"></span></label>
+        <label><input type="checkbox" checked data-g="allyShips"><span id="aShipKey"></span>Allied ships <span class="sub" id="c-allyShips"></span></label>
+        <label><input type="checkbox" checked data-g="rivalShips"><span id="rShipKey"></span>Rival navies (RU · CN · IR · NK) <span class="sub" id="c-rivalShips"></span></label>
+      </div>
+      <div class="filters">
+        <span class="brand-filter-line"><img id="branchLogo" class="brand-emblem small" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select></span>
+        <select id="allyCountry" class="country"><option value="">All countries</option></select>
+      </div>
+    </details>
+    <div class="sub" style="margin-top:8px">Weekly reports show approximate sea areas.</div>
   </div>
 </div>
 
@@ -1810,6 +1816,7 @@ try {
 size();
 
 // ---------- Live AIS ----------
+$("aisRow").hidden = typeof globalThis.claude?.use !== "function";
 $("aisOn").onchange = e => { showAis = e.target.checked; draw(); if (showAis) loadAis(); };
 // Live positions are collected every 10 min by a Supabase edge function
 // (project navy-fleet-tracker) and read here through the viewer's Supabase connector.
