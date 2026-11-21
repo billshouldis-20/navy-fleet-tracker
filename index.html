@@ -406,7 +406,6 @@
   </div>
   <div class="hudstat"><span>UNITS <b id="hudUnits">--</b></span><span>AIS <b id="hudAis">--</b></span><span>DEPL <b id="hudDep">--</b></span><span id="hudClock">--:--:--Z</span></div>
   <div class="snapshot-controls" aria-label="Fleet snapshot comparison">
-    <button type="button" class="barbtn" id="omanBtn">Arabian Sea (Oman)</button>
     <label>Date A<select class="country" id="dateA" disabled></select></label>
     <label>Date B<select class="country" id="dateB" disabled></select></label>
     <button type="button" class="barbtn" id="compareBtn" aria-pressed="false" disabled>Show B</button>
@@ -1778,14 +1777,6 @@ function setupSnapshots(latest) {
   $("compareBtn").onclick = () => selectSnapshot(activeSlot === "A" ? "B" : "A");
   selectSnapshot("A");
 }
-
-$("omanBtn").onclick = () => {
-  if (pns.on) exitPensacola();
-  collapsePanel();
-  hideSheet();
-  $("oob").hidden = true;
-  fitPoints([{ lon: 52, lat: 10 }, { lon: 72, lat: 26 }], 10);
-};
 
 // ---------- Weekly USNI data ----------
 try {
