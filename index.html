@@ -383,6 +383,12 @@
 .brand-emblem[hidden] { display:none !important; }
 .brand-filter-line { display:flex; align-items:center; gap:6px; }
 .brand-filter-line #branchSel { flex:1; min-width:0; }
+  .ship-search { width:100%; padding:9px; background:var(--panel); border:1px solid var(--line); color:var(--text); font:inherit; }
+  .report-results { margin-top:10px; }
+  .report-results .contact { text-align:left; }
+  .change-list { margin:4px 0 12px; padding-left:20px; }
+  .change-list li { margin:5px 0; }
+  .dep .dep-label { pointer-events:auto; }
   .bar { flex-wrap:wrap; }
   .bar h1 { flex:1 0 auto; overflow:visible; }
   .hudstat [hidden], .map-status[hidden] { display:none; }
@@ -409,6 +415,7 @@
 <div class="panel collapsed" id="panel">
   <div class="bar">
     <h1><img class="brand-emblem" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><span class="radar"></span>NavalGT</h1>
+    <button type="button" class="barbtn" id="shipSearchBtn" disabled>Search</button>
     <button class="barbtn" id="oobBtn" title="Order of battle — fleet hierarchy">FLEET</button>
     <button class="barbtn" id="pnsBtn" title="Pensacola area map and base news">📍 PNS</button>
     <button class="barbtn" id="toggle">Layers ▾</button>
@@ -418,6 +425,7 @@
     <label>Date A<select class="country" id="dateA" disabled></select></label>
     <label>Date B<select class="country" id="dateB" disabled></select></label>
     <button type="button" class="barbtn" id="compareBtn" aria-pressed="false" disabled>Show B</button>
+    <button type="button" class="barbtn" id="diffBtn" disabled>Changes</button>
     <p class="sub snapshot-context" id="snapshotContext" aria-live="polite"></p>
   </div>
   <div class="body">
@@ -445,15 +453,19 @@
         <label><input type="checkbox" checked data-g="allyShips"><span id="aShipKey"></span>Allied ships <span class="sub" id="c-allyShips"></span></label>
         <label><input type="checkbox" checked data-g="rivalShips"><span id="rShipKey"></span>Rival navies (RU · CN · IR · NK) <span class="sub" id="c-rivalShips"></span></label>
       </div>
+      <button type="button" class="barbtn" id="deployListBtn" disabled>Deployment details</button>
       <div class="filters">
         <span class="brand-filter-line"><img id="branchLogo" class="brand-emblem small" src="assets/branding/navy-128.webp" alt="" onerror="this.hidden=true"><select id="branchSel" class="country"><option value="">All US branches</option><option value="army">Army</option><option value="navy">Navy</option><option value="marines">Marines</option><option value="af">Air Force</option><option value="space">Space Force</option><option value="guard">National Guard</option><option value="joint">Joint / multi-service</option></select></span>
         <select id="allyCountry" class="country"><option value="">All countries</option></select>
       </div>
     </details>
     <details class="force-filters">
-      <summary class="sect">Data &amp; methodology</summary>
+      <summary class="sect">Legend &amp; methodology</summary>
+      <div class="legend" id="mapKey"></div>
+      <p class="sub">US marks U.S. ships. A numbered marker groups nearby ships. Foreign hulls use national colors. Flag-shaped pins mark installations and circular markers mark deployment regions.</p>
       <p class="sub">U.S. ship positions come from USNI News weekly reports. Markers show approximate sea areas or reported ports. Ships can be absent from a weekly report.</p>
-      <p class="sub">Date comparison shows the U.S. fleet for the selected report. The dashed lines connect reported areas and do not show a ship’s actual route.</p>
+      <p class="sub">USNI reports are generally weekly. Fleet labels are inferred from the reported area and do not establish command assignments. Dashed lines connect approximate report locations.</p>
+      <p class="sub">Changes compares only the U.S. ships listed on both report dates or appearing in one of them. Allied and rival reports have their own dates.</p>
     </details>
   </div>
 </div>
@@ -845,10 +857,14 @@ function drawGround() {
   ga.select(".badge").attr("x", d => R(d) - 1).attr("y", d => -R(d) + 3).attr("text-anchor", "middle").attr("dominant-baseline", "central").attr("font-size", 10)
     .text(d => allyCountry && role(d) !== "lead" ? flagOf(allyCountry) : "");
 
-  const dp = !show.deploy ? [] : branchSel ? deploys.filter(d => branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)) : deploys;
+  const dp = show.deploy ? filteredDeployments() : [];
   const sel = gDeploy.selectAll("g.dep").data(dp, d => d.id).join(enter => {
     const gg = enter.append("g").attr("class", "dep").style("cursor", "pointer");
-    gg.append("circle").attr("class", "halo"); gg.append("image").attr("class", "core"); gg.append("text").attr("class", "lbl");
+    gg.append("circle").attr("class", "halo");
+    gg.append("image").attr("class", "core");
+    gg.append("circle").attr("r", 16).attr("fill", "transparent");
+    gg.append("text").attr("class", "lbl dep-label");
+    gg.append("title");
     return gg;
   });
   sel.attr("transform", d => `translate(${P(d)[0]},${P(d)[1]})`)
@@ -856,10 +872,11 @@ function drawGround() {
   sel.select(".halo").attr("r", 13 / Math.sqrt(k)).attr("fill", d => (DKIND[d.kind] || DKIND.rotation)[1]).attr("fill-opacity", .18)
     .attr("stroke", d => (DKIND[d.kind] || DKIND.rotation)[1]).attr("stroke-width", 1 / k).attr("stroke-dasharray", d => d.kind === "drawdown" ? `${3 / k} ${3 / k}` : null);
   sel.select(".core").attr("href", "assets/operations/mobilization.svg").attr("x", -11).attr("y", -11).attr("width", 22).attr("height", 22);
-  sel.select("text").attr("font-size", 10).attr("stroke-width", 3).attr("y", 4)
+  sel.select("title").text(d => d.title);
+  sel.select(".dep-label").attr("font-size", 10).attr("stroke-width", 3).attr("y", 4)
     .each(function (d) { const flip = P(d)[0] > el.clientWidth - 140;
       d3.select(this).attr("x", flip ? -15 : 15).attr("text-anchor", flip ? "end" : "start"); })
-    .text(d => { const x = P(d)[0]; return T.k >= 2.5 && x > 4 && x < el.clientWidth - 4 ? trunc(d.title.replace(/\s*\(.*\)$/, ""), 20) : ""; });
+    .text(d => { const x = P(d)[0]; return T.k >= 2.5 && x > 4 && x < el.clientWidth - 4 ? d.title : ""; });
 }
 
 // Land, graticule and coast highlights are re-projected at screen size on every zoom step
@@ -1451,6 +1468,7 @@ const FLEETS = [
   ["4th Fleet", "Caribbean & Latin America · Mayport", s => /Caribbean|Latin|Panama/i.test(s.area) || (s.lat < 30 && s.lon > -100 && s.lon < -50)],
   ["3rd Fleet", "Eastern Pacific · San Diego", s => /San Diego|Eastern Pacific|Hawaii|Pearl/i.test(s.area) || (s.lon <= -100 && s.lon >= -160)],
   ["2nd Fleet / Home", "Atlantic · Norfolk", s => true]];
+const fleetFor = ship => FLEETS.find(([, , matches]) => matches(ship));
 const TYPE_ORDER = { carrier: 0, amphib: 1, cruiser: 2, destroyer: 3, other: 4 };
 let oobTab = "us", usniMeta = {};
 // Firepower score used to rank fleets, groups and navies (most important at the top / left)
@@ -1467,7 +1485,7 @@ function oobHtml() {
   let root, tiers, sum, note;
   if (oobTab === "us") {
     const byFleet = FLEETS.map(([n, a]) => ({ n, a, ships: [] }));
-    for (const x of ships) byFleet[FLEETS.findIndex(f => f[2](x))].ships.push(x);
+    for (const x of ships) byFleet[FLEETS.indexOf(fleetFor(x))].ships.push(x);
     const fleets = byFleet.filter(f => f.ships.length).sort((a, b) => score(b.ships) - score(a.ships));
     root = `<div class="ot-node ot-root"><span class="ot-k">Chief of Naval Operations</span><b>${brandImg("navy", "hero")} 🇺🇸 U.S. Navy</b><span class="ot-c">${ships.length} ships tracked · ${ships.filter(x => x.type === "carrier").length} carriers</span></div>`;
     tiers = fleets.map((f, i) => {
@@ -1523,7 +1541,8 @@ function showShip(s, { fit = true } = {}) {
     `<button type="button" class="tl-row tl-snapshot${p.date === snapshotDate ? " now" : ""}" data-date="${esc(p.date)}" aria-pressed="${p.date === snapshotDate}"><span class="tl-date">${esc(fmtDay(p.date))}</span><span>${esc(p.area)}</span></button>`).join("");
   const moved = new Set(hist.map(p => p.area)).size;
   $("sheetBody").innerHTML = `<div class="sheet-kicker">TARGET // ${esc((TYPES[s.type] || TYPES.other).label.toUpperCase())}</div><h3>${shipIcon(s.type, 30)} ${esc(s.name)} <span title="United States">🇺🇸</span></h3>
-    <div class="sub">${esc(s.area)} · approximate · ${esc(snapshotDate)}</div>
+    <div class="sub">${esc(s.area)} · approximate</div>
+    <p class="sub"><b>Last reported:</b> ${esc(snapshotDate || usniMeta.asOf || "Date unavailable")}</p>
     <span class="tag">🇺🇸 U.S. Navy</span><span class="tag" style="border-color:${t.hex}">${esc(t.label)}</span><span class="tag">${esc(s.group)}</span>
     <p style="margin:6px 0 0">${esc(s.note)}</p>${photoSlot()}
     <div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div>
@@ -1593,9 +1612,12 @@ function showDeploy(d) {
   const [label, color] = DKIND[d.kind] || DKIND.rotation;
   openSheet(`<div class="sheet-kicker">INTEL // DEPLOYMENT</div><h3>${svgArt("assets/operations/mobilization.svg", 32)} ${esc(d.title)}</h3><div class="sub">${esc(d.region)} · since ${esc(d.since)}</div>
     <span class="tag" style="border-color:${color}">${esc(label)}</span>${(d.branches || []).map(b => `<span class="tag">${esc((BRANCH[b] || [b])[0])}</span>`).join("")}
-    <p style="margin:6px 0 2px"><b>Size:</b> ${esc(d.size)}</p>
+    <p style="margin:6px 0 2px"><b>Mission:</b> ${esc(d.mission || "Not specified in the report.")}</p>
+    <p style="margin:2px 0"><b>Start or announcement:</b> ${esc(d.since || "Not reported")}</p>
+    <p style="margin:2px 0"><b>Size:</b> ${esc(d.size)}</p>
     <p style="margin:2px 0"><b>Status:</b> ${esc(d.status)}</p>
-    ${d.units && d.units.length ? `<div class="tl-head">Units / assets</div>` + d.units.map(u => `<div class="src">• ${esc(u)}</div>`).join("") : ""}
+    <div class="tl-head">Reported units / assets</div>
+    ${d.units?.length ? d.units.map(u => `<div class="src">• ${esc(u)}</div>`).join("") : '<div class="sub">No units listed in the report.</div>'}
     ${srcList(d.sources)}
     <div class="sub" style="margin-top:6px">Marker shows the country or region, not unit positions. Data as of ${esc(deployMeta.asOf || "")}.</div>`);
 }
@@ -1618,7 +1640,7 @@ async function showAllyShip(d) {
   openSheet(d.live
     ? head + `<p style="margin:6px 0 0">${d.inPort ? "<b>In port / alongside</b><br>" : ""}Speed ${esc(d.sog ?? "?")} kn · Course ${esc(d.cog ?? "?")}°<br>${esc(d.lat.toFixed(3))}, ${esc(d.lon.toFixed(3))}<br>
         <span class="sub">Last seen ${esc(new Date(d.time).toLocaleString())} · MMSI ${esc(d.mmsi)}</span></p><div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div><div class="tl-head" id="aTrk">Loading 45-day track…</div>`
-    : head + `${photoSlot()}<p style="margin:6px 0 2px"><b>Area:</b> ${esc(d.area)}</p><p style="margin:2px 0"><b>Last reported:</b> ${esc(d.reported)}</p>
+    : head + `${photoSlot()}<p style="margin:6px 0 2px"><b>Area:</b> ${esc(d.area)}</p><p style="margin:2px 0"><b>Last reported:</b> ${esc(d.reported || "Date unavailable")}</p>
         <p style="margin:6px 0 0">${esc(d.note)}</p><div id="nearSlot"><div class="tl-head">Locating nearby coasts…</div></div>${d.src ? srcList([d.src]) : ""}
         <div class="sub" style="margin-top:6px">Position is approximate, placed in open water near the reported area. List as of ${esc((RIVAL.has(d.country) ? rivalMeta : allyShipsMeta).asOf || "")}.</div>`);
   selAShip = d; draw();
@@ -1722,8 +1744,9 @@ for (const [t, cfg] of Object.entries(TYPES)) {
 }
 function updateGroundCounts() {
   const bs = filteredBases();
-  const dp = branchSel ? deploys.filter(d => branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)) : deploys;
+  const dp = filteredDeployments();
   $("c-bases").textContent = bs.length; $("c-deploy").textContent = dp.length;
+  $("deployListBtn").disabled = !dp.length;
 }
 $("branchSel").onclick = e => e.stopPropagation();
 $("branchSel").onchange = e => { branchSel = e.target.value; const logo = $("branchLogo"); if (logo) { const key = BRAND_LOGOS[branchSel] || "navy"; logo.hidden = false; logo.src = `assets/branding/${key}-128.webp`; } updateGroundCounts(); draw(); };
@@ -1780,7 +1803,7 @@ function selectSnapshot(slot) {
   ships = snapshots.get(date);
   $("compareBtn").textContent = slot === "A" ? "Show B" : "Show A";
   $("compareBtn").setAttribute("aria-pressed", String(slot === "B"));
-  $("compareBtn").disabled = $("dateA").value === $("dateB").value;
+  $("diffBtn").disabled = $("compareBtn").disabled = $("dateA").value === $("dateB").value;
   $("snapshotContext").textContent = `Viewing ${slot} · ${date} · ${isHistorical() ? "Historical U.S. fleet snapshot" : "Latest weekly report"}`;
   updateShipCounts();
   fillAllyCountries();
@@ -1819,6 +1842,93 @@ function setupSnapshots(latest) {
   selectSnapshot("A");
 }
 
+function filteredDeployments() {
+  return deploys.filter(d => !branchSel ||
+    (branchSel === "joint" ? (d.branches || []).length > 1 : (d.branches || []).includes(branchSel)));
+}
+
+$("deployListBtn").onclick = () => {
+  const results = filteredDeployments();
+  openSheet(`<h3>Deployment details</h3><div class="report-results">${results.map((d, i) =>
+    `<button type="button" class="contact" data-result="${i}"><span>${esc(d.title)}</span></button>`).join("")}</div>`);
+  $("sheetBody").querySelectorAll("[data-result]").forEach(button => {
+    button.onclick = () => showDeploy(results[Number(button.dataset.result)]);
+  });
+};
+
+const searchKey = text => String(text).toLowerCase().replace(/[^a-z0-9]/g, "");
+$("shipSearchBtn").onclick = () => {
+  const catalogue = [
+    ...ships.map(ship => ({ ship, country: "United States", reported: snapshotDate })),
+    ...(isHistorical() ? [] : [...allyShips, ...rivalShips].map(ship => ({ ship, country: ship.country, reported: ship.reported })))
+  ].sort((a, b) => shortName(a.ship.name).localeCompare(shortName(b.ship.name)));
+  openSheet(`<h3>Find a ship</h3><label for="shipQuery" class="sub">Ship name or hull number</label>
+    <input type="search" class="ship-search" id="shipQuery" placeholder="e.g. Bush or CVN 77" autocomplete="off">
+    <div class="sub" id="shipResultCount" aria-live="polite"></div><div class="report-results" id="shipResults"></div>`);
+  const query = $("shipQuery");
+  function renderResults() {
+    const key = searchKey(query.value);
+    const matches = catalogue.filter(({ship}) => searchKey(ship.name).includes(key));
+    $("shipResultCount").textContent = `${matches.length} ships · ${isHistorical() ? snapshotDate + " U.S. report" : "Latest available reports"}`;
+    $("shipResults").innerHTML = matches.map(({ship, country, reported}, i) =>
+      `<button type="button" class="contact" data-result="${i}"><span>${esc(ship.name)}<br><small>${esc(country)}${reported ? " · " + esc(reported) : ""}</small></span></button>`).join("");
+    $("shipResults").querySelectorAll("button").forEach(button => {
+      button.onclick = () => {
+        const {ship} = matches[Number(button.dataset.result)];
+        if (pns.on) exitPensacola();
+        hidden.delete(ship.type);
+        const typeToggle = document.querySelector(`#legend input[data-t="${ship.type}"]`);
+        if (typeToggle) typeToggle.checked = true;
+        if (ship.country) {
+          const layer = RIVAL.has(ship.country) ? "rivalShips" : "allyShips";
+          show[layer] = true;
+          document.querySelector(`[data-g="${layer}"]`).checked = true;
+          if (allyCountry && allyCountry !== ship.country) setAllyCountry("", true);
+          showAllyShip(ship);
+        } else {
+          showShip(ship, {fit: false});
+        }
+        fitPoints([ship], 8);
+      };
+    });
+  }
+  query.oninput = renderResults;
+  query.onkeydown = event => {
+    if (event.key === "Enter") $("shipResults").querySelector("button")?.click();
+  };
+  renderResults();
+  query.focus();
+};
+
+$("diffBtn").onclick = () => {
+  const [older, newer] = [$("dateA").value, $("dateB").value].sort();
+  const before = new Map(snapshots.get(older).map(ship => [ship.name, ship]));
+  const after = new Map(snapshots.get(newer).map(ship => [ship.name, ship]));
+  const added = [], removed = [], changed = [];
+  for (const name of [...new Set([...before.keys(), ...after.keys()])].sort()) {
+    const a = before.get(name), b = after.get(name);
+    if (!a) added.push([name, b.area]);
+    else if (!b) removed.push([name, a.area]);
+    else {
+      const fromFleet = fleetFor(a)[0], toFleet = fleetFor(b)[0];
+      const areaChanged = a.area.trim().toLowerCase() !== b.area.trim().toLowerCase();
+      const fleetChanged = fromFleet !== toFleet;
+      if (areaChanged || fleetChanged) {
+        const area = areaChanged ? `${a.area} → ${b.area}` : b.area;
+        changed.push([name, fleetChanged ? `${area} · Inferred fleet: ${fromFleet} → ${toFleet}` : area]);
+      }
+    }
+  }
+  const group = (title, rows) => `<div class="tl-head">${title} · ${rows.length}</div>` +
+    (rows.length ? `<ul class="change-list">${rows.map(([name, details]) => `<li><b>${esc(name)}</b><br><span class="sub">${esc(details)}</span></li>`).join("")}</ul>` : "");
+  openSheet(`<h3>Weekly changes</h3><p class="sub">${esc(older)} → ${esc(newer)} · U.S. fleet reports</p>
+    ${group("Changed area or inferred fleet", changed)}${group("Newly listed", added)}${group("No longer listed", removed)}
+    <p class="sub">A change in listing alone does not establish movement. Fleet changes reflect map groupings inferred from reported sea areas.</p>`);
+};
+
+$("mapKey").innerHTML = Object.entries(TYPES).map(([type, info]) =>
+  `<span>${shipIcon(type, 22)} ${esc(info.label)}</span>`).join("");
+
 // ---------- Weekly USNI data ----------
 try {
   const d = await (await fetch("data/usni.json", { cache: "no-store" })).json();
@@ -1843,10 +1953,12 @@ try {
       $("allyCountry").onchange = e => focusCountry(e.target.value);
       $("allyCountry").onclick = e => e.stopPropagation();
     }
-    $("c-bases").textContent = bases.length; $("c-deploy").textContent = deploys.length; $("c-allies").textContent = allies.length;
+    updateGroundCounts();
+    $("c-allies").textContent = allies.length;
     shipCounts();
   } catch {}
   setupSnapshots(d);
+  $("shipSearchBtn").disabled = false;
   $("mapStatus").hidden = true;
 } catch {
   $("asof").textContent = "Could not load weekly data.";

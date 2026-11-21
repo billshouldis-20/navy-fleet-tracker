@@ -4,6 +4,7 @@
  "items": [
   {
    "id": "centcom-surge",
+   "mission": "Regional force posture and air defense.",
    "title": "Middle East force posture (Iran conflict)",
    "region": "CENTCOM — Gulf region",
    "lat": 27.5,
@@ -44,6 +45,7 @@
   },
   {
    "id": "lithuania-1id",
+   "mission": "Rotational U.S. Army presence in Lithuania.",
    "title": "2nd BCT, 1st Infantry Division → Lithuania",
    "region": "NATO eastern flank — Lithuania",
    "lat": 54.9,
@@ -71,6 +73,7 @@
   },
   {
    "id": "estonia",
+   "mission": "Resume the U.S. Army rotation in Estonia.",
    "title": "US Army rotation resumes in Estonia",
    "region": "NATO eastern flank — Estonia",
    "lat": 59.3,
@@ -94,6 +97,7 @@
   },
   {
    "id": "poland-canceled",
+   "mission": "Planned armored rotation in Poland, subsequently canceled.",
    "title": "Poland armored rotation canceled",
    "region": "NATO eastern flank — Poland",
    "lat": 52.4,
@@ -117,6 +121,7 @@
   },
   {
    "id": "romania-101",
+   "mission": "End the brigade rotation in Romania without a replacement.",
    "title": "101st Airborne brigade leaves Europe, not replaced",
    "region": "NATO southeast — Romania",
    "lat": 44.36,
@@ -140,6 +145,7 @@
   },
   {
    "id": "korea-3cr",
+   "mission": "Maintain the U.S. Army rotation in South Korea.",
    "title": "3rd Cavalry Regiment → South Korea",
    "region": "Korean Peninsula",
    "lat": 36.96,
@@ -167,6 +173,7 @@
   },
   {
    "id": "jtf-southern-border",
+   "mission": "Support operations along the U.S. southern border.",
    "title": "Joint Task Force–Southern Border",
    "region": "US–Mexico border",
    "lat": 31.8,
@@ -206,6 +213,7 @@
   },
   {
    "id": "dc-guard",
+   "mission": "Support public-safety operations in Washington, D.C.",
    "title": "National Guard in Washington, D.C.",
    "region": "Washington, D.C.",
    "lat": 38.9,
@@ -234,6 +242,7 @@
   },
   {
    "id": "caribbean",
+   "mission": "Support Operation Southern Spear in the Caribbean.",
    "title": "Caribbean / Puerto Rico buildup (Operation Southern Spear)",
    "region": "Caribbean — Puerto Rico",
    "lat": 18.23,
